@@ -1,0 +1,53 @@
+.event-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    padding-top: 1rem;
+  }
+  
+  .event-card {
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 1rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    background-color: #fff;
+  }
+  
+  .date-box {
+    background-color: #cce5ff;
+    text-align: center;
+    padding: 0.5rem;
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+    width: 60px;
+  }
+  
+  .date-box .month {
+    display: block;
+    font-weight: bold;
+  }
+  
+  .date-box .day {
+    font-size: 1.4rem;
+  }
+  
+  .register-btn {
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    background-color: #ccffcc;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .view-all {
+    text-align: center;
+    margin-top: 2rem;
+  }
+  
+  .view-btn {
+    padding: 0.6rem 2rem;
+    background-color: #fdd;
+    border: none;
+    font-weight: bold;
+  }
+  

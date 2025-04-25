@@ -1,0 +1,38 @@
+{
+	"folders": [
+		{
+			"path": "../../../GKC-FaithLink"
+		},
+		{
+			"path": "../../tests"
+		},
+		{
+			"path": "../../vendor"
+		},
+		{
+			"path": "../../app"
+		},
+		{
+			"path": "../../bootstrap"
+		},
+		{
+			"path": "../../config"
+		},
+		{
+			"path": "../../database"
+		},
+		{
+			"path": "../../public"
+		},
+		{
+			"path": ".."
+		},
+		{
+			"path": "../../routes"
+		},
+		{
+			"path": "../../storage"
+		}
+	],
+	"settings": {}
+}
