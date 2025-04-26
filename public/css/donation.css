@@ -1,0 +1,295 @@
+
+:root {
+    --primary-dark: #205781;
+    --accent-teal: #4F959D;
+    --secondary-mint: #98D2C0;
+    --background-light: #F6F8D5;
+    --white: #ffffff;
+    --shadow: rgba(0, 0, 0, 0.1);
+}
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--background-light);
+    color: var(--primary-dark);
+}
+
+.navigation .container {
+    width: 100%;
+    margin: 0 auto;
+   
+}
+
+.top-nav {
+    width: 100%;
+    height: 84px;
+    background-color: var(--primary-dark);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    color: var(--white);
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-radius: 50%;
+}
+
+.logo img {
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
+}
+
+.nav-icons a {
+    color: var(--white);
+    font-size: 1.2rem;
+    margin-left: 1rem;
+    transition: color 0.3s ease;
+}
+
+.nav-icons a:hover {
+    color: var(--secondary-mint);
+}
+
+.sidebar {
+    width: 250px;
+    height: 100%;
+    background-color: var(--accent-teal);
+    padding: 1rem;
+    color: var(--white);
+    position: fixed;
+}
+
+.profile {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 2rem;
+    gap: 10px;
+}
+
+.profile img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 3px solid var(--secondary-mint);
+}
+
+.name {
+    display: block;
+    margin-top: 0.5rem;
+    font-weight: bold;
+}
+
+.nav-menu ul {
+    list-style: none;
+    padding: 0;
+}
+
+.nav-menu ul li {
+    margin: 1rem 0;
+}
+
+/* .nav-menu ul li a {
+    color: var(--white);
+    text-decoration: none;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: background 0.3s ease;
+}
+
+.nav-menu ul li a:hover {
+    display: block; 
+    background-color: var(--secondary-mint);
+    padding: 0.5rem;
+    border-radius: 8px;
+} */
+
+.nav-menu ul li a {
+    color: var(--white);
+    text-decoration: none;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0.5rem; /* Add consistent padding here */
+    border-radius: 8px; /* Keep border-radius consistent */
+    transition: background 0.3s ease;
+}
+
+.nav-menu ul li a:hover {
+    background-color: var(--secondary-mint);
+}
+
+.dropdown {
+    display: none;
+    margin-left: 1.5rem;
+    margin-top: 0.5rem;
+}
+
+.nav-menu li:hover .dropdown {
+    display: block; 
+}
+.main-content {
+    margin-left: 280px;
+   text-align: center;
+   
+}
+
+.main-content h1 {
+    font-size: 1rem; /* Slightly smaller heading */
+    margin-bottom: 0.2rem; /* Space below the heading */
+    color: var(--primary-dark); /* Primary dark color */
+}
+
+.main-content p {
+    font-size: 0.9rem; /* Smaller font size for text */
+    line-height: 1rem; /* Better line spacing */
+    margin-bottom: 0.2rem; /* Space between paragraphs */
+    color: var(--primary-dark); /* Primary dark color */
+}
+
+.main-content p:last-child {
+    font-weight: bold; /* Highlight the Bible verse */
+    font-style: italic; /* Italicize the Bible verse */
+    margin-top: 0.2rem; /* Space above the Bible verse */
+   
+}
+
+.donation-container {
+    width: 600px;
+    height: 440px;
+    padding: 0.5rem;
+    position: absolute;
+    top: 28%;
+    right: 200px;
+    background-color: #98D2C0; /* Light teal background */
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    text-align: center;
+    color: #205781; /* Primary blue */
+    margin-bottom: 1rem;
+    font-size: 1rem;
+}
+
+.form-group {
+    margin-bottom: 8px;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 0.1rem;
+    color: #205781; /* Primary blue */
+    font-size: 0.9rem;
+}
+
+input, select {
+    width: 100%;
+    padding: 0.3rem;
+    border: 1px solid #4F959D; /* Teal border */
+    border-radius: 4px;
+    font-size: 0.7rem;
+    background-color: #F6F8D5; /* Light background */
+    color: #205781; /* Primary blue */
+}
+
+input:focus, select:focus {
+    border-color: #205781; /* Darker blue on focus */
+    outline: none;
+}
+
+.qr-code {
+    display: block;
+    margin: 0.8 auto;
+    max-width: 150px;
+    border: 1px solid #4F959D; /* Teal border */
+    border-radius: 4px;
+}
+
+.submit-button {
+    width: 100%;
+    padding: 0.3rem;
+    background-color: #4F959D; /* Teal button */
+    color: #F6F8D5; /* Light text */
+    border: none;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.submit-button:hover {
+    background-color: #205781; /* Darker blue on hover */
+}
+
+p {
+    color: #205781; /* Primary blue */
+    font-size: 0.7rem;
+    margin-top: 0.3rem;
+}
+
+.qr-button {
+    border: 1px solid #4F959D; /* Consistent border color */
+    padding: 0.3rem;
+    border-radius: 4px; /* Rounded corners */
+    background-color: #F6F8D5; /* Light background color */
+    text-align: left;
+    font: 0.5rem;
+    width: 100%; /* Full width to match other form elements */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for consistency */
+}
+
+/* QR Code Popup Styles */
+.qr-popup {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Black background with opacity */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.qr-popup-content {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.qr-popup-content img {
+    max-width: 200px;
+    margin-top: 1rem;
+}
+
+.close-qr {
+    color: #205781;
+    float: right;
+    font-size: 1.5rem;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close-qr:hover {
+    color: #4F959D;
+}
