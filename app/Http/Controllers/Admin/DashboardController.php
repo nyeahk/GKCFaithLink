@@ -10,6 +10,7 @@ use App\Models\Event;
 use App\Models\Member;
 use App\Models\Donation;
 use App\Models\Activity;
+use Illuminate\Support\Facades\Log;
 
 class DashboardController extends Controller
 {
@@ -32,6 +33,7 @@ class DashboardController extends Controller
         $eventsCount = Event::where('start_date', '>=', $today)->count();
         $membersCount = Member::where('status', 'active')->count();
         $donationsTotal = Donation::sum('amount');
+        $totalTithes = Donation::where('purpose', 'like', '%tithe%')->sum('amount');
 
         // Get recent activities
         $recentActivities = Activity::latest()->take(5)->get();
@@ -51,7 +53,7 @@ class DashboardController extends Controller
                     ->select('id', 'title', 'start_date', 'end_date', 'location', 'status')
                     ->get();
                     
-                \Log::info('Events for date ' . $currentDate->format('Y-m-d') . ':', [
+                Log::info('Events for date ' . $currentDate->format('Y-m-d') . ':', [
                     'count' => $events->count(),
                     'events' => $events->toArray()
                 ]);
@@ -78,6 +80,7 @@ class DashboardController extends Controller
             'eventsCount',
             'membersCount',
             'donationsTotal',
+            'totalTithes',
             'recentActivities'
         ));
     }
@@ -127,14 +130,14 @@ class DashboardController extends Controller
                 'status_class' => $this->getStatusClass($event->status)
             ];
             
-            \Log::info('Event details response:', $response);
+            Log::info('Event details response:', $response);
             
             return response()->json($response, 200, [
                 'Content-Type' => 'application/json',
                 'X-Requested-With' => 'XMLHttpRequest'
             ]);
         } catch (\Exception $e) {
-            \Log::error('Error fetching event details:', [
+            Log::error('Error fetching event details:', [
                 'error' => $e->getMessage(),
                 'event_id' => $id
             ]);

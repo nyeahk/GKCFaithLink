@@ -6,43 +6,48 @@
 <div class="reports-container">
     <div class="reports-header">
         <h1>Monthly Report</h1>
-        <div class="report-period">
-            <span class="period-label">Period:</span>
-            <span class="period-value">{{ $startDate->format('F Y') }}</span>
+        <div class="header-actions">
+            <div class="report-period">
+                <span class="period-label">Period:</span>
+                <span class="period-value">{{ $startDate->format('F Y') }}</span>
+            </div>
+            <a href="{{ route('reports.monthly.download', ['date' => $startDate->format('Y-m-d')]) }}" class="btn btn-primary">
+                <i class="fas fa-download"></i> Download PDF
+            </a>
         </div>
     </div>
 
     <div class="report-summary">
         <div class="summary-card">
             <div class="summary-icon">
-                <i class="fas fa-donate"></i>
+                <i class="fas fa-hand-holding-usd"></i>
             </div>
             <div class="summary-info">
-                <h3>Total Donations</h3>
-                <p class="summary-value">₱{{ number_format($totalDonations, 2) }}</p>
+                <h3>Total Tithes</h3>
+                <p class="summary-value">₱{{ number_format($totalTithes, 2) }}</p>
                 <p class="summary-label">This Month</p>
             </div>
         </div>
 
         <div class="summary-card">
             <div class="summary-icon">
-                <i class="fas fa-users"></i>
+                <i class="fas fa-gift"></i>
             </div>
             <div class="summary-info">
-                <h3>New Members</h3>
-                <p class="summary-value">{{ $newMembers }}</p>
+                <h3>Total Offerings</h3>
+                <p class="summary-value">₱{{ number_format($totalOfferings, 2) }}</p>
                 <p class="summary-label">This Month</p>
             </div>
         </div>
 
         <div class="summary-card">
             <div class="summary-icon">
-                <i class="fas fa-calendar-check"></i>
+                <i class="fas fa-globe"></i>
             </div>
             <div class="summary-info">
-                <h3>Upcoming Events</h3>
-                <p class="summary-value">{{ $upcomingEvents }}</p>
-                <p class="summary-label">Next 30 Days</p>
+                <h3>Total Mission Funds</h3>
+                <p class="summary-value">₱{{ number_format($totalMissionFunds, 2) }}</p>
+                <p class="summary-label">This Month</p>
             </div>
         </div>
     </div>
@@ -259,4 +264,4 @@
         });
     });
 </script>
-@endpush 
+@endpush

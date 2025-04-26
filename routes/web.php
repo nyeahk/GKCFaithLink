@@ -12,6 +12,17 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LogoutController;
 
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider and all of them will
+| be assigned to the "web" middleware group. Make something great!
+|
+*/
+
 Route::get('/', function () {
     return view('welcome');
 });
@@ -66,8 +77,10 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/donations/{donation}', [DonationController::class, 'destroy'])->name('admin.donations.destroy');
 
         // Report routes
-        Route::get('/reports/weekly', [ReportController::class, 'weekly'])->name('reports.weekly');
-        Route::get('/reports/monthly', [ReportController::class, 'monthly'])->name('reports.monthly');
+        Route::get('/reports/weekly', [\App\Http\Controllers\Admin\ReportsController::class, 'weekly'])->name('reports.weekly');
+        Route::get('/reports/monthly', [\App\Http\Controllers\Admin\ReportsController::class, 'monthly'])->name('reports.monthly');
+        Route::get('/reports/weekly/download', [\App\Http\Controllers\Admin\ReportsController::class, 'downloadWeeklyReport'])->name('reports.weekly.download');
+        Route::get('/reports/monthly/download', [\App\Http\Controllers\Admin\ReportsController::class, 'downloadMonthlyReport'])->name('reports.monthly.download');
 
         // Member routes
         Route::get('/members', [MemberController::class, 'index'])->name('members.index');
