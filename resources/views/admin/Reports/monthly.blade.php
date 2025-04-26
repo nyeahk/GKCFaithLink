@@ -97,6 +97,17 @@
 
 @push('styles')
 <style>
+    /* .reports-container {
+        padding: 2rem;
+    } */
+
+    /* .reports-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    } */
+
     .reports-container {
         padding: 2rem;
     }
@@ -106,6 +117,11 @@
         justify-content: space-between;
         align-items: center;
         margin-bottom: 2rem;
+    }
+    .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
     }
 
     .report-period {
@@ -121,6 +137,30 @@
 
     .period-value {
         color: var(--primary-dark);
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+
+    .btn-primary {
+        background-color: var(--primary);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background-color: var(--primary-dark);
+    }
+
+    .btn i {
+        font-size: 1rem;
     }
 
     .report-summary {

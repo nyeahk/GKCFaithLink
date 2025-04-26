@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\ServiceProvider;
+
 return [
 
     /*
@@ -166,6 +168,33 @@ return [
 
     'aliases' => [
         'PDF' => Barryvdh\DomPDF\Facade::class,
+        'Route' => Illuminate\Support\Facades\Route::class,
+        'Auth' => Illuminate\Support\Facades\Auth::class,
+        'DB' => Illuminate\Support\Facades\DB::class,
+        'View' => Illuminate\Support\Facades\View::class,
+        'Config' => Illuminate\Support\Facades\Config::class,
+        'Session' => Illuminate\Support\Facades\Session::class,
+        'Redirect' => Illuminate\Support\Facades\Redirect::class,
+        'Response' => Illuminate\Support\Facades\Response::class,
+        'Request' => Illuminate\Support\Facades\Request::class,
+        'URL' => Illuminate\Support\Facades\URL::class,
+        'Validator' => Illuminate\Support\Facades\Validator::class,
+        'Storage' => Illuminate\Support\Facades\Storage::class,
+        'File' => Illuminate\Support\Facades\File::class,
+        'Hash' => Illuminate\Support\Facades\Hash::class,
+        'Log' => Illuminate\Support\Facades\Log::class,
+        'Mail' => Illuminate\Support\Facades\Mail::class,
+        'Cache' => Illuminate\Support\Facades\Cache::class,
+        'Cookie' => Illuminate\Support\Facades\Cookie::class,
+        'Crypt' => Illuminate\Support\Facades\Crypt::class,
+        'Event' => Illuminate\Support\Facades\Event::class,
+        'Gate' => Illuminate\Support\Facades\Gate::class,
+        'Lang' => Illuminate\Support\Facades\Lang::class,
+        'Password' => Illuminate\Support\Facades\Password::class,
+        'Queue' => Illuminate\Support\Facades\Queue::class,
+        'Schema' => Illuminate\Support\Facades\Schema::class,
+        'Str' => Illuminate\Support\Str::class,
+        'Arr' => Illuminate\Support\Arr::class,
     ],
 
 ];

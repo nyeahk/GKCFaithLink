@@ -653,7 +653,7 @@
     }
 
     .no-events p {
-        color: var(--text-secondary);
+        color: var(--primary-dark);
         margin-bottom: 1rem;
         font-size: 0.875rem;
     }
@@ -661,6 +661,7 @@
     .no-events-actions {
         display: flex;
         gap: 0.75rem;
+       
     }
 
     @media (max-width: 768px) {
@@ -868,12 +869,13 @@
     }
 
     .btn-primary {
-        background-color: var(--primary);
+        background-color: var(--primary-dark);
         color: white;
     }
 
     .btn-primary:hover {
-        background-color: var(--primary-dark);
+        background-color: var(--background-light);
+        color: var(--primary-dark);
     }
 
     .btn-danger {
@@ -886,15 +888,14 @@
     }
 
     .btn-secondary {
-        background-color: var(--background-light);
-        color: var(--text-primary);
-        border: 1px solid var(--border);
+        background-color: var(--primary-dark);
+        color: white;
     }
 
     .btn-secondary:hover {
-        background-color: var(--border);
+        background-color: var(--background-light);
+        color: var(--primary-dark);
     }
-
     @media (max-width: 768px) {
         .header-top {
             flex-direction: column;
