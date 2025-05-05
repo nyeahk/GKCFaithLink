@@ -22,6 +22,17 @@
     --error: #dc3545;
     --success: #28a745;
     --warning: #ffc107;
+    /* Unified Hover Styles */
+    --hover-bg: var(--primary-light);
+    --hover-color: var(--white);
+    --hover-transition: all 0.3s ease;
+    --hover-scale: scale(1.02);
+    --hover-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    /* Form Hover Styles */
+    --form-hover-bg: var(--background-light);
+    --form-hover-border: var(--primary);
+    --form-hover-shadow: 0 0 0 3px rgba(79, 149, 157, 0.1);
+    --form-hover-transition: all 0.2s ease;
 }
 
 /* Base Styles */
@@ -280,4 +291,151 @@ body {
         flex-direction: column;
         gap: 0.5rem;
     }
+}
+
+/* Unified Hover Effects */
+a:hover,
+button:hover,
+.nav-menu a:hover,
+.nav-menu a.active,
+.menu-section a:hover,
+.menu-section a.active,
+.dropdown-menu a:hover,
+.dropdown-menu button:hover,
+.btn:hover,
+.btn-submit:hover,
+.btn-cancel:hover,
+.nav-icons a:hover,
+.nav-brand a:hover,
+.user-button:hover,
+.close:hover,
+.submit-button:hover,
+.qr-button:hover {
+    color: var(--hover-color);
+    transform: var(--hover-scale);
+    box-shadow: var(--hover-shadow);
+    transition: var(--hover-transition);
+}
+
+/* Table Row Hover */
+tr:hover,
+.members-table tr:hover {
+    color: var(--hover-color);
+    transform: var(--hover-scale);
+    transition: var(--hover-transition);
+}
+
+/* Form Input Hover */
+input:hover,
+select:hover,
+textarea:hover {
+    border-color: var(--form-hover-border);
+    box-shadow: var(--form-hover-shadow);
+    transition: var(--form-hover-transition);
+}
+
+/* Modal Close Button Hover */
+.close:hover,
+.close-qr:hover {
+    color: var(--hover-bg);
+    transform: var(--hover-scale);
+    transition: var(--hover-transition);
+}
+
+/* Unified Form Hover Effects */
+.form-control:hover,
+.form-input:hover,
+.form-select:hover,
+.form-textarea:hover,
+input:hover,
+select:hover,
+textarea:hover,
+input[type="text"]:hover,
+input[type="email"]:hover,
+input[type="password"]:hover,
+input[type="number"]:hover,
+input[type="date"]:hover,
+input[type="datetime-local"]:hover,
+input[type="file"]:hover,
+input[type="search"]:hover,
+input[type="tel"]:hover,
+input[type="url"]:hover,
+input[type="time"]:hover,
+input[type="week"]:hover,
+input[type="month"]:hover,
+input[type="color"]:hover {
+    background-color: var(--form-hover-bg);
+    border-color: var(--form-hover-border);
+    box-shadow: var(--form-hover-shadow);
+    transition: var(--form-hover-transition);
+}
+
+/* Form Focus States */
+.form-control:focus,
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus,
+input:focus,
+select:focus,
+textarea:focus,
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="number"]:focus,
+input[type="date"]:focus,
+input[type="datetime-local"]:focus,
+input[type="file"]:focus,
+input[type="search"]:focus,
+input[type="tel"]:focus,
+input[type="url"]:focus,
+input[type="time"]:focus,
+input[type="week"]:focus,
+input[type="month"]:focus,
+input[type="color"]:focus {
+    border-color: var(--form-hover-border);
+    box-shadow: var(--form-hover-shadow);
+    outline: none;
+    transition: var(--form-hover-transition);
+}
+
+/* Form Group Hover */
+.form-group:hover {
+    transform: var(--hover-scale);
+    transition: var(--hover-transition);
+}
+
+/* Form Label Hover */
+.form-label:hover,
+label:hover {
+    color: var(--primary);
+    transition: var(--hover-transition);
+}
+
+/* Form Button Hover */
+.form-actions button:hover,
+.btn:hover,
+.btn-submit:hover,
+.btn-cancel:hover,
+.submit-button:hover {
+    color: var(--hover-color);
+    transform: var(--hover-scale);
+    box-shadow: var(--hover-shadow);
+    transition: var(--hover-transition);
+}
+
+/* Form Validation States */
+.form-control.is-invalid:hover,
+.form-input.is-invalid:hover,
+.form-select.is-invalid:hover,
+.form-textarea.is-invalid:hover {
+    border-color: var(--error);
+    box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+}
+
+.form-control.is-valid:hover,
+.form-input.is-valid:hover,
+.form-select.is-valid:hover,
+.form-textarea.is-valid:hover {
+    border-color: var(--success);
+    box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1);
 }

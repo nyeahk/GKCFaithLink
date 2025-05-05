@@ -24,7 +24,7 @@ use App\Http\Controllers\Auth\LogoutController;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('auth.login');
 });
 
 // Authentication Routes

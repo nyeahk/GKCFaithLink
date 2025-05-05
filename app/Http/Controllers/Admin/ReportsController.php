@@ -61,7 +61,7 @@ class ReportsController extends Controller
         // Get recent donations for the week
         $recentDonations = Donation::whereBetween('created_at', [$startDate, $endDate])
             ->orderBy('created_at', 'desc')
-            ->take(10)
+            ->take(5)
             ->get();
 
         // Prepare data for the donations chart
@@ -141,7 +141,7 @@ class ReportsController extends Controller
         // Get recent donations for the month
         $recentDonations = Donation::whereBetween('created_at', [$startDate, $endDate])
             ->orderBy('created_at', 'desc')
-            ->take(10)
+            ->take(5)
             ->get();
 
         // Prepare data for the donations chart by week

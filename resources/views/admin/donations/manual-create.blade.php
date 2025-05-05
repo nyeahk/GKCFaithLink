@@ -48,14 +48,19 @@
 
                 <div class="form-group">
                     <label for="payment_method">Payment Method</label>
-                    <select name="payment_method" id="payment_method" class="form-control @error('payment_method') is-invalid @enderror" required>
-                        <option value="">Select Payment Method</option>
-                        <option value="cash" {{ old('payment_method') == 'cash' ? 'selected' : '' }}>Cash</option>
-                        <option value="check" {{ old('payment_method') == 'check' ? 'selected' : '' }}>Check</option>
-                        <option value="bank_transfer" {{ old('payment_method') == 'bank_transfer' ? 'selected' : '' }}>Bank Transfer</option>
-                        <option value="online_payment" {{ old('payment_method') == 'online_payment' ? 'selected' : '' }}>Online Payment</option>
-                        <option value="gcash" {{ old('payment_method') == 'gcash' ? 'selected' : '' }}>GCash</option>
-                    </select>
+                    <div class="payment-method-container">
+                        <select name="payment_method" id="payment_method" class="form-control @error('payment_method') is-invalid @enderror" required>
+                            <option value="">Select Payment Method</option>
+                            <option value="cash" {{ old('payment_method') == 'cash' ? 'selected' : '' }}>Cash</option>
+                            <option value="check" {{ old('payment_method') == 'check' ? 'selected' : '' }}>Check</option>
+                            <option value="bank_transfer" {{ old('payment_method') == 'bank_transfer' ? 'selected' : '' }}>Bank Transfer</option>
+                            <option value="online_payment" {{ old('payment_method') == 'online_payment' ? 'selected' : '' }}>Online Payment</option>
+                            <option value="gcash" {{ old('payment_method') == 'gcash' ? 'selected' : '' }}>GCash</option>
+                        </select>
+                        <button type="button" id="show-qr-button" class="btn btn-qr">
+                            <i class="fas fa-qrcode"></i> Show QR Code
+                        </button>
+                    </div>
                     @error('payment_method')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -116,6 +121,45 @@
                     </a>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- QR Code Modal -->
+    <div class="modal" id="qr-code-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>GCash QR Code for Donations</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="qr-code-content">
+                    <div class="qr-image-container">
+                        <img src="{{ asset('images/sample QR.png') }}" alt="GCash QR Code" class="qr-image">
+                    </div>
+                    
+                    <div class="qr-instructions">
+                        <h4>Scan to Donate</h4>
+                        <p>Use your GCash app to scan this QR code</p>
+                        
+                        <div class="instructions-list">
+                            <h5>Donation Instructions:</h5>
+                            <ol>
+                                <li>Open your GCash app</li>
+                                <li>Tap on "Scan QR"</li>
+                                <li>Scan the QR code above</li>
+                                <li>Enter the donation amount</li>
+                                <li>Add a note with your name</li>
+                                <li>Confirm the transaction</li>
+                            </ol>
+                        </div>
+
+                        <div class="qr-note">
+                            <i class="fas fa-info-circle"></i>
+                            <p>After making your donation, please wait for verification. You will receive a notification once your donation has been verified.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 @endsection
@@ -253,21 +297,249 @@
     .btn-secondary:hover {
         background-color: #cbd5e0;
     }
+
+    .payment-method-container {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+    }
+
+    .btn-qr {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        background-color: var(--primary-light);
+        color: var(--primary-dark);
+        border: none;
+        border-radius: 0.375rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        white-space: nowrap;
+    }
+
+    .btn-qr:hover {
+        background-color: var(--secondary-mint);
+       
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .modal.show {
+        display: flex;
+        opacity: 1;
+    }
+
+    .modal-content {
+        background: white;
+        border-radius: 0.5rem;
+        max-width: 600px;
+        width: 90%;
+        max-height: 90vh;
+        overflow-y: auto;
+        position: relative;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transform: translateY(-20px);
+        transition: transform 0.3s ease;
+    }
+
+    .modal.show .modal-content {
+        transform: translateY(0);
+    }
+
+    .modal-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid #e2e8f0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .modal-header h3 {
+        margin: 0;
+        color: #1a365d;
+        font-size: 1.25rem;
+    }
+
+    .modal-close {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        color: #4a5568;
+        cursor: pointer;
+        padding: 0.25rem;
+        transition: color 0.2s;
+    }
+
+    .modal-close:hover {
+        color: #1a365d;
+    }
+
+    .modal-body {
+        padding: 1.5rem;
+    }
+
+    .qr-code-content {
+        text-align: center;
+    }
+
+    .qr-image-container {
+        margin-bottom: 1.5rem;
+        padding: 1rem;
+        background: #f7fafc;
+        border-radius: 0.5rem;
+        display: inline-block;
+    }
+
+    .qr-image {
+        max-width: 250px;
+        border-radius: 0.5rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .qr-instructions {
+        text-align: left;
+        max-width: 500px;
+        margin: 0 auto;
+    }
+
+    .qr-instructions h4 {
+        color: #1a365d;
+        margin-bottom: 0.5rem;
+        font-size: 1.1rem;
+    }
+
+    .qr-instructions p {
+        color: #4a5568;
+        margin-bottom: 1.5rem;
+    }
+
+    .instructions-list {
+        background: #f7fafc;
+        padding: 1.25rem;
+        border-radius: 0.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .instructions-list h5 {
+        color: #1a365d;
+        margin-bottom: 1rem;
+        font-size: 1rem;
+    }
+
+    .instructions-list ol {
+        padding-left: 1.5rem;
+        color: #4a5568;
+    }
+
+    .instructions-list li {
+        margin-bottom: 0.5rem;
+        line-height: 1.5;
+    }
+
+    .qr-note {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+        padding: 1rem;
+        background: #ebf8ff;
+        border-radius: 0.5rem;
+        color: #2b6cb0;
+    }
+
+    .qr-note i {
+        font-size: 1.1rem;
+        color: #3182ce;
+    }
+
+    .qr-note p {
+        margin: 0;
+        text-align: left;
+        font-size: 0.875rem;
+    }
+
+    @media (max-width: 768px) {
+        .modal-content {
+            width: 95%;
+            max-height: 95vh;
+        }
+
+        .qr-image {
+            max-width: 200px;
+        }
+
+        .qr-instructions {
+            padding: 0 0.5rem;
+        }
+    }
 </style>
 @endpush
 
 @push('scripts')
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const status = document.getElementById('status');
-        const verificationNotesField = document.getElementById('verification_notes_field');
+document.addEventListener('DOMContentLoaded', function() {
+    // Get all necessary elements
+    const qrButton = document.getElementById('show-qr-button');
+    const qrModal = document.getElementById('qr-code-modal');
+    const closeModal = document.querySelector('.modal-close');
+    const status = document.getElementById('status');
+    const verificationNotesField = document.getElementById('verification_notes_field');
 
+    // Status change handler
+    if (status && verificationNotesField) {
         status.addEventListener('change', function() {
             verificationNotesField.style.display = this.value === 'verified' ? 'block' : 'none';
         });
-
-        // Trigger change event on page load
         status.dispatchEvent(new Event('change'));
+    }
+
+    // Show QR Modal
+    if (qrButton && qrModal) {
+        qrButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            qrModal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        });
+    }
+
+    // Close QR Modal
+    if (closeModal && qrModal) {
+        closeModal.addEventListener('click', function() {
+            qrModal.classList.remove('show');
+            document.body.style.overflow = '';
+        });
+    }
+
+    // Close modal when clicking outside
+    if (qrModal) {
+        window.addEventListener('click', function(e) {
+            if (e.target === qrModal) {
+                qrModal.classList.remove('show');
+                document.body.style.overflow = '';
+            }
+        });
+    }
+
+    // Close modal with Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && qrModal && qrModal.classList.contains('show')) {
+            qrModal.classList.remove('show');
+            document.body.style.overflow = '';
+        }
     });
+});
 </script>
 @endpush 

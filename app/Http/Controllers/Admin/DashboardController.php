@@ -25,8 +25,8 @@ class DashboardController extends Controller
         $currentDate = Carbon::createFromTimestamp($currentTimestamp);
 
         // Calculate previous and next month timestamps
-        $lastMonthTimestamp = $currentDate->copy()->subMonth()->timestamp;
-        $nextMonthTimestamp = $currentDate->copy()->addMonth()->timestamp;
+        $lastMonthTimestamp = Carbon::create($currentDate->year, $currentDate->month - 1, $currentDate->day, 0, 0, 0)->timestamp;
+        $nextMonthTimestamp = Carbon::create($currentDate->year, $currentDate->month + 1, $currentDate->day, 0, 0, 0)->timestamp;
 
         // Get statistics
         $announcementsCount = Announcement::count();
@@ -36,37 +36,80 @@ class DashboardController extends Controller
         $totalTithes = Donation::where('purpose', 'like', '%tithe%')->sum('amount');
 
         // Get recent activities
-        $recentActivities = Activity::latest()->take(5)->get();
+        $recentEvents = Event::latest()->take(5)->get();
 
         // Prepare calendar data
         $calendar = [];
-        $startOfMonth = $currentDate->copy()->startOfMonth();
-        $endOfMonth = $currentDate->copy()->endOfMonth();
-        $startDate = $startOfMonth->copy()->startOfWeek();
-        $endDate = $endOfMonth->copy()->endOfWeek();
-
-        $currentDate = $startDate->copy();
-        while ($currentDate <= $endDate) {
+        $numOfDaysForThisMonth = $currentDate->daysInMonth;
+        $startingWeekDay = Carbon::create($currentDate->year, $currentDate->month, 1)->dayOfWeek;
+        
+        $dayCounter = 1;
+        $daysInAWeek = 7;
+        
+        // Calculate previous month's last days
+        $prevMonth = $currentDate->copy()->subMonth();
+        $prevMonthDays = $prevMonth->daysInMonth;
+        $prevMonthStartDay = $prevMonthDays - $startingWeekDay + 1;
+        
+        while ($dayCounter <= $numOfDaysForThisMonth) {
             $week = [];
-            for ($i = 0; $i < 7; $i++) {
-                $events = Event::whereDate('start_date', $currentDate)
+            $colCounter = 0;
+            
+            while ($colCounter < $daysInAWeek) {
+                if ($colCounter === 0 && $dayCounter === 1) {
+                    // Handle the first day of the month
+                    for ($i = 0; $i < $startingWeekDay; $i++) {
+                        $prevDate = Carbon::create($prevMonth->year, $prevMonth->month, $prevMonthStartDay + $i);
+                        $week[] = [
+                            'day' => $prevMonthStartDay + $i,
+                            'date' => $prevDate,
+                            'isToday' => false,
+                            'isCurrentMonth' => false,
+                            'events' => null,
+                            'moonPhase' => $this->getMoonPhase($prevDate)
+                        ];
+                        $colCounter++;
+                    }
+                }
+                
+                if ($dayCounter > $numOfDaysForThisMonth) {
+                    // Fill remaining days with next month's days
+                    $nextMonth = $currentDate->copy()->addMonth();
+                    $nextMonthDay = 1;
+                    while ($colCounter < $daysInAWeek) {
+                        $nextDate = Carbon::create($nextMonth->year, $nextMonth->month, $nextMonthDay);
+                        $week[] = [
+                            'day' => $nextMonthDay,
+                            'date' => $nextDate,
+                            'isToday' => false,
+                            'isCurrentMonth' => false,
+                            'events' => null,
+                            'moonPhase' => $this->getMoonPhase($nextDate)
+                        ];
+                        $colCounter++;
+                        $nextMonthDay++;
+                    }
+                    break;
+                }
+                
+                $date = Carbon::create($currentDate->year, $currentDate->month, $dayCounter);
+                $events = Event::whereDate('start_date', $date)
                     ->select('id', 'title', 'start_date', 'end_date', 'location', 'status')
                     ->get();
-                    
-                Log::info('Events for date ' . $currentDate->format('Y-m-d') . ':', [
-                    'count' => $events->count(),
-                    'events' => $events->toArray()
-                ]);
                 
                 $week[] = [
-                    'day' => $currentDate->day,
-                    'date' => $currentDate->copy(),
-                    'isToday' => $currentDate->isToday(),
-                    'isCurrentMonth' => $currentDate->month === $startOfMonth->month,
-                    'events' => $events->count() > 0 ? $events : null
+                    'day' => $dayCounter,
+                    'date' => $date,
+                    'isToday' => $date->isToday(),
+                    'isCurrentMonth' => true,
+                    'events' => $events->count() > 0 ? $events : null,
+                    'moonPhase' => $this->getMoonPhase($date)
                 ];
-                $currentDate->addDay();
+                
+                $colCounter++;
+                $dayCounter++;
             }
+            
             $calendar[] = $week;
         }
 
@@ -81,7 +124,7 @@ class DashboardController extends Controller
             'membersCount',
             'donationsTotal',
             'totalTithes',
-            'recentActivities'
+            'recentEvents'
         ));
     }
 
@@ -160,5 +203,41 @@ class DashboardController extends Controller
             'cancelled' => 'bg-red-100 text-red-800',
             default => 'bg-gray-100 text-gray-800'
         };
+    }
+
+    private function getMoonPhase($date)
+    {
+        // Calculate moon phase (0 = New Moon, 0.25 = First Quarter, 0.5 = Full Moon, 0.75 = Last Quarter)
+        $year = $date->year;
+        $month = $date->month;
+        $day = $date->day;
+        
+        $c = floor(($month + 9) / 12);
+        $y = $year + 4800 - $c;
+        $m = $month + 12 * $c - 3;
+        
+        $julian = $day + floor((153 * $m + 2) / 5) + 365 * $y + floor($y / 4) - floor($y / 100) + floor($y / 400) - 32045;
+        
+        $daysSinceNew = $julian - 2451549.5;
+        $newMoons = $daysSinceNew / 29.53;
+        $phase = $newMoons - floor($newMoons);
+        
+        if ($phase < 0.03 || $phase > 0.97) {
+            return '🌑 New Moon';
+        } elseif ($phase < 0.22) {
+            return '🌒 Waxing Crescent';
+        } elseif ($phase < 0.28) {
+            return '🌓 First Quarter';
+        } elseif ($phase < 0.47) {
+            return '🌔 Waxing Gibbous';
+        } elseif ($phase < 0.53) {
+            return '🌕 Full Moon';
+        } elseif ($phase < 0.72) {
+            return '🌖 Waning Gibbous';
+        } elseif ($phase < 0.78) {
+            return '🌗 Last Quarter';
+        } else {
+            return '🌘 Waning Crescent';
+        }
     }
 }

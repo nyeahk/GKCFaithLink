@@ -85,7 +85,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="text-center">No donations this month.</td>
+                            <td colspan="5" class="text-center">No donations match the selected filters.</td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -229,6 +229,22 @@
     .donations-table h2 {
         margin: 0 0 1.5rem 0;
         color: var(--primary-dark);
+    }
+
+    .filter-container {
+        margin-bottom: 1.5rem;
+    }
+
+    .filter-group {
+        margin-bottom: 1rem;
+    }
+
+    .filter-select,
+    .filter-input {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid var(--border);
+        border-radius: 4px;
     }
 
     table {
