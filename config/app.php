@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\ServiceProvider;
+
 return [
 
     /*
@@ -121,6 +123,78 @@ return [
     'maintenance' => [
         'driver' => env('APP_MAINTENANCE_DRIVER', 'file'),
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
+    ],
+
+    'providers' => [
+        /*
+         * Laravel Framework Service Providers...
+         */
+        Illuminate\Auth\AuthServiceProvider::class,
+        Illuminate\Broadcasting\BroadcastServiceProvider::class,
+        Illuminate\Bus\BusServiceProvider::class,
+        Illuminate\Cache\CacheServiceProvider::class,
+        Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
+        Illuminate\Cookie\CookieServiceProvider::class,
+        Illuminate\Database\DatabaseServiceProvider::class,
+        Illuminate\Encryption\EncryptionServiceProvider::class,
+        Illuminate\Filesystem\FilesystemServiceProvider::class,
+        Illuminate\Foundation\Providers\FoundationServiceProvider::class,
+        Illuminate\Hashing\HashServiceProvider::class,
+        Illuminate\Mail\MailServiceProvider::class,
+        Illuminate\Notifications\NotificationServiceProvider::class,
+        Illuminate\Pagination\PaginationServiceProvider::class,
+        Illuminate\Pipeline\PipelineServiceProvider::class,
+        Illuminate\Queue\QueueServiceProvider::class,
+        Illuminate\Redis\RedisServiceProvider::class,
+        Illuminate\Auth\Passwords\PasswordResetServiceProvider::class,
+        Illuminate\Session\SessionServiceProvider::class,
+        Illuminate\Translation\TranslationServiceProvider::class,
+        Illuminate\Validation\ValidationServiceProvider::class,
+        Illuminate\View\ViewServiceProvider::class,
+
+        /*
+         * Package Service Providers...
+         */
+        Barryvdh\DomPDF\ServiceProvider::class,
+
+        /*
+         * Application Service Providers...
+         */
+        App\Providers\AppServiceProvider::class,
+        App\Providers\AuthServiceProvider::class,
+        App\Providers\EventServiceProvider::class,
+        App\Providers\RouteServiceProvider::class,
+    ],
+
+    'aliases' => [
+        'PDF' => Barryvdh\DomPDF\Facade::class,
+        'Route' => Illuminate\Support\Facades\Route::class,
+        'Auth' => Illuminate\Support\Facades\Auth::class,
+        'DB' => Illuminate\Support\Facades\DB::class,
+        'View' => Illuminate\Support\Facades\View::class,
+        'Config' => Illuminate\Support\Facades\Config::class,
+        'Session' => Illuminate\Support\Facades\Session::class,
+        'Redirect' => Illuminate\Support\Facades\Redirect::class,
+        'Response' => Illuminate\Support\Facades\Response::class,
+        'Request' => Illuminate\Support\Facades\Request::class,
+        'URL' => Illuminate\Support\Facades\URL::class,
+        'Validator' => Illuminate\Support\Facades\Validator::class,
+        'Storage' => Illuminate\Support\Facades\Storage::class,
+        'File' => Illuminate\Support\Facades\File::class,
+        'Hash' => Illuminate\Support\Facades\Hash::class,
+        'Log' => Illuminate\Support\Facades\Log::class,
+        'Mail' => Illuminate\Support\Facades\Mail::class,
+        'Cache' => Illuminate\Support\Facades\Cache::class,
+        'Cookie' => Illuminate\Support\Facades\Cookie::class,
+        'Crypt' => Illuminate\Support\Facades\Crypt::class,
+        'Event' => Illuminate\Support\Facades\Event::class,
+        'Gate' => Illuminate\Support\Facades\Gate::class,
+        'Lang' => Illuminate\Support\Facades\Lang::class,
+        'Password' => Illuminate\Support\Facades\Password::class,
+        'Queue' => Illuminate\Support\Facades\Queue::class,
+        'Schema' => Illuminate\Support\Facades\Schema::class,
+        'Str' => Illuminate\Support\Str::class,
+        'Arr' => Illuminate\Support\Arr::class,
     ],
 
 ];
