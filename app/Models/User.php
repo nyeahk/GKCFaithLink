@@ -18,9 +18,14 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
-        'name',
+        'username',
         'email',
         'password',
+        'position',
+        'name',
+        'contact_number',
+        'address',
+        'image_path'
     ];
 
     /**
@@ -43,6 +48,28 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+        ];
+    }
+    
+    /**
+     * Get the validation rules for user registration.
+     *
+     * @return array<string, mixed>
+     */
+    public static function getValidationRules(): array
+    {
+        return [
+            'username' => [
+                'required', 
+                'string', 
+                'min:3', 
+                'max:20', 
+                'unique:users', 
+                'regex:/^[a-zA-Z0-9][a-zA-Z0-9._]{1,18}[a-zA-Z0-9]$/',
+            ],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'position' => ['required', 'string', 'in:Pastor,Staff,Treasurer,Member'],
         ];
     }
 }

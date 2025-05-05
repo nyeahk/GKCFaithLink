@@ -4,14 +4,17 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-
+use App\Models\Event;
 use Carbon\Carbon;
 
 class MemberDashboardController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $carbon = Carbon::now();
+        // Get the month from the request or use current month
+        $monthParam = $request->input('month');
+        $carbon = $monthParam ? Carbon::createFromFormat('Y-m', $monthParam) : Carbon::now();
+        
         $startOfMonth = $carbon->copy()->startOfMonth();
         $endOfMonth = $carbon->copy()->endOfMonth();
         $startDay = $startOfMonth->copy()->startOfWeek(Carbon::SUNDAY);
@@ -29,15 +32,29 @@ class MemberDashboardController extends Controller
             $weeks[] = $week;
         }
 
+        // Get events for the current month
+        $events = Event::whereMonth('event_date', $carbon->month)
+                       ->whereYear('event_date', $carbon->year)
+                       ->get()
+                       ->groupBy(function($event) {
+                           return $event->event_date->format('Y-m-d');
+                       });
+
         return view('member.dashboard', [
             'weeks' => $weeks,
             'carbon' => $carbon,
+            'events' => $events,
         ]);
     }
 
-    public function dashboard()
+    public function showEventsByDate($date)
     {
-        $events = Event::all(); // Replace 'Event' with the appropriate model name
-        return view('member.dashboard', compact('events'));
+        $dateObj = Carbon::parse($date);
+        $events = Event::whereDate('event_date', $dateObj)->get();
+        
+        return view('member.events', [
+            'date' => $dateObj,
+            'events' => $events
+        ]);
     }
 }
