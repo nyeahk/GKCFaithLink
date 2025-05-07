@@ -30,12 +30,25 @@
         <div class="w-full max-w-2xl bg-white rounded-xl shadow-lg p-8">
             <div class="flex flex-col items-center mb-8 relative">
                 <!-- Profile Image with overlay -->
-                <div class="relative w-24 h-24 mb-2">
-                    <img id="profileImage" src="{{ auth()->user()->image_path ? asset('storage/' . auth()->user()->image_path) : 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png' }}" alt="Profile" class="w-24 h-24 rounded-full border-4 border-blue-100 object-cover">
-                    <label for="profilePicInput" class="absolute bottom-0 right-0 bg-[#205781] text-white rounded-full p-2 cursor-pointer hover:bg-[#4F959D] transition-colors shadow">
-                        <i class="fas fa-camera"></i>
-                        <input id="profilePicInput" name="profile_picture" type="file" accept="image/*" class="hidden" form="profileUpdateForm">
-                    </label>
+                <div class="relative w-32 h-32 mb-4 group">
+                    <img id="profileImage" 
+                         src="{{ auth()->user()->image_path ? asset('storage/' . auth()->user()->image_path) : 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png' }}" 
+                         alt="Profile" 
+                         class="w-32 h-32 rounded-full border-4 border-blue-100 object-cover transition-transform duration-300 group-hover:scale-105">
+                    
+                    <div class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <label for="profilePicInput" class="cursor-pointer text-white hover:text-blue-200 transition-colors">
+                            <i class="fas fa-camera text-2xl"></i>
+                            <span class="sr-only">Change profile picture</span>
+                        </label>
+                    </div>
+                    
+                    <input id="profilePicInput" 
+                           name="profile_picture" 
+                           type="file" 
+                           accept="image/*" 
+                           class="hidden" 
+                           form="profileUpdateForm">
                 </div>
                 <div class="text-gray-500">{{ auth()->user()->username }}</div>
             </div>
@@ -47,7 +60,16 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm text-gray-600 mb-1" for="name">Name</label>
-                        <input type="text" id="name" name="name" class="w-full border rounded px-3 py-2" value="{{ old('name', auth()->user()->name) }}" required>
+                        <input type="text" 
+                               id="name" 
+                               name="name" 
+                               class="w-full border rounded px-3 py-2" 
+                               value="{{ old('name', auth()->user()->name) }}" 
+                               onkeydown="return !/[0-9]/.test(event.key)"
+                               onpaste="return false"
+                               ondrop="return false"
+                               required>
+                        <p class="text-xs text-gray-500 mt-1">Only letters and spaces are allowed</p>
                     </div>
                     <div>
                         <label class="block text-sm text-gray-600 mb-1" for="email">Email</label>
@@ -94,15 +116,59 @@
     </main>
 
     <script>
+        // Profile picture upload handling
         document.getElementById('profilePicInput').addEventListener('change', function(e) {
             const file = e.target.files[0];
-            if (file && file.type.startsWith('image/')) {
+            if (file) {
+                if (file.size > 2 * 1024 * 1024) { // 2MB
+                    alert('File size must be less than 2MB');
+                    this.value = '';
+                    return;
+                }
+                
+                if (!file.type.startsWith('image/')) {
+                    alert('Please select an image file');
+                    this.value = '';
+                    return;
+                }
+
                 const reader = new FileReader();
                 reader.onload = function(evt) {
+                    // Update both profile page and sidebar images
                     document.getElementById('profileImage').src = evt.target.result;
+                    const sidebarImage = document.querySelector('.sidebar img[alt="Profile Picture"]');
+                    if (sidebarImage) {
+                        sidebarImage.src = evt.target.result;
+                    }
                 };
                 reader.readAsDataURL(file);
             }
+        });
+
+        // Name input validation
+        const nameInput = document.getElementById('name');
+        
+        // Prevent any non-letter characters
+        nameInput.addEventListener('keypress', function(e) {
+            const char = String.fromCharCode(e.which);
+            if (!/[a-zA-Z\s]/.test(char)) {
+                e.preventDefault();
+            }
+        });
+
+        // Remove any numbers or special characters if they somehow get in
+        nameInput.addEventListener('input', function(e) {
+            this.value = this.value.replace(/[^a-zA-Z\s]/g, '');
+        });
+
+        // Prevent paste
+        nameInput.addEventListener('paste', function(e) {
+            e.preventDefault();
+        });
+
+        // Prevent drag and drop
+        nameInput.addEventListener('drop', function(e) {
+            e.preventDefault();
         });
     </script>
 @endsection 

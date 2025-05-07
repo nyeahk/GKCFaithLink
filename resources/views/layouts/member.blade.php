@@ -65,14 +65,16 @@
         
         <!-- Sidebar -->
         <aside id="sidebar" class="w-64 bg-[#4F959D] shadow-lg fixed left-0 top-16 bottom-0 overflow-y-auto transition-all duration-300 ease-in-out z-40 transform -translate-x-full md:translate-x-0">
-            <div class="p-4 border-b border-[#4F959D]">
-                <div class="flex items-center space-x-3">
-                    <img src="{{ asset('images/gkc-logo.png') }}" alt="Profile Picture" class="h-10 w-auto rounded-full ring-2 ring-white shadow-md">
-                    <div>
-                        <div class="font-bold text-white text-lg">{{ auth()->user()->username ??'' }}</div>
-                        <p class="text-xs text-[#98D2C0] flex items-center">
+            <div class="flex flex-col items-center justify-center p-6 border-b border-[#4F959D]">
+                <div class="flex flex-col items-center space-y-3">
+                    <img src="{{ auth()->user()->image_path ? asset('storage/' . auth()->user()->image_path) : 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png' }}" 
+                         alt="Profile Picture" 
+                         class="h-20 w-20 rounded-full ring-2 ring-white shadow-md object-cover">
+                    <div class="text-center">
+                        <div class="font-bold text-white text-lg">{{ auth()->user()->name ??'' }}</div>
+                        <p class="text-xs text-[#98D2C0] flex items-center justify-center">
                             <span class="w-2 h-2 bg-green-400 rounded-full mr-1"></span>
-                            Member
+                            {{ auth()->user()->position ?? 'Member' }}
                         </p>
                     </div>
                 </div>

@@ -10,7 +10,7 @@
 <body class="bg-gray-50 min-h-screen flex items-center justify-center p-4">
     <div class="bg-white rounded-xl shadow-lg overflow-hidden w-full max-w-md p-8">
         <div class="text-center mb-8">
-            <img src="{{ asset('images/gkc-logo.png') }}" alt="Logo" class="mx-auto h-20 mb-4">
+            <img src="{{ asset('images/gkc-logo.png') }}" alt="Logo" class="mx-auto h-20 mb-4 rounded-full">
             <h2 class="text-2xl font-bold text-gray-800">Member Login</h2>
             <p class="text-gray-600 mt-2">Welcome back! Please login to your account.</p>
         </div>
