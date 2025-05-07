@@ -6,43 +6,48 @@
 <div class="reports-container">
     <div class="reports-header">
         <h1>Monthly Report</h1>
-        <div class="report-period">
-            <span class="period-label">Period:</span>
-            <span class="period-value">{{ $startDate->format('F Y') }}</span>
+        <div class="header-actions">
+            <div class="report-period">
+                <span class="period-label">Period:</span>
+                <span class="period-value">{{ $startDate->format('F Y') }}</span>
+            </div>
+            <a href="{{ route('reports.monthly.download', ['date' => $startDate->format('Y-m-d')]) }}" class="btn btn-primary">
+                <i class="fas fa-download"></i> Download PDF
+            </a>
         </div>
     </div>
 
     <div class="report-summary">
         <div class="summary-card">
             <div class="summary-icon">
-                <i class="fas fa-donate"></i>
+                <i class="fas fa-hand-holding-usd"></i>
             </div>
             <div class="summary-info">
-                <h3>Total Donations</h3>
-                <p class="summary-value">₱{{ number_format($totalDonations, 2) }}</p>
+                <h3>Total Tithes</h3>
+                <p class="summary-value">₱{{ number_format($totalTithes, 2) }}</p>
                 <p class="summary-label">This Month</p>
             </div>
         </div>
 
         <div class="summary-card">
             <div class="summary-icon">
-                <i class="fas fa-users"></i>
+                <i class="fas fa-gift"></i>
             </div>
             <div class="summary-info">
-                <h3>New Members</h3>
-                <p class="summary-value">{{ $newMembers }}</p>
+                <h3>Total Offerings</h3>
+                <p class="summary-value">₱{{ number_format($totalOfferings, 2) }}</p>
                 <p class="summary-label">This Month</p>
             </div>
         </div>
 
         <div class="summary-card">
             <div class="summary-icon">
-                <i class="fas fa-calendar-check"></i>
+                <i class="fas fa-globe"></i>
             </div>
             <div class="summary-info">
-                <h3>Upcoming Events</h3>
-                <p class="summary-value">{{ $upcomingEvents }}</p>
-                <p class="summary-label">Next 30 Days</p>
+                <h3>Total Mission Funds</h3>
+                <p class="summary-value">₱{{ number_format($totalMissionFunds, 2) }}</p>
+                <p class="summary-label">This Month</p>
             </div>
         </div>
     </div>
@@ -80,7 +85,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="text-center">No donations this month.</td>
+                            <td colspan="5" class="text-center">No donations match the selected filters.</td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -92,6 +97,17 @@
 
 @push('styles')
 <style>
+    /* .reports-container {
+        padding: 2rem;
+    } */
+
+    /* .reports-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    } */
+
     .reports-container {
         padding: 2rem;
     }
@@ -101,6 +117,11 @@
         justify-content: space-between;
         align-items: center;
         margin-bottom: 2rem;
+    }
+    .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
     }
 
     .report-period {
@@ -116,6 +137,30 @@
 
     .period-value {
         color: var(--primary-dark);
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+
+    .btn-primary {
+        background-color: var(--primary);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background-color: var(--primary-dark);
+    }
+
+    .btn i {
+        font-size: 1rem;
     }
 
     .report-summary {
@@ -184,6 +229,22 @@
     .donations-table h2 {
         margin: 0 0 1.5rem 0;
         color: var(--primary-dark);
+    }
+
+    .filter-container {
+        margin-bottom: 1.5rem;
+    }
+
+    .filter-group {
+        margin-bottom: 1rem;
+    }
+
+    .filter-select,
+    .filter-input {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid var(--border);
+        border-radius: 4px;
     }
 
     table {
@@ -259,4 +320,4 @@
         });
     });
 </script>
-@endpush 
+@endpush

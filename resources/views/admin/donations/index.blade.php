@@ -70,6 +70,9 @@
                                 <a href="{{ route('admin.donations.show', $donation->id) }}" class="btn btn-action btn-view" title="View Donation">
                                     <i class="fas fa-eye"></i>
                                 </a>
+                                <a href="{{ route('admin.donations.edit', $donation->id) }}" class="btn btn-action btn-edit" title="Edit Donation">
+                                    <i class="fas fa-edit"></i>
+                                </a>
                                 @if($donation->status === 'pending')
                                     <form action="{{ route('admin.donations.approve', $donation->id) }}" method="POST" class="d-inline">
                                         @csrf
@@ -81,6 +84,13 @@
                                         <i class="fas fa-times"></i>
                                     </button>
                                 @endif
+                                <form action="{{ route('admin.donations.destroy', $donation->id) }}" method="POST" class="d-inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-action btn-delete" title="Delete Donation" onclick="return confirm('Are you sure you want to delete this donation?')">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
                             </td>
                         </tr>
                     @empty
@@ -232,6 +242,8 @@
 
     .actions {
         display: flex;
+        justify-content: center;
+        align-items: center;
         gap: 0.5rem;
     }
 
@@ -239,8 +251,9 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        width: 2.5rem;
-        height: 2.5rem;
+        width: 2rem;
+        height: 2rem;
+        font-size: 0.875rem;
         border-radius: 0.375rem;
         transition: all 0.2s;
     }
@@ -270,6 +283,24 @@
 
     .btn-view:hover {
         background-color: #bee3f8;
+    }
+
+    .btn-edit {
+        background-color: #fefcbf;
+        color: #b7791f;
+    }
+
+    .btn-edit:hover {
+        background-color: #faf089;
+    }
+
+    .btn-delete {
+        background-color: #fee2e2;
+        color: #991b1b;
+    }
+
+    .btn-delete:hover {
+        background-color: #fed7d7;
     }
 
     .empty-state {
@@ -314,25 +345,64 @@
     }
 
     .pagination {
-        margin-top: 2rem;
-        display: flex;
-        justify-content: center;
-    }
+    margin-top: 2rem;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    font-family: system-ui, sans-serif;
+}
 
-    .pagination .page-link {
-        padding: 0.5rem 1rem;
-        margin: 0 0.25rem;
-        border-radius: 0.375rem;
-        color: #2b6cb0;
-        background-color: white;
-        border: 1px solid #e2e8f0;
-    }
+.pagination .page-item {
+    display: inline-flex;
+    align-items: center;
+}
 
-    .pagination .page-item.active .page-link {
-        background-color: #2b6cb0;
-        color: white;
-        border-color: #2b6cb0;
-    }
+.pagination .page-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.5rem;
+    height: 2.5rem;
+    padding: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border-radius: 0.375rem;
+    color: #2b6cb0;
+    background-color: #fff;
+    border: 1px solid #e2e8f0;
+    text-decoration: none;
+    transition: all 0.2s ease-in-out;
+}
+
+.pagination .page-link i {
+    font-size: 0.875rem;
+    margin: 0;
+}
+
+.pagination .page-link:hover,
+.pagination .page-link:focus {
+    background-color: #ebf8ff;
+    border-color: #bee3f8;
+    color: #2b6cb0;
+    outline: none;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #2b6cb0;
+    color: white;
+    border-color: #2b6cb0;
+    pointer-events: none;
+}
+
+.pagination .page-item.disabled .page-link {
+    color: #a0aec0;
+    background-color: #f7fafc;
+    border-color: #e2e8f0;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
 
     /* Modal Styles */
     .modal {
@@ -446,4 +516,4 @@
         }
     }
 </script>
-@endpush 
+@endpush

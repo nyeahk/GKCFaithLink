@@ -55,13 +55,17 @@
                 <div class="section-header">
                     <h2>Calendar</h2>
                     <div class="calendar-nav">
-                        <a href="{{ route('admin.dashboard', ['timestamp' => $lastMonthTimestamp]) }}" class="btn btn-sm">
-                            <i class="fas fa-chevron-left"></i>
-                        </a>
-                        <span>{{ $currentDate->format('F Y') }}</span>
-                        <a href="{{ route('admin.dashboard', ['timestamp' => $nextMonthTimestamp]) }}" class="btn btn-sm">
-                            <i class="fas fa-chevron-right"></i>
-                        </a>
+                        <div class="pagination">
+                            <a href="{{ route('admin.dashboard', ['timestamp' => $lastMonthTimestamp]) }}" class="pagination-link prev">
+                                <i class="fas fa-chevron-left"></i>
+                                <span>Previous</span>
+                            </a>
+                            <span class="current-month">{{ $currentDate->format('F Y') }}</span>
+                            <a href="{{ route('admin.dashboard', ['timestamp' => $nextMonthTimestamp]) }}" class="pagination-link next">
+                                <span>Next</span>
+                                <i class="fas fa-chevron-right"></i>
+                            </a>
+                        </div>
                     </div>
                 </div>
                 <div class="calendar">
@@ -82,7 +86,9 @@
                                 <tr>
                                     @foreach($week as $day)
                                         <td class="calendar-day {{ $day['isToday'] ? 'today' : '' }} {{ $day['isCurrentMonth'] ? '' : 'other-month' }}"
-                                            data-date="{{ $day['date']->format('Y-m-d') }}"
+                                            @if($day['date'])
+                                                data-date="{{ $day['date']->format('Y-m-d') }}"
+                                            @endif
                                             data-has-events="{{ isset($day['events']) && count($day['events']) > 0 ? 'true' : 'false' }}">
                                             <div class="day-number">{{ $day['day'] }}</div>
                                             @if(isset($day['events']) && count($day['events']) > 0)
@@ -115,13 +121,13 @@
                     <h2>Recent Activities</h2>
                 </div>
                 <div class="activities-list">
-                    @forelse($recentActivities as $activity)
+                    @forelse($recentEvents as $activity)
                         <div class="activity-item">
                             <div class="activity-icon">
                                 <i class="fas {{ $activity->icon }}"></i>
                             </div>
                             <div class="activity-details">
-                                <p class="activity-description">{{ $activity->description }}</p>
+                                <p class="activity-description">{{ $activity->title }}</p>
                                 <span class="activity-time">{{ $activity->created_at->diffForHumans() }}</span>
                             </div>
                         </div>
@@ -653,7 +659,7 @@
     }
 
     .no-events p {
-        color: var(--text-secondary);
+        color: var(--primary-dark);
         margin-bottom: 1rem;
         font-size: 0.875rem;
     }
@@ -661,6 +667,7 @@
     .no-events-actions {
         display: flex;
         gap: 0.75rem;
+       
     }
 
     @media (max-width: 768px) {
@@ -843,7 +850,8 @@
     }
 
     .event-map {
-        height: 300px;
+        height: 200px;
+        width: 200px;
         border-radius: 8px;
         overflow: hidden;
     }
@@ -868,12 +876,13 @@
     }
 
     .btn-primary {
-        background-color: var(--primary);
+        background-color: var(--primary-dark);
         color: white;
     }
 
     .btn-primary:hover {
         background-color: var(--primary-dark);
+        color: white;
     }
 
     .btn-danger {
@@ -886,15 +895,14 @@
     }
 
     .btn-secondary {
-        background-color: var(--background-light);
-        color: var(--text-primary);
-        border: 1px solid var(--border);
+        background-color: var(--primary-dark);
+        color: white;
     }
 
     .btn-secondary:hover {
-        background-color: var(--border);
+        background-color: var(--primary-dark);
+        color: white;
     }
-
     @media (max-width: 768px) {
         .header-top {
             flex-direction: column;
@@ -937,6 +945,75 @@
 
     .event-link:hover .event-dot {
         background: var(--primary);
+    }
+
+    .pagination {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        background: var(--white);
+        padding: 0.75rem 1rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .pagination-link {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        color: var(--text-primary);
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        background: var(--background-light);
+    }
+
+    .pagination-link:hover {
+        background: var(--primary-light);
+        color: var(--primary-dark);
+    }
+
+    .pagination-link.prev {
+        margin-right: auto;
+    }
+
+    .pagination-link.next {
+        margin-left: auto;
+    }
+
+    .pagination-link i {
+        font-size: 0.875rem;
+    }
+
+    .current-month {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        padding: 0 1rem;
+    }
+
+    @media (max-width: 768px) {
+        .pagination {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .pagination-link {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .pagination-link.prev,
+        .pagination-link.next {
+            margin: 0;
+        }
+
+        .current-month {
+            padding: 0.5rem 0;
+            text-align: center;
+        }
     }
 </style>
 @endpush

@@ -6,43 +6,67 @@
 <div class="reports-container">
     <div class="reports-header">
         <h1>Weekly Report</h1>
-        <div class="report-period">
-            <span class="period-label">Period:</span>
-            <span class="period-value">{{ $startDate->format('M d, Y') }} - {{ $endDate->format('M d, Y') }}</span>
+        <div class="header-actions">
+            <div class="report-period">
+                <span class="period-label">Period:</span>
+                <span class="period-value">{{ $startDate->format('M d, Y') }} - {{ $endDate->format('M d, Y') }}</span>
+            </div>
+            <a href="{{ route('reports.weekly.download', ['date' => $startDate->format('Y-m-d')]) }}" class="btn btn-primary">
+                <i class="fas fa-download"></i> Download PDF
+            </a>
         </div>
+    </div>
+
+    <div class="filter-container">
+        <form method="GET" action="{{ route('reports.weekly') }}">
+            <div class="filter-group">
+                <label for="statusFilter">Filter by Status:</label>
+                <select name="status" id="statusFilter" class="filter-select">
+                    <option value="">All</option>
+                    <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
+                    <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>Completed</option>
+                    <option value="failed" {{ request('status') == 'failed' ? 'selected' : '' }}>Failed</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="dateFilter">Filter by Date:</label>
+                <input type="date" name="date" id="dateFilter" value="{{ request('date') }}" class="filter-input">
+            </div>
+            <button type="submit" class="btn btn-primary">Apply Filters</button>
+        </form>
     </div>
 
     <div class="report-summary">
         <div class="summary-card">
             <div class="summary-icon">
-                <i class="fas fa-donate"></i>
+                <i class="fas fa-hand-holding-usd"></i>
             </div>
             <div class="summary-info">
-                <h3>Total Donations</h3>
-                <p class="summary-value">₱{{ number_format($totalDonations, 2) }}</p>
+                <h3>Total Tithes</h3>
+                <p class="summary-value">₱{{ number_format($totalTithes, 2) }}</p>
                 <p class="summary-label">This Week</p>
             </div>
         </div>
 
         <div class="summary-card">
             <div class="summary-icon">
-                <i class="fas fa-users"></i>
+                <i class="fas fa-gift"></i>
             </div>
             <div class="summary-info">
-                <h3>New Members</h3>
-                <p class="summary-value">{{ $newMembers }}</p>
+                <h3>Total Offerings</h3>
+                <p class="summary-value">₱{{ number_format($totalOfferings, 2) }}</p>
                 <p class="summary-label">This Week</p>
             </div>
         </div>
 
         <div class="summary-card">
             <div class="summary-icon">
-                <i class="fas fa-calendar-check"></i>
+                <i class="fas fa-globe"></i>
             </div>
             <div class="summary-info">
-                <h3>Upcoming Events</h3>
-                <p class="summary-value">{{ $upcomingEvents }}</p>
-                <p class="summary-label">Next 7 Days</p>
+                <h3>Total Mission Funds</h3>
+                <p class="summary-value">₱{{ number_format($totalMissionFunds, 2) }}</p>
+                <p class="summary-label">This Week</p>
             </div>
         </div>
     </div>
@@ -103,6 +127,12 @@
         margin-bottom: 2rem;
     }
 
+    .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+    }
+
     .report-period {
         display: flex;
         align-items: center;
@@ -116,6 +146,46 @@
 
     .period-value {
         color: var(--primary-dark);
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+
+    .btn-primary {
+        background-color: var(--primary);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background-color: var(--primary-dark);
+    }
+
+    .btn i {
+        font-size: 1rem;
+    }
+
+    .filter-container {
+        margin-bottom: 2rem;
+    }
+
+    .filter-group {
+        margin-bottom: 1rem;
+    }
+
+    .filter-select,
+    .filter-input {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid var(--border);
+        border-radius: 4px;
     }
 
     .report-summary {
@@ -258,4 +328,4 @@
         });
     });
 </script>
-@endpush 
+@endpush
