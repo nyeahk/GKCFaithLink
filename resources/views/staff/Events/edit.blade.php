@@ -1,4 +1,4 @@
-@extends('layouts.gkc')
+@extends('layouts.staff')
 
 @section('title', 'Edit Event')
 

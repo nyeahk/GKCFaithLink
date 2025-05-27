@@ -1,11 +1,11 @@
-@extends('layouts.gkc')
+@extends('layouts.staff')
 
-@section('title', 'Create Announcement')
+@section('title', 'Edit Announcement')
 
 @section('content')
     <div class="announcements-container">
         <div class="announcements-header">
-            <h1>Create New Announcement</h1>
+            <h1>Edit Announcement</h1>
             <a href="{{ route('announcements.index') }}" class="btn btn-back">
                 <i class="fas fa-arrow-left"></i> Back to Announcements
             </a>
@@ -19,12 +19,13 @@
         @endif
 
         <div class="announcement-form-card">
-            <form action="{{ route('announcements.store') }}" method="POST" enctype="multipart/form-data" class="announcement-form">
+            <form action="{{ route('announcements.update', $announcement->id) }}" method="POST" enctype="multipart/form-data" class="announcement-form">
                 @csrf
+                @method('PUT')
                 
                 <div class="form-group">
                     <label for="title">Title</label>
-                    <input type="text" name="title" id="title" class="form-control @error('title') is-invalid @enderror" value="{{ old('title') }}" required>
+                    <input type="text" name="title" id="title" class="form-control @error('title') is-invalid @enderror" value="{{ old('title', $announcement->title) }}" required>
                     @error('title')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -32,14 +33,25 @@
                 
                 <div class="form-group">
                     <label for="content">Content</label>
-                    <textarea name="content" id="content" class="form-control @error('content') is-invalid @enderror" rows="5" required>{{ old('content') }}</textarea>
+                    <textarea name="content" id="content" class="form-control @error('content') is-invalid @enderror" rows="5" required>{{ old('content', $announcement->content) }}</textarea>
                     @error('content')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
                 
                 <div class="form-group">
-                    <label for="image">Image (Optional)</label>
+                    <label for="image">Current Image</label>
+                    @if($announcement->image)
+                        <div class="current-image">
+                            <img src="{{ asset('storage/' . $announcement->image) }}" alt="Current announcement image" class="img-thumbnail">
+                        </div>
+                    @else
+                        <p class="text-muted">No image uploaded</p>
+                    @endif
+                </div>
+                
+                <div class="form-group">
+                    <label for="image">Change Image (Optional)</label>
                     <input type="file" name="image" id="image" class="form-control @error('image') is-invalid @enderror" accept="image/*">
                     @error('image')
                         <div class="invalid-feedback">{{ $message }}</div>
@@ -48,7 +60,7 @@
                 
                 <div class="form-group">
                     <label for="posted_at">Posting Date</label>
-                    <input type="datetime-local" name="posted_at" id="posted_at" class="form-control @error('posted_at') is-invalid @enderror" value="{{ old('posted_at') }}" required>
+                    <input type="datetime-local" name="posted_at" id="posted_at" class="form-control @error('posted_at') is-invalid @enderror" value="{{ old('posted_at', $announcement->posted_at->format('Y-m-d\TH:i')) }}" required>
                     @error('posted_at')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -57,8 +69,8 @@
                 <div class="form-group">
                     <label for="status">Status</label>
                     <select name="status" id="status" class="form-control @error('status') is-invalid @enderror" required>
-                        <option value="draft" {{ old('status') == 'draft' ? 'selected' : '' }}>Draft</option>
-                        <option value="published" {{ old('status') == 'published' ? 'selected' : '' }}>Published</option>
+                        <option value="draft" {{ old('status', $announcement->status) == 'draft' ? 'selected' : '' }}>Draft</option>
+                        <option value="published" {{ old('status', $announcement->status) == 'published' ? 'selected' : '' }}>Published</option>
                     </select>
                     @error('status')
                         <div class="invalid-feedback">{{ $message }}</div>
@@ -67,7 +79,7 @@
                 
                 <div class="form-actions">
                     <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save"></i> Save Announcement
+                        <i class="fas fa-save"></i> Update Announcement
                     </button>
                     <a href="{{ route('announcements.index') }}" class="btn btn-secondary">
                         <i class="fas fa-times"></i> Cancel
@@ -159,6 +171,20 @@
         color: #e53e3e;
         font-size: 0.875rem;
         margin-top: 0.25rem;
+    }
+
+    .current-image {
+        margin-bottom: 1rem;
+    }
+
+    .current-image img {
+        max-width: 300px;
+        border-radius: 0.375rem;
+    }
+
+    .text-muted {
+        color: #718096;
+        font-style: italic;
     }
 
     .form-actions {

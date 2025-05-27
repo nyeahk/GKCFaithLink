@@ -1,147 +1,71 @@
-@extends('layouts.app')
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="/css/auth.css" rel="stylesheet">
+</head>
+<body>
+    <div class="login-card mx-auto">
+        <div class="text-center mb-3">
+            <img src="{{ asset('images/gkc-logo.png') }}" alt="Logo" class="login-logo rounded-circle">
+        </div>
+        <h3 class="text-center fw-bold mb-1">Create Account</h3>
+        <p class="text-center text-muted mb-4" style="font-size:1.05rem;">Please fill in the form to register</p>
 
-@section('content')
-<div class="auth-container">
-    <div class="auth-box">
-        <h2>Register</h2>
-        
-        <form method="POST" action="{{ route('register') }}" class="auth-form">
+        <form method="POST" action="{{ route('register.store') }}" autocomplete="off">
             @csrf
-
-            <div class="form-group">
-                <label for="name" class="form-label">Name</label>
-                <input id="name" type="text" class="form-input @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}" required autocomplete="name" autofocus>
-                @error('name')
-                    <span class="error-message">{{ $message }}</span>
+            <div class="mb-3">
+                <label for="username" class="form-label mb-1">Username</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
+                    <input type="text" id="username" name="username" class="form-control @error('name') is-invalid @enderror" placeholder="Enter username" value="{{ old('username') }}">
+                </div>
+                @error('username')
+                    <div class="text-danger">{{ $message }}</div>
                 @enderror
             </div>
-
-            <div class="form-group">
-                <label for="email" class="form-label">Email Address</label>
-                <input id="email" type="email" class="form-input @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email">
+            <div class="mb-3">
+                <label for="email" class="form-label mb-1">Email</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fa-solid fa-envelope"></i></span>
+                    <input type="email" id="email" name="email" class="form-control @error('email') is-invalid @enderror" placeholder="Email Address" value="{{ old('email') }}">
+                </div>
                 @error('email')
-                    <span class="error-message">{{ $message }}</span>
+                    <div class="text-danger">{{ $message }}</div>
                 @enderror
             </div>
-
-            <div class="form-group">
-                <label for="password" class="form-label">Password</label>
-                <input id="password" type="password" class="form-input @error('password') is-invalid @enderror" name="password" required autocomplete="new-password">
+            <div class="mb-3">
+                <label for="password" class="form-label mb-1">Password</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
+                    <input type="password" id="password" name="password" class="form-control @error('password') is-invalid @enderror" placeholder="Password">
+                </div>
                 @error('password')
-                    <span class="error-message">{{ $message }}</span>
+                    <div class="text-danger">{{ $message }}</div>
                 @enderror
             </div>
-
-            <div class="form-group">
-                <label for="password-confirm" class="form-label">Confirm Password</label>
-                <input id="password-confirm" type="password" class="form-input" name="password_confirmation" required autocomplete="new-password">
+            <div class="mb-3">
+                <label for="password_confirmation" class="form-label mb-1">Confirm Password</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
+                    <input type="password" id="password_confirmation" name="password_confirmation" class="form-control @error('password_confirmation') is-invalid @enderror" placeholder="Confirm Password">
+                </div>
+                @error('password_confirmation')
+                    <div class="text-danger">{{ $message }}</div>
+                @enderror
             </div>
-
-            <div class="form-group">
-                <button type="submit" class="btn btn-primary">
-                    Register
-                </button>
-            </div>
+            <button type="submit" class="btn btn-primary w-100 fw-semibold py-2">Register</button>
         </form>
-
-        <div class="auth-links">
-            <p>Already have an account? <a href="{{ route('login') }}">Login</a></p>
+        <div class="text-center mt-3" style="font-size:0.97rem;">
+            Already have an account? <a href="{{ route('login') }}" class="text-primary fw-semibold text-decoration-none">Sign in</a>
         </div>
     </div>
-</div>
-
-<style>
-.auth-container {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #f8f9fa;
-}
-
-.auth-box {
-    background: white;
-    padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 400px;
-}
-
-.auth-box h2 {
-    text-align: center;
-    margin-bottom: 1.5rem;
-    color: #333;
-}
-
-.auth-form {
-    margin-bottom: 1.5rem;
-}
-
-.form-group {
-    margin-bottom: 1rem;
-}
-
-.form-label {
-    display: block;
-    margin-bottom: 0.5rem;
-    color: #666;
-}
-
-.form-input {
-    width: 100%;
-    padding: 0.75rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 1rem;
-}
-
-.form-input:focus {
-    outline: none;
-    border-color: #4a90e2;
-    box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
-}
-
-.error-message {
-    color: #dc3545;
-    font-size: 0.875rem;
-    margin-top: 0.25rem;
-}
-
-.btn {
-    display: inline-block;
-    padding: 0.75rem 1.5rem;
-    border: none;
-    border-radius: 4px;
-    font-size: 1rem;
-    cursor: pointer;
-    text-align: center;
-    text-decoration: none;
-    transition: background-color 0.2s;
-}
-
-.btn-primary {
-    background-color: #4a90e2;
-    color: white;
-    width: 100%;
-}
-
-.btn-primary:hover {
-    background-color: #357abd;
-}
-
-.auth-links {
-    text-align: center;
-    color: #666;
-}
-
-.auth-links a {
-    color: #4a90e2;
-    text-decoration: none;
-}
-
-.auth-links a:hover {
-    text-decoration: underline;
-}
-</style>
-@endsection 
+</body>
+</html>

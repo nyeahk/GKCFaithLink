@@ -1,7 +1,7 @@
-@extends('layouts.gkc')
+@extends('layouts.admin')
 
-@section('title', 'GKC FaithLink Admin Dashboard')
-
+@section('title', 'Admin Dashboard')
+@section('page-title', 'Admin Dashboard')
 @section('content')
 <div class="container">
 

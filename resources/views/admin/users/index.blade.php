@@ -1,4 +1,4 @@
-@extends('layouts.gkc')
+@extends('layouts.admin')
 
 @section('title', 'Users')
 

@@ -1,4 +1,4 @@
-@extends('layouts.gkc')
+@extends('layouts.treasurer')
 
 @section('title', 'GCash QR Code')
 

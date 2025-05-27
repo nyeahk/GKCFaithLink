@@ -1,20 +1,39 @@
-@extends('layouts.admin')
+@extends('layouts.treasurer')
 
-@section('title', 'Monthly Report')
+@section('title', 'Weekly Report')
 
 @section('content')
 <div class="reports-container">
     <div class="reports-header">
-        <h1>Monthly Report</h1>
+        <h1>Weekly Report</h1>
         <div class="header-actions">
             <div class="report-period">
                 <span class="period-label">Period:</span>
-                <span class="period-value">{{ $startDate->format('F Y') }}</span>
+                <span class="period-value">{{ $startDate->format('M d, Y') }} - {{ $endDate->format('M d, Y') }}</span>
             </div>
-            <a href="{{ route('reports.monthly.download', ['date' => $startDate->format('Y-m-d')]) }}" class="btn btn-primary">
+            <a href="{{ route('reports.weekly.download', ['date' => $startDate->format('Y-m-d')]) }}" class="btn btn-primary">
                 <i class="fas fa-download"></i> Download PDF
             </a>
         </div>
+    </div>
+
+    <div class="filter-container">
+        <form method="GET" action="{{ route('reports.weekly') }}">
+            <div class="filter-group">
+                <label for="statusFilter">Filter by Status:</label>
+                <select name="status" id="statusFilter" class="filter-select">
+                    <option value="">All</option>
+                    <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
+                    <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>Completed</option>
+                    <option value="failed" {{ request('status') == 'failed' ? 'selected' : '' }}>Failed</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="dateFilter">Filter by Date:</label>
+                <input type="date" name="date" id="dateFilter" value="{{ request('date') }}" class="filter-input">
+            </div>
+            <button type="submit" class="btn btn-primary">Apply Filters</button>
+        </form>
     </div>
 
     <div class="report-summary">
@@ -25,7 +44,7 @@
             <div class="summary-info">
                 <h3>Total Tithes</h3>
                 <p class="summary-value">₱{{ number_format($totalTithes, 2) }}</p>
-                <p class="summary-label">This Month</p>
+                <p class="summary-label">This Week</p>
             </div>
         </div>
 
@@ -36,7 +55,7 @@
             <div class="summary-info">
                 <h3>Total Offerings</h3>
                 <p class="summary-value">₱{{ number_format($totalOfferings, 2) }}</p>
-                <p class="summary-label">This Month</p>
+                <p class="summary-label">This Week</p>
             </div>
         </div>
 
@@ -47,14 +66,14 @@
             <div class="summary-info">
                 <h3>Total Mission Funds</h3>
                 <p class="summary-value">₱{{ number_format($totalMissionFunds, 2) }}</p>
-                <p class="summary-label">This Month</p>
+                <p class="summary-label">This Week</p>
             </div>
         </div>
     </div>
 
     <div class="report-details">
         <div class="donations-chart">
-            <h2>Donations by Week</h2>
+            <h2>Donations by Day</h2>
             <canvas id="donationsChart"></canvas>
         </div>
 
@@ -85,7 +104,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="text-center">No donations match the selected filters.</td>
+                            <td colspan="5" class="text-center">No donations this week.</td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -97,17 +116,6 @@
 
 @push('styles')
 <style>
-    /* .reports-container {
-        padding: 2rem;
-    } */
-
-    /* .reports-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 2rem;
-    } */
-
     .reports-container {
         padding: 2rem;
     }
@@ -118,6 +126,7 @@
         align-items: center;
         margin-bottom: 2rem;
     }
+
     .header-actions {
         display: flex;
         align-items: center;
@@ -161,6 +170,22 @@
 
     .btn i {
         font-size: 1rem;
+    }
+
+    .filter-container {
+        margin-bottom: 2rem;
+    }
+
+    .filter-group {
+        margin-bottom: 1rem;
+    }
+
+    .filter-select,
+    .filter-input {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid var(--border);
+        border-radius: 4px;
     }
 
     .report-summary {
@@ -231,22 +256,6 @@
         color: var(--primary-dark);
     }
 
-    .filter-container {
-        margin-bottom: 1.5rem;
-    }
-
-    .filter-group {
-        margin-bottom: 1rem;
-    }
-
-    .filter-select,
-    .filter-input {
-        width: 100%;
-        padding: 0.5rem;
-        border: 1px solid var(--border);
-        border-radius: 4px;
-    }
-
     table {
         width: 100%;
         border-collapse: collapse;
@@ -298,15 +307,14 @@
     document.addEventListener('DOMContentLoaded', function() {
         const ctx = document.getElementById('donationsChart').getContext('2d');
         new Chart(ctx, {
-            type: 'bar',
+            type: 'line',
             data: {
-                labels: {!! json_encode($donationWeeks) !!},
+                labels: {!! json_encode($donationDays) !!},
                 datasets: [{
                     label: 'Donations',
                     data: {!! json_encode($donationAmounts) !!},
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
                     borderColor: 'rgb(75, 192, 192)',
-                    borderWidth: 1
+                    tension: 0.1
                 }]
             },
             options: {

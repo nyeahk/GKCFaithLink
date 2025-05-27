@@ -1,4 +1,4 @@
-@extends('layouts.gkc')
+@extends('layouts.treasurer')
 
 @section('title', 'Edit Donation')
 

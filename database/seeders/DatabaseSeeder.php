@@ -1,10 +1,10 @@
 <?php
 
 namespace Database\Seeders;
-
-use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\User;
+use Illuminate\Support\Facades\DB;
+// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class DatabaseSeeder extends Seeder
 {
@@ -15,9 +15,14 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        $adminRole = DB::table('user_role')->where('role_name', 'admin')->first();
+
+        User::create([
+          'username' => 'elsa_admin',
+          'email' => 'admin@example.com',
+          'email_verified_at' => now(),
+          'password' => bcrypt('12345678'),
+          'role' => $adminRole->id,
         ]);
     }
 }

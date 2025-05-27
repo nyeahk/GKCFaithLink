@@ -1,0 +1,36 @@
+body {
+    background: #e9f5fb;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.login-card {
+    border-radius: 18px;
+    box-shadow: 0 4px 32px rgba(0,0,0,0.08);
+    background: #fff;
+    padding: 2.5rem 2rem;
+    width: 100%;
+    max-width: 400px;
+}
+.login-logo {
+    width: 90px;
+    height: 90px;
+    object-fit: contain;
+    margin-bottom: 1rem;
+}
+.input-group-text {
+    background: none;
+    border: none;
+}
+.form-control:focus {
+    box-shadow: 0 0 0 2px #0d6efd33;
+}
+.toggle-password {
+    background: none;
+    border: none;
+    outline: none;
+}
+.forgot-link {
+    font-size: 0.97rem;
+}
