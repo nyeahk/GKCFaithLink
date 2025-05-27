@@ -36,6 +36,41 @@ Route::post('/logout', [LogoutController::class, 'logout'])->name('logout');
 Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
 Route::post('/register', [RegisterController::class, 'register']);
 
+// Staff Authentication Routes
+// Staff Authentication Routes
+Route::get('/staff/login', [App\Http\Controllers\Auth\StaffLoginController::class, 'showLoginForm'])->name('staff.login');
+Route::post('/staff/login', [App\Http\Controllers\Auth\StaffLoginController::class, 'login']);
+Route::post('/staff/logout', [App\Http\Controllers\Auth\StaffLoginController::class, 'logout'])->name('staff.logout');
+
+// Staff Registration Routes
+Route::get('/staff/register', [App\Http\Controllers\Auth\StaffRegisterController::class, 'showRegistrationForm'])->name('staff.register');
+Route::post('/staff/register', [App\Http\Controllers\Auth\StaffRegisterController::class, 'register']);
+
+// Staff Protected Routes
+Route::middleware(['auth', 'role:staff'])->prefix('staff')->group(function () {
+    Route::get('/dashboard', [App\Http\Controllers\Staff\DashboardController::class, 'index'])->name('staff.dashboard');
+    Route::get('/dashboard/events', [App\Http\Controllers\Staff\DashboardController::class, 'getEventsForDate'])->name('staff.dashboard.events');
+    Route::get('/dashboard/events/{id}', [App\Http\Controllers\Staff\DashboardController::class, 'getEventDetails'])->name('staff.dashboard.event.details');
+    
+    // Staff Announcement Routes
+    Route::get('/announcements', [App\Http\Controllers\Staff\AnnouncementController::class, 'index'])->name('staff.announcements.index');
+    Route::post('/announcements', [App\Http\Controllers\Staff\AnnouncementController::class, 'store'])->name('staff.announcements.store');
+    Route::get('/announcements/{id}', [App\Http\Controllers\Staff\AnnouncementController::class, 'show'])->name('staff.announcements.show');
+    Route::put('/announcements/{id}', [App\Http\Controllers\Staff\AnnouncementController::class, 'update'])->name('staff.announcements.update');
+    Route::delete('/announcements/{id}', [App\Http\Controllers\Staff\AnnouncementController::class, 'destroy'])->name('staff.announcements.destroy');
+    
+    // Staff Event Routes
+    Route::get('/events', [App\Http\Controllers\Staff\EventController::class, 'index'])->name('staff.events.index');
+    Route::post('/events', [App\Http\Controllers\Staff\EventController::class, 'store'])->name('staff.events.store');
+    Route::get('/events/{id}', [App\Http\Controllers\Staff\EventController::class, 'show'])->name('staff.events.show');
+    Route::put('/events/{id}', [App\Http\Controllers\Staff\EventController::class, 'update'])->name('staff.events.update');
+    Route::delete('/events/{id}', [App\Http\Controllers\Staff\EventController::class, 'destroy'])->name('staff.events.destroy');
+    
+    // Staff Member View Routes (read-only)
+    Route::get('/members', [App\Http\Controllers\Staff\MemberController::class, 'index'])->name('staff.members.index');
+    Route::get('/members/{id}', [App\Http\Controllers\Staff\MemberController::class, 'show'])->name('staff.members.show');
+});
+
 // Protected Routes
 Route::middleware(['auth'])->group(function () {
     // Admin routes

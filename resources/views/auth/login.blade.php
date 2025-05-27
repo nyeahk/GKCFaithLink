@@ -1,51 +1,76 @@
 @extends('layouts.app')
 
+@section('title', 'Login - GKC FaithLink')
+
 @section('content')
 <div class="auth-container">
-    <div class="auth-box">
-        <div class="auth-header">
-            <h1>Login</h1>
-            <p>Welcome back! Please enter your credentials.</p>
+    <div class="auth-card">
+        <!-- Left Side - Logo and Branding -->
+        <div class="auth-logo-section">
+            <div class="floating-dots"></div>
+            <div class="logo-content">
+                <img src="{{ asset('images/gkc logo new.jpeg') }}" alt="GKC FaithLink Logo">
+                <h1>GKC FaithLink</h1>
+                <p class="auth-subtitle">Welcome back to your faith community</p>
+            </div>
         </div>
 
-        @if($errors->any())
-            <div class="alert alert-danger">
-                <ul>
-                    @foreach($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
-        
-        <form method="POST" action="{{ route('login') }}" class="auth-form">
-            @csrf
-
-            <div class="form-group">
-                <label for="email" class="form-label">Email Address</label>
-                <input type="email" id="email" name="email" class="form-input" value="{{ old('email') }}" required autofocus>
+        <!-- Right Side - Form -->
+        <div class="auth-form-section">
+            <div class="auth-header">
+                <h2>Sign In</h2>
+                <p>Please enter your credentials to continue</p>
             </div>
 
-            <div class="form-group">
-                <label for="password" class="form-label">Password</label>
-                <input type="password" id="password" name="password" class="form-input" required>
-            </div>
+            @if($errors->any())
+                <div class="alert alert-error">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <div class="alert-content">
+                        @foreach($errors->all() as $error)
+                            <p>{{ $error }}</p>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
 
-            <div class="form-group">
-                <label class="checkbox-label">
-                    <input type="checkbox" name="remember" id="remember">
-                    <span>Remember Me</span>
-                </label>
-            </div>
+            <form method="POST" action="{{ route('login') }}" class="auth-form">
+                @csrf
 
-            <div class="form-actions">
-                <button type="submit" class="btn btn-primary">Login</button>
-            </div>
+                <div class="form-group">
+                    <label for="email" class="form-label">
+                        <i class="fas fa-envelope"></i>
+                        Email Address
+                    </label>
+                    <input type="email" id="email" name="email" class="form-input" value="{{ old('email') }}" required autofocus placeholder="Enter your email">
+                </div>
 
-            <div class="auth-footer">
-                <p>Don't have an account? <a href="{{ route('register') }}">Register here</a></p>
-            </div>
-        </form>
+                <div class="form-group">
+                    <label for="password" class="form-label">
+                        <i class="fas fa-lock"></i>
+                        Password
+                    </label>
+                    <input type="password" id="password" name="password" class="form-input" required placeholder="Enter your password">
+                </div>
+
+                <div class="form-group checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" name="remember" id="remember">
+                        <span class="checkmark"></span>
+                        Remember me
+                    </label>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        SIGN IN
+                    </button>
+                </div>
+
+                <div class="auth-footer">
+                    <p>Don't have an account? <a href="{{ route('register') }}" class="auth-link">Create one here</a></p>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
@@ -56,17 +81,98 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--background-light);
+    background: linear-gradient(135deg, var(--background-light) 0%, var(--secondary-mint) 100%);
     padding: 2rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.auth-box {
+.auth-card {
     background: var(--white);
-    border-radius: 8px;
-    box-shadow: 0 2px 4px var(--shadow);
-    padding: 2rem;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(32, 87, 129, 0.1);
+    overflow: hidden;
     width: 100%;
-    max-width: 400px;
+    max-width: 900px;
+    min-height: 600px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    position: relative;
+}
+
+/* Left Side - Logo Section */
+.auth-logo-section {
+    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--accent-teal) 100%);
+    color: var(--white);
+    padding: 3rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.floating-dots {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image:
+        radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.1) 2px, transparent 2px),
+        radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 2px, transparent 2px),
+        radial-gradient(circle at 40% 60%, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    background-size: 100px 100px, 150px 150px, 80px 80px;
+    animation: float 20s infinite linear;
+}
+
+@keyframes float {
+    0% { transform: translateY(0px) rotate(0deg); }
+    100% { transform: translateY(-20px) rotate(360deg); }
+}
+
+.logo-content {
+    position: relative;
+    z-index: 2;
+}
+
+.logo-content img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 4px solid var(--white);
+    margin-bottom: 1.5rem;
+    object-fit: cover;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+}
+
+.logo-content img:hover {
+    transform: scale(1.05);
+}
+
+.logo-content h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.auth-subtitle {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    margin: 0;
+    font-weight: 400;
+}
+
+/* Right Side - Form Section */
+.auth-form-section {
+    padding: 3rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: var(--white);
 }
 
 .auth-header {
@@ -74,14 +180,17 @@
     margin-bottom: 2rem;
 }
 
-.auth-header h1 {
+.auth-header h2 {
     color: var(--primary-dark);
+    font-size: 2rem;
+    font-weight: 600;
     margin: 0 0 0.5rem;
 }
 
 .auth-header p {
-    color: var(--text-light);
+    color: var(--accent-teal);
     margin: 0;
+    font-size: 1rem;
 }
 
 .auth-form {
@@ -91,88 +200,203 @@
 }
 
 .form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+    margin-bottom: 1.5rem;
 }
 
 .form-label {
-    color: var(--text-dark);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+    color: var(--accent-teal);
     font-weight: 500;
+    font-size: 0.95rem;
+}
+
+.form-label i {
+    color: var(--accent-teal);
+    width: 16px;
 }
 
 .form-input {
-    padding: 0.75rem;
-    border: 1px solid var(--border);
-    border-radius: 4px;
+    width: 100%;
+    padding: 1rem;
+    border: 1px solid #e1e5e9;
+    border-radius: 8px;
     font-size: 1rem;
+    background-color: #f8f9fa;
+    transition: all 0.3s ease;
+    color: var(--primary-dark);
+    box-sizing: border-box;
 }
 
 .form-input:focus {
     outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 0 2px var(--primary-light);
+    border-color: var(--accent-teal);
+    background-color: var(--white);
+    box-shadow: 0 0 0 3px rgba(79, 149, 157, 0.1);
+}
+
+.form-input::placeholder {
+    color: #a0a0a0;
+}
+
+.checkbox-group {
+    margin: 1rem 0;
 }
 
 .checkbox-label {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.75rem;
+    color: var(--accent-teal);
     cursor: pointer;
+    font-size: 0.95rem;
+    position: relative;
 }
 
 .checkbox-label input[type="checkbox"] {
-    width: 1rem;
-    height: 1rem;
+    width: 18px;
+    height: 18px;
+    accent-color: var(--accent-teal);
+    margin: 0;
 }
 
-.form-actions {
-    margin-top: 1rem;
+.btn {
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    width: 100%;
 }
 
 .btn-primary {
-    width: 100%;
-    padding: 0.75rem;
-    background: var(--primary);
+    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--accent-teal) 100%);
     color: var(--white);
-    border: none;
-    border-radius: 4px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.2s;
+    box-shadow: 0 4px 15px rgba(32, 87, 129, 0.3);
 }
 
 .btn-primary:hover {
-    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(32, 87, 129, 0.4);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
 }
 
 .auth-footer {
     text-align: center;
-    margin-top: 1.5rem;
+    margin-top: 2rem;
     padding-top: 1.5rem;
-    border-top: 1px solid var(--border);
+    border-top: 1px solid #e1e5e9;
 }
 
-.auth-footer a {
-    color: var(--primary);
+.auth-footer p {
+    color: var(--primary-dark);
+    margin: 0;
+}
+
+.auth-link {
+    color: var(--accent-teal);
     text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
 }
 
-.auth-footer a:hover {
+.auth-link:hover {
+    color: var(--primary-dark);
     text-decoration: underline;
 }
 
 .alert {
     padding: 1rem;
-    border-radius: 4px;
     margin-bottom: 1.5rem;
+    border-radius: 8px;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
 }
 
-.alert-danger {
-    background: var(--danger-light);
-    color: var(--danger);
-    border: 1px solid var(--danger);
+.alert-error {
+    background-color: #fef2f2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+}
+
+.alert-error i {
+    color: #dc2626;
+    margin-top: 0.125rem;
+    flex-shrink: 0;
+}
+
+.alert-content p {
+    margin: 0;
+    font-size: 0.95rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .auth-card {
+        grid-template-columns: 1fr;
+        max-width: 500px;
+    }
+
+    .auth-logo-section {
+        padding: 2rem;
+        min-height: 300px;
+    }
+
+    .logo-content img {
+        width: 80px;
+        height: 80px;
+    }
+
+    .logo-content h1 {
+        font-size: 2rem;
+    }
+
+    .auth-form-section {
+        padding: 2rem;
+    }
+
+    .auth-header h2 {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .auth-container {
+        padding: 1rem;
+    }
+
+    .auth-logo-section {
+        padding: 1.5rem;
+        min-height: 250px;
+    }
+
+    .logo-content img {
+        width: 60px;
+        height: 60px;
+    }
+
+    .logo-content h1 {
+        font-size: 1.5rem;
+    }
+
+    .auth-form-section {
+        padding: 1.5rem;
+    }
+
+    .form-input {
+        padding: 0.875rem;
+    }
 }
 </style>
 @endpush
-@endsection 
+@endsection

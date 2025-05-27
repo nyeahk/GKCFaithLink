@@ -20,5 +20,16 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         //
+        
+        // Add a view composer to check user role
+        \Illuminate\Support\Facades\View::composer('*', function ($view) {
+            if (\Illuminate\Support\Facades\Auth::check()) {
+                $user = \Illuminate\Support\Facades\Auth::user();
+                $view->with('isStaff', $user->role === 'staff');
+                $view->with('isAdmin', $user->role === 'admin');
+                $view->with('isTreasurer', $user->role === 'treasurer');
+            }
+        });
     }
 }
+

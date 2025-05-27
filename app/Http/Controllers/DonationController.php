@@ -60,9 +60,8 @@ class DonationController extends Controller
         $validated = $request->validate([
             'user_id' => 'required|exists:users,id',
             'amount' => 'required|numeric|min:0',
-            'payment_method' => 'required|in:cash,check,bank_transfer,online_payment,gcash',
+            'payment_method' => 'required|in:cash,gcash',
             'transaction_date' => 'required|date',
-            'status' => 'required|in:pending,verified',
             'verification_notes' => 'required_if:status,verified|nullable|string',
         ]);
 

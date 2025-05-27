@@ -52,9 +52,6 @@
                         <select name="payment_method" id="payment_method" class="form-control @error('payment_method') is-invalid @enderror" required>
                             <option value="">Select Payment Method</option>
                             <option value="cash" {{ old('payment_method') == 'cash' ? 'selected' : '' }}>Cash</option>
-                            <option value="check" {{ old('payment_method') == 'check' ? 'selected' : '' }}>Check</option>
-                            <option value="bank_transfer" {{ old('payment_method') == 'bank_transfer' ? 'selected' : '' }}>Bank Transfer</option>
-                            <option value="online_payment" {{ old('payment_method') == 'online_payment' ? 'selected' : '' }}>Online Payment</option>
                             <option value="gcash" {{ old('payment_method') == 'gcash' ? 'selected' : '' }}>GCash</option>
                         </select>
                         <button type="button" id="show-qr-button" class="btn btn-qr">
@@ -91,12 +88,6 @@
                     @enderror
                 </div>
 
-                <div class="form-group">
-                    <label for="status">Status</label>
-                    <select name="status" id="status" class="form-control @error('status') is-invalid @enderror" required>
-                        <option value="pending" {{ old('status') == 'pending' ? 'selected' : '' }}>Pending</option>
-                        <option value="verified" {{ old('status') == 'verified' ? 'selected' : '' }}>Verified</option>
-                    </select>
                     @error('status')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
