@@ -2,16 +2,14 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Carbon\Carbon;
+// Remove Laravel\Sanctum\HasApiTokens if it's there
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable; // Remove HasApiTokens if it's there
 
     /**
      * The attributes that are mass assignable.
@@ -19,10 +17,14 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
+        'name',
+        'contact_number',
+        'address',
         'username',
         'email',
         'password',
         'role',
+        'image_path'
     ];
 
     /**
@@ -76,4 +78,25 @@ class User extends Authenticatable
     {
         $this->update(['last_active_at' => Carbon::now()]);
     }
+
+    public function getRoleDashboardRoute()
+    {
+        switch ($this->role) {
+            case 1:
+                return 'admin.dashboard';
+            case 2:
+                return 'treasurer.dashboard';
+            case 3:
+                return 'member.dashboard';
+            case 4:
+                return 'staff.dashboard';
+            default:
+                return 'home';
+        }
+    }
 }
+
+
+
+
+

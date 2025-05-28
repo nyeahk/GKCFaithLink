@@ -1,71 +1,86 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <!-- Custom CSS -->
-    <link href="/css/auth.css" rel="stylesheet">
-</head>
-<body>
-    <div class="login-card mx-auto">
-        <div class="text-center mb-3">
-            <img src="{{ asset('images/gkc-logo.png') }}" alt="Logo" class="login-logo rounded-circle">
-        </div>
-        <h3 class="text-center fw-bold mb-1">Create Account</h3>
-        <p class="text-center text-muted mb-4" style="font-size:1.05rem;">Please fill in the form to register</p>
+@extends('layouts.app')
 
-        <form method="POST" action="{{ route('register.store') }}" autocomplete="off">
-            @csrf
-            <div class="mb-3">
-                <label for="username" class="form-label mb-1">Username</label>
-                <div class="input-group">
-                    <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
-                    <input type="text" id="username" name="username" class="form-control @error('name') is-invalid @enderror" placeholder="Enter username" value="{{ old('username') }}">
-                </div>
-                @error('username')
-                    <div class="text-danger">{{ $message }}</div>
-                @enderror
+@push('styles')
+    <link href="{{ asset('css/auth.css') }}" rel="stylesheet">
+@endpush
+
+@section('title', 'Register - GKC FaithLink')
+
+@section('content')
+<div class="auth-container">
+    <div class="auth-card">
+        <!-- Left Side - Logo and Branding -->
+        <div class="auth-logo-section">
+            <div class="floating-dots"></div>
+            <div class="logo-content">
+                <img src="{{ asset('images/gkc logo new.jpeg') }}" alt="GKC FaithLink Logo">
+                <h1>GKC FaithLink</h1>
+                <p class="auth-subtitle">Join our faith community today</p>
             </div>
-            <div class="mb-3">
-                <label for="email" class="form-label mb-1">Email</label>
-                <div class="input-group">
-                    <span class="input-group-text"><i class="fa-solid fa-envelope"></i></span>
-                    <input type="email" id="email" name="email" class="form-control @error('email') is-invalid @enderror" placeholder="Email Address" value="{{ old('email') }}">
-                </div>
-                @error('email')
-                    <div class="text-danger">{{ $message }}</div>
-                @enderror
+        </div>
+
+        <!-- Right Side - Form -->
+        <div class="auth-form-section">
+            <div class="auth-header">
+                <h2>Create Account</h2>
+                <p>Please fill in your information to get started</p>
             </div>
-            <div class="mb-3">
-                <label for="password" class="form-label mb-1">Password</label>
-                <div class="input-group">
-                    <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
-                    <input type="password" id="password" name="password" class="form-control @error('password') is-invalid @enderror" placeholder="Password">
+
+            <form method="POST" action="{{ route('register') }}" class="auth-form">
+                @csrf
+
+                <div class="form-group">
+                    <label for="name" class="form-label">
+                        <i class="fas fa-user"></i>
+                        Username
+                    </label>
+                    <input id="username" type="text" class="form-input @error('username') is-invalid @enderror" name="username" value="{{ old('username') }}" autocomplete="username" autofocus placeholder="Enter your username">
+                    @error('name')
+                        <span class="text-danger">{{ $message }}</span>
+                    @enderror
                 </div>
-                @error('password')
-                    <div class="text-danger">{{ $message }}</div>
-                @enderror
-            </div>
-            <div class="mb-3">
-                <label for="password_confirmation" class="form-label mb-1">Confirm Password</label>
-                <div class="input-group">
-                    <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
-                    <input type="password" id="password_confirmation" name="password_confirmation" class="form-control @error('password_confirmation') is-invalid @enderror" placeholder="Confirm Password">
+
+                <div class="form-group">
+                    <label for="email" class="form-label">
+                        <i class="fas fa-envelope"></i>
+                        Email Address
+                    </label>
+                    <input id="email" type="email" class="form-input @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" autocomplete="email" placeholder="Enter your email">
+                    @error('email')
+                        <span class="text-danger">{{ $message }}</span>
+                    @enderror
                 </div>
-                @error('password_confirmation')
-                    <div class="text-danger">{{ $message }}</div>
-                @enderror
-            </div>
-            <button type="submit" class="btn btn-primary w-100 fw-semibold py-2">Register</button>
-        </form>
-        <div class="text-center mt-3" style="font-size:0.97rem;">
-            Already have an account? <a href="{{ route('login') }}" class="text-primary fw-semibold text-decoration-none">Sign in</a>
+
+                <div class="form-group">
+                    <label for="password" class="form-label">
+                        <i class="fas fa-lock"></i>
+                        Password
+                    </label>
+                    <input id="password" type="password" class="form-input @error('password') is-invalid @enderror" name="password" autocomplete="new-password" placeholder="Create a password">
+                    @error('password')
+                        <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div class="form-group">
+                    <label for="password-confirm" class="form-label">
+                        <i class="fas fa-lock"></i>
+                        Confirm Password
+                    </label>
+                    <input id="password-confirm" type="password" class="form-input" name="password_confirmation" autocomplete="new-password" placeholder="Confirm your password">
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        CREATE ACCOUNT
+                    </button>
+                </div>
+
+                <div class="auth-footer">
+                    <p>Already have an account? <a href="{{ route('login') }}" class="auth-link">Sign in here</a></p>
+                </div>
+            </form>
         </div>
     </div>
-</body>
-</html>
+</div>
+@endsection

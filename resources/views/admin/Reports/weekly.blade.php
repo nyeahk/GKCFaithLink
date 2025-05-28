@@ -4,37 +4,35 @@
 
 @section('content')
 <div class="reports-container">
-    <div class="reports-header">
-        <h1>Weekly Report</h1>
-        <div class="header-actions">
-            <div class="report-period">
-                <span class="period-label">Period:</span>
-                <span class="period-value">{{ $startDate->format('M d, Y') }} - {{ $endDate->format('M d, Y') }}</span>
-            </div>
-            <a href="{{ route('reports.weekly.download', ['date' => $startDate->format('Y-m-d')]) }}" class="btn btn-primary">
-                <i class="fas fa-download"></i> Download PDF
-            </a>
-        </div>
+    <div class="header-actions">
+    <div class="report-period">
+        <span class="period-label">Period:</span>
+        <span class="period-value">{{ $startDate->format('F Y') }}</span>
+    </div>
+    <a href="{{ route('admin.reports.monthly.download', ['date' => $startDate->format('Y-m-d')]) }}" class="btn btn-primary">
+        <i class="fas fa-download"></i> Download PDF
+    </a>
+</div>
     </div>
 
     <div class="filter-container">
-        <form method="GET" action="{{ route('reports.weekly') }}">
-            <div class="filter-group">
-                <label for="statusFilter">Filter by Status:</label>
-                <select name="status" id="statusFilter" class="filter-select">
-                    <option value="">All</option>
-                    <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
-                    <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>Completed</option>
-                    <option value="failed" {{ request('status') == 'failed' ? 'selected' : '' }}>Failed</option>
-                </select>
-            </div>
-            <div class="filter-group">
-                <label for="dateFilter">Filter by Date:</label>
-                <input type="date" name="date" id="dateFilter" value="{{ request('date') }}" class="filter-input">
-            </div>
-            <button type="submit" class="btn btn-primary">Apply Filters</button>
-        </form>
-    </div>
+    <form method="GET" action="{{ route('admin.reports.weekly') }}">
+        <div class="filter-group">
+            <label for="statusFilter">Filter by Status:</label>
+            <select name="status" id="statusFilter" class="filter-select">
+                <option value="">All</option>
+                <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
+                <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>Completed</option>
+                <option value="failed" {{ request('status') == 'failed' ? 'selected' : '' }}>Failed</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label for="dateFilter">Filter by Date:</label>
+            <input type="date" name="date" id="dateFilter" value="{{ request('date') }}" class="filter-input">
+        </div>
+        <button type="submit" class="btn btn-primary">Apply Filters</button>
+    </form>
+</div>
 
     <div class="report-summary">
         <div class="summary-card">

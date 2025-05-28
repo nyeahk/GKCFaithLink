@@ -41,8 +41,9 @@ class NewDonationNotification extends Notification implements ShouldQueue
         return [
             'donation_id' => $this->donation->id,
             'amount' => $this->donation->amount,
-            'donor_name' => $this->donation->user->name,
-            'message' => 'A new donation requires your approval.',
+            'message' => 'New donation of ' . $this->donation->amount . ' received',
+            'description' => 'From: ' . $this->donation->user->name . ' via ' . $this->donation->payment_method,
+            'url' => route('admin.donations.show', $this->donation->id)
         ];
     }
 } 

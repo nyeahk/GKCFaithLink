@@ -40,13 +40,15 @@ class DonationStatusNotification extends Notification implements ShouldQueue
 
     public function toArray($notifiable)
     {
+        $status = $this->donation->status === 'verified' ? 'verified' : 'declined';
+        
         return [
             'donation_id' => $this->donation->id,
             'amount' => $this->donation->amount,
-            'status' => $this->donation->status,
-            'verification_notes' => $this->donation->verification_notes,
-            'verified_by' => $this->donation->verified_by,
-            'verification_date' => $this->donation->verification_date,
+            'message' => 'Your donation of ' . $this->donation->amount . ' has been ' . $status,
+            'description' => $this->donation->verification_notes,
+            'url' => route('member.donations.show', $this->donation->id)
         ];
     }
 } 
+

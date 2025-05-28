@@ -11,10 +11,34 @@
                 <span class="period-label">Period:</span>
                 <span class="period-value">{{ $startDate->format('F Y') }}</span>
             </div>
-            <a href="{{ route('reports.monthly.download', ['date' => $startDate->format('Y-m-d')]) }}" class="btn btn-primary">
+            <a href="{{ route('admin.reports.monthly.download', ['date' => $startDate->format('Y-m-d')]) }}" class="btn btn-primary">
                 <i class="fas fa-download"></i> Download PDF
             </a>
         </div>
+    </div>
+
+    <div class="filter-container">
+        <form method="GET" action="{{ route('admin.reports.monthly') }}" class="filter-form">
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label for="statusFilter">Filter by Status:</label>
+                    <select name="status" id="statusFilter" class="filter-select">
+                        <option value="">All</option>
+                        <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
+                        <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>Completed</option>
+                        <option value="failed" {{ request('status') == 'failed' ? 'selected' : '' }}>Failed</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="dateFilter">Filter by Date:</label>
+                    <input type="month" name="date" id="dateFilter" value="{{ request('date', $startDate->format('Y-m')) }}" class="filter-input">
+                </div>
+                <div class="filter-actions">
+                    <button type="submit" class="btn btn-primary">Apply Filters</button>
+                    <a href="{{ route('admin.reports.monthly') }}" class="btn btn-outline-secondary">Reset</a>
+                </div>
+            </div>
+        </form>
     </div>
 
     <div class="report-summary">
@@ -24,7 +48,7 @@
             </div>
             <div class="summary-info">
                 <h3>Total Tithes</h3>
-                <p class="summary-value">₱{{ number_format($totalTithes, 2) }}</p>
+                <p class="summary-value">₱{{ number_format($totalTithes ?? 0, 2) }}</p>
                 <p class="summary-label">This Month</p>
             </div>
         </div>
@@ -35,7 +59,7 @@
             </div>
             <div class="summary-info">
                 <h3>Total Offerings</h3>
-                <p class="summary-value">₱{{ number_format($totalOfferings, 2) }}</p>
+                <p class="summary-value">₱{{ number_format($totalOfferings ?? 0, 2) }}</p>
                 <p class="summary-label">This Month</p>
             </div>
         </div>
@@ -46,7 +70,7 @@
             </div>
             <div class="summary-info">
                 <h3>Total Mission Funds</h3>
-                <p class="summary-value">₱{{ number_format($totalMissionFunds, 2) }}</p>
+                <p class="summary-value">₱{{ number_format($totalMissionFunds ?? 0, 2) }}</p>
                 <p class="summary-label">This Month</p>
             </div>
         </div>
@@ -95,225 +119,61 @@
 </div>
 @endsection
 
-@push('styles')
-<style>
-    /* .reports-container {
-        padding: 2rem;
-    } */
-
-    /* .reports-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 2rem;
-    } */
-
-    .reports-container {
-        padding: 2rem;
-    }
-
-    .reports-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 2rem;
-    }
-    .header-actions {
-        display: flex;
-        align-items: center;
-        gap: 1.5rem;
-    }
-
-    .report-period {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .period-label {
-        font-weight: 500;
-        color: var(--text-light);
-    }
-
-    .period-value {
-        color: var(--primary-dark);
-    }
-
-    .btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.5rem 1rem;
-        border-radius: 4px;
-        font-weight: 500;
-        text-decoration: none;
-        transition: all 0.2s;
-    }
-
-    .btn-primary {
-        background-color: var(--primary);
-        color: white;
-    }
-
-    .btn-primary:hover {
-        background-color: var(--primary-dark);
-    }
-
-    .btn i {
-        font-size: 1rem;
-    }
-
-    .report-summary {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 1.5rem;
-        margin-bottom: 2rem;
-    }
-
-    .summary-card {
-        background: var(--white);
-        border-radius: 8px;
-        padding: 1.5rem;
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        box-shadow: 0 2px 4px var(--shadow);
-    }
-
-    .summary-icon {
-        width: 48px;
-        height: 48px;
-        border-radius: 50%;
-        background: var(--primary-light);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--primary-dark);
-        font-size: 1.5rem;
-    }
-
-    .summary-info h3 {
-        margin: 0;
-        font-size: 1rem;
-        color: var(--text-light);
-    }
-
-    .summary-value {
-        margin: 0.25rem 0;
-        font-size: 1.5rem;
-        font-weight: 600;
-        color: var(--primary-dark);
-    }
-
-    .summary-label {
-        margin: 0;
-        font-size: 0.875rem;
-        color: var(--text-light);
-    }
-
-    .report-details {
-        display: grid;
-        grid-template-columns: 2fr 1fr;
-        gap: 2rem;
-    }
-
-    .donations-chart,
-    .donations-table {
-        background: var(--white);
-        border-radius: 8px;
-        padding: 1.5rem;
-        box-shadow: 0 2px 4px var(--shadow);
-    }
-
-    .donations-chart h2,
-    .donations-table h2 {
-        margin: 0 0 1.5rem 0;
-        color: var(--primary-dark);
-    }
-
-    .filter-container {
-        margin-bottom: 1.5rem;
-    }
-
-    .filter-group {
-        margin-bottom: 1rem;
-    }
-
-    .filter-select,
-    .filter-input {
-        width: 100%;
-        padding: 0.5rem;
-        border: 1px solid var(--border);
-        border-radius: 4px;
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-
-    th, td {
-        padding: 0.75rem;
-        text-align: left;
-        border-bottom: 1px solid var(--border);
-    }
-
-    th {
-        background-color: var(--background-light);
-        font-weight: 600;
-        color: var(--text-light);
-    }
-
-    .status-badge {
-        padding: 0.25rem 0.75rem;
-        border-radius: 20px;
-        font-size: 0.875rem;
-        font-weight: 500;
-    }
-
-    .status-pending {
-        background-color: #ffc107;
-        color: #000;
-    }
-
-    .status-completed {
-        background-color: #28a745;
-        color: var(--white);
-    }
-
-    .status-failed {
-        background-color: #dc3545;
-        color: var(--white);
-    }
-
-    .text-center {
-        text-align: center;
-    }
-</style>
-@endpush
 
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const ctx = document.getElementById('donationsChart').getContext('2d');
+        
+        // Create gradient for chart
+        const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+        gradient.addColorStop(0, 'rgba(75, 192, 192, 0.6)');
+        gradient.addColorStop(1, 'rgba(75, 192, 192, 0.1)');
+        
         new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: {!! json_encode($donationWeeks) !!},
+                labels: {!! json_encode($donationWeeks ?? []) !!},
                 datasets: [{
-                    label: 'Donations',
-                    data: {!! json_encode($donationAmounts) !!},
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    label: 'Donations (₱)',
+                    data: {!! json_encode($donationAmounts ?? []) !!},
+                    backgroundColor: gradient,
                     borderColor: 'rgb(75, 192, 192)',
-                    borderWidth: 1
+                    borderWidth: 1,
+                    borderRadius: 4
                 }]
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed.y !== null) {
+                                    label += '₱' + new Intl.NumberFormat().format(context.parsed.y);
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                },
                 scales: {
                     y: {
-                        beginAtZero: true
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return '₱' + value;
+                            }
+                        }
                     }
                 }
             }

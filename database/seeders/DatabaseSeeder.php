@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
           'email_verified_at' => now(),
           'password' => bcrypt('12345678'),
           'role' => $adminRole->id,
+          'is_active' => true,
         ]);
     }
 }

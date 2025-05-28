@@ -12,28 +12,41 @@ class ProfileController extends Controller
 {
     public function index()
     {
-        return view('admin.profile.index');
+        return view('profile.index');
+    }
+
+    public function edit()
+    {
+        return view('profile.edit');
+    }
+
+    public function password()
+    {
+        return view('profile.password');
     }
 
     public function update(Request $request)
-    {
-        $user = auth()->user();
+{
+    $user = auth()->user();
 
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
-            'current_password' => ['nullable', 'required_with:new_password'],
-            'new_password' => ['nullable', 'confirmed', Password::defaults()],
-            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
-        ]);
+    $request->validate([
+        'name' => ['required', 'string', 'max:255'],
+        'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
+        'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
+        'contact_number' => ['nullable', 'digits_between:10,11', 'regex:/^[0-9]+$/'],
+        'address' => ['nullable', 'string', 'max:255'],
+    ]);
 
-        try {
-            // Update basic info
-            $user->name = $request->name;
-            $user->email = $request->email;
+    try {
+        // Update basic info
+        $user->name = $request->input('name');
+        $user->email = $request->input('email');
+        $user->contact_number = $request->input('contact_number');
+        $user->address = $request->input('address');
 
-            // Handle image upload
-            if ($request->hasFile('image')) {
+        // Handle image upload
+        if ($request->hasFile('image')) {
+            try {
                 // Delete old image if exists
                 if ($user->image_path) {
                     try {
@@ -43,31 +56,57 @@ class ProfileController extends Controller
                     }
                 }
                 
-                try {
-                    // Store new image
-                    $path = $request->file('image')->store('profile-photos', 'public');
-                    $user->image_path = $path;
-                } catch (\Exception $e) {
-                    Log::error('Failed to store new image: ' . $e->getMessage());
-                    return back()->withErrors(['image' => 'Failed to upload image. Please try again.']);
+                // Store new image
+                $path = $request->file('image')->store('profile-photos', 'public');
+                
+                // Log the path for debugging
+                Log::info('Image stored at: ' . $path);
+                
+                // Update user with new image path
+                $user->image_path = $path;
+                $user->save();
+                
+                // Verify the image exists
+                if (!Storage::disk('public')->exists($path)) {
+                    Log::error('Image was saved but file does not exist at: ' . $path);
                 }
+            } catch (\Exception $e) {
+                Log::error('Failed to store new image: ' . $e->getMessage());
+                return back()->withErrors(['image' => 'Failed to upload image. Please try again.']);
             }
-
-            // Update password if provided
-            if ($request->filled('current_password')) {
-                if (!Hash::check($request->current_password, $user->password)) {
-                    return back()->withErrors(['current_password' => 'The current password is incorrect.']);
-                }
-
-                $user->password = Hash::make($request->new_password);
-            }
-
-            $user->save();
-
-            return redirect()->route('profile.index')->with('success', 'Profile updated successfully.');
-        } catch (\Exception $e) {
-            Log::error('Profile update failed: ' . $e->getMessage());
-            return back()->withErrors(['error' => 'An error occurred while updating your profile. Please try again.']);
         }
+
+        $user->save();
+        
+        return redirect()->route('admin.profile.index')->with('success', 'Profile updated successfully.');
+    } catch (\Exception $e) {
+        Log::error('Profile update error: ' . $e->getMessage());
+        // Show the actual error message for debugging
+        return back()->withErrors(['error' => 'Error: ' . $e->getMessage()]);
     }
-} 
+}
+
+public function updatePassword(Request $request)
+{
+    $user = auth()->user();
+
+    $request->validate([
+        'current_password' => ['required', function ($attribute, $value, $fail) use ($user) {
+            if (!Hash::check($value, $user->password)) {
+                $fail('The current password is incorrect.');
+            }
+        }],
+        'new_password' => ['required', 'confirmed', Password::defaults()],
+    ]);
+
+    try {
+        $user->password = Hash::make($request->new_password);
+        $user->save();
+        
+        return redirect()->route('admin.profile.password')->with('success', 'Password updated successfully.');
+    } catch (\Exception $e) {
+        Log::error('Password update error: ' . $e->getMessage());
+        return back()->withErrors(['error' => 'An error occurred while updating your password.']);
+    }
+}
+}

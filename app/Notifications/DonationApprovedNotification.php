@@ -39,7 +39,11 @@ class DonationApprovedNotification extends Notification implements ShouldQueue
         return [
             'donation_id' => $this->donation->id,
             'amount' => $this->donation->amount,
-            'message' => $this->donation->admin_response,
+            'message' => 'Your donation of ' . $this->donation->amount . ' has been approved!',
+            'description' => $this->donation->admin_response,
+            'url' => route('member.donations.show', $this->donation->id)
         ];
     }
 } 
+
+

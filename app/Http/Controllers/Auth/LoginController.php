@@ -12,7 +12,6 @@ class LoginController extends Controller
     {
         return view('auth.login');
     }
-
     public function login(Request $request)
     {
         $credentials = $request->validate([
@@ -20,9 +19,22 @@ class LoginController extends Controller
             'password' => ['required'],
         ]);
 
+        // First check if the credentials are valid
         if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
             $user = Auth::user();
+            
+            // Check if the user is active
+            if (!$user->is_active) {
+                Auth::logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+                
+                return back()->withErrors([
+                    'email' => 'Your account has been disabled. Please contact the administrator.',
+                ])->onlyInput('email');
+            }
+            
+            $request->session()->regenerate();
 
             switch ($user->role) {
                 case 1:

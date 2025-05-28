@@ -9,7 +9,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->boolean('is_active')->default(true)->after('image_path');
+            $table->boolean('is_active')->default(true)->after('username');
             $table->timestamp('last_active_at')->nullable()->after('is_active');
         });
     }
