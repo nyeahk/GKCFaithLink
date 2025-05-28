@@ -1,4 +1,17 @@
-@extends('layouts.admin')
+@php
+    $layout = 'layouts.admin';
+    if(auth()->user()->role == 1) {
+        $layout = 'layouts.admin';
+    } elseif(auth()->user()->role == 2) {
+        $layout = 'layouts.treasurer';
+    }elseif(auth()->user()->role == 3) {
+        $layout = 'layouts.member';
+    } elseif(auth()->user()->role == 4) {
+        $layout = 'layouts.staff';
+    }
+@endphp
+
+@extends($layout)
 
 @section('title', 'My Profile')
 
@@ -43,12 +56,35 @@
                                 {{ $roleName }}
                             </p>
                             <div class="mt-3">
-                                <a href="{{ route('admin.profile.edit') }}" class="btn btn-primary btn-sm">
-                                    <i class="bi bi-pencil-square me-1"></i> Edit Profile
-                                </a>
-                                <a href="{{ route('admin.profile.password') }}" class="btn btn-outline-secondary btn-sm ms-2">
-                                    <i class="bi bi-key me-1"></i> Change Password
-                                </a>
+                                @if(auth()->user()->role == 1)
+                                    <a href="{{ route('admin.profile.edit') }}" class="btn btn-primary btn-sm">
+                                        <i class="bi bi-pencil-square me-1"></i> Edit Profile
+                                    </a>
+                                    <a href="{{ route('admin.profile.password') }}" class="btn btn-outline-secondary btn-sm ms-2">
+                                        <i class="bi bi-key me-1"></i> Change Password
+                                    </a>
+                                @elseif(auth()->user()->role == 2)
+                                    <a href="{{ route('treasurer.profile.edit') }}" class="btn btn-primary btn-sm">
+                                        <i class="bi bi-pencil-square me-1"></i> Edit Profile
+                                    </a>
+                                    <a href="{{ route('treasurer.profile.password') }}" class="btn btn-outline-secondary btn-sm ms-2">
+                                        <i class="bi bi-key me-1"></i> Change Password
+                                    </a>
+                                @elseif(auth()->user()->role == 3)
+                                    <a href="{{ route('member.profile.edit') }}" class="btn btn-primary btn-sm">
+                                        <i class="bi bi-pencil-square me-1"></i> Edit Profile
+                                    </a>
+                                    <a href="{{ route('member.profile.password') }}" class="btn btn-outline-secondary btn-sm ms-2">
+                                        <i class="bi bi-key me-1"></i> Change Password
+                                    </a>
+                                @elseif(auth()->user()->role == 4)
+                                    <a href="{{ route('staff.profile.edit') }}" class="btn btn-primary btn-sm">
+                                        <i class="bi bi-pencil-square me-1"></i> Edit Profile
+                                    </a>
+                                    <a href="{{ route('staff.profile.password') }}" class="btn btn-outline-secondary btn-sm ms-2">
+                                        <i class="bi bi-key me-1"></i> Change Password
+                                    </a>
+                                @endif
                             </div>
                         </div>
                         <div class="col-md-8">
@@ -80,10 +116,6 @@
                                         <div class="col-md-4 fw-bold">Account Created:</div>
                                         <div class="col-md-8">{{ auth()->user()->created_at->format('F d, Y') }}</div>
                                     </div>
-                                    <div class="row">
-                                        <div class="col-md-4 fw-bold">Last Login:</div>
-                                        <div class="col-md-8">{{ auth()->user()->last_login_at ? auth()->user()->last_login_at->format('F d, Y h:i A') : 'Never' }}</div>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -94,3 +126,5 @@
     </div>
 </div>
 @endsection
+
+

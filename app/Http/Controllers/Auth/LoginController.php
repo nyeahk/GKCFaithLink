@@ -12,13 +12,36 @@ class LoginController extends Controller
     {
         return view('auth.login');
     }
+
+    /**
+     * Validate the user login request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return void
+     *
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    protected function validateLogin(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|string|email',
+            'password' => 'required|string',
+        ]);
+    }
+
+    /**
+     * Handle a login request to the application.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\Response|\Illuminate\Http\JsonResponse
+     */
     public function login(Request $request)
     {
-        $credentials = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required'],
-        ]);
+        $this->validateLogin($request);
 
+        // Check if the user exists and is active
+        $credentials = $request->only('email', 'password');
+        
         // First check if the credentials are valid
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
@@ -36,22 +59,27 @@ class LoginController extends Controller
             
             $request->session()->regenerate();
 
+            // Redirect based on user role
             switch ($user->role) {
-                case 1:
+                case 1: // Admin
                     return redirect()->intended('admin/dashboard');
-                case 2:
+                case 2: // Treasurer
                     return redirect()->intended('treasurer/dashboard');
-                case 3:
+                case 3: // Member
                     return redirect()->intended('member/dashboard');
-                case 4:
+                case 4: // Staff
                     return redirect()->intended('staff/dashboard');
                 default:
                     return redirect()->intended('/');
             }
         }
 
+        // If the login attempt was unsuccessful
         return back()->withErrors([
             'email' => 'The provided credentials do not match our records.',
         ])->onlyInput('email');
     }
 } 
+
+
+

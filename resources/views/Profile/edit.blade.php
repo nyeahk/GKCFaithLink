@@ -1,4 +1,17 @@
-@extends('layouts.admin')
+@php
+    $layout = 'layouts.admin';
+    if(auth()->user()->role == 1) {
+        $layout = 'layouts.admin';
+    } elseif(auth()->user()->role == 2) {
+        $layout = 'layouts.treasurer';
+    }elseif(auth()->user()->role == 3) {
+        $layout = 'layouts.member';
+    } elseif(auth()->user()->role == 4) {
+        $layout = 'layouts.staff';
+    }
+@endphp
+
+@extends($layout)
 
 @section('title', 'Edit Profile')
 
@@ -29,7 +42,13 @@
                         </div>
                     @endif
 
-                    <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data">
+                    @if(auth()->user()->role == 3)
+                        <form action="{{ route('member.profile.update') }}" method="POST" enctype="multipart/form-data">
+                    @elseif(auth()->user()->role == 1)
+                        <form action="{{ route('admin.profile.update') }}" method="POST" enctype="multipart/form-data">
+                    @elseif(auth()->user()->role == 2)
+                        <form action="{{ route('staff.profile.update') }}" method="POST" enctype="multipart/form-data">
+                    @endif
                         @csrf
                         @method('PUT')
 
@@ -84,7 +103,15 @@
                 <input type="text" class="form-control" id="address" name="address" value="{{ old('address', auth()->user()->address) }}">
             </div>
             <div class="d-flex justify-content-end mt-4">
-                <a href="{{ route('admin.profile.index') }}" class="btn btn-secondary me-2">Cancel</a>
+                @if(auth()->user()->role == 3)
+                    <a href="{{ route('member.profile.index') }}" class="btn btn-secondary me-2">Cancel</a>
+                @elseif(auth()->user()->role == 1)
+                    <a href="{{ route('admin.profile.index') }}" class="btn btn-secondary me-2">Cancel</a>
+                @elseif(auth()->user()->role == 2)
+                    <a href="{{ route('treasurer.profile.index') }}" class="btn btn-secondary me-2">Cancel</a>
+                @elseif(auth()->user()->role == 4)
+                    <a href="{{ route('staff.profile.index') }}" class="btn btn-secondary me-2">Cancel</a>
+                @endif
                 <button type="submit" class="btn btn-primary">Save Changes</button>
             </div>
         </div>
