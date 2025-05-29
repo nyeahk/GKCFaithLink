@@ -89,22 +89,21 @@ class DonationController extends Controller
     public function update(Request $request, Donation $donation)
     {
         $validated = $request->validate([
+            'donor_name' => 'required|string|max:255',
             'amount' => 'required|numeric|min:0',
-            'status' => 'required|in:pending,verified',
-            'verification_notes' => 'required_if:status,verified|nullable|string',
+            'purpose' => 'required|string|in:tithes,offering,mission',
+            'payment_method' => 'required|string|in:cash',
+            'transaction_date' => 'required|date'
         ]);
 
-        $donation->update($validated);
+        // Maintain the approved status and admin details for manual donations
+        $validated['status'] = 'approved';
+        $validated['admin_id'] = auth()->id();
+        $validated['admin_response'] = 'Updated by ' . auth()->user()->name;
+        $validated['verified_by'] = auth()->user()->name;
+        $validated['verification_date'] = now();
 
-        if ($validated['status'] === 'verified') {
-            $donation->update([
-                'verified_by' => auth()->user()->name,
-                'verification_date' => now(),
-            ]);
-            
-            // Notify donor about the verified donation
-            $donation->user->notify(new DonationStatusNotification($donation));
-        }
+        $donation->update($validated);
 
         return redirect()->route('admin.donations.index')
             ->with('success', 'Donation updated successfully.');

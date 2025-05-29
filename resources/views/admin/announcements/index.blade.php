@@ -9,9 +9,11 @@
                 <h1>Announcements</h1>
                 <p class="subtitle">Manage and publish announcements for your community</p>
             </div>
-            <a href="{{ route('announcements.create') }}" class="btn btn-primary">
+            <div>
+                <button onclick="window.location.href='{{ route('announcements.create') }}'" class="btn btn-primary">
                 <i class="fas fa-plus"></i> Create New Announcement
-            </a>
+                </button>
+            </div>
         </div>
 
         @if(session('success'))

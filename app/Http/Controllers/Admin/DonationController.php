@@ -4,40 +4,109 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Donation;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class DonationController extends Controller
 {
-    public function manualCreate()
+    public function __construct()
     {
-        return view('admin.donations.manual-create');
+        $this->middleware('auth');
+        $this->middleware('admin');
     }
 
-    public function manualStore(Request $request)
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
+    {
+        Log::info('DonationController@index called');
+        $donations = Donation::with(['user', 'admin'])
+            ->latest()
+            ->paginate(10);
+            
+        return view('admin.donations.index', compact('donations'));
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        return view('admin.donations.create');
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
     {
         $validated = $request->validate([
-            'donor_name' => 'required|string|max:255',
+            'user_id' => 'required|exists:users,id',
             'amount' => 'required|numeric|min:0',
-            'purpose' => 'required|string|max:255',
-            'reference_number' => 'nullable|string|max:255',
-            'screenshot' => 'nullable|image|max:2048',
-            'payment_method' => 'required|string|max:255',
+            'payment_method' => 'required|in:gcash',
             'transaction_date' => 'required|date',
-            'status' => 'required|string|max:255',
-            'verification_notes' => 'nullable|string',
         ]);
 
-        if ($request->hasFile('screenshot')) {
-            $path = $request->file('screenshot')->store('donation-screenshots', 'public');
-            $validated['screenshot'] = $path;
-        }
-
-        $validated['admin_id'] = auth()->id();
-        $validated['donor_name'] = $request->donor_name;
-
-        Donation::create($validated);
+        $donation = Donation::create($validated);
 
         return redirect()->route('admin.donations.index')
-            ->with('success', 'Manual donation added successfully.');
+            ->with('success', 'Donation recorded successfully.');
     }
-} 
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(Donation $donation)
+    {
+        return view('admin.donations.show', compact('donation'));
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(Donation $donation)
+    {
+        return view('admin.donations.edit', compact('donation'));
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, Donation $donation)
+    {
+        $validated = $request->validate([
+            'status' => 'required|in:pending,approved,declined',
+            'admin_notes' => 'nullable|string',
+        ]);
+
+        $donation->update($validated);
+
+        return redirect()->route('admin.donations.index')
+            ->with('success', 'Donation updated successfully.');
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Donation $donation)
+    {
+        $donation->delete();
+
+        return redirect()->route('admin.donations.index')
+            ->with('success', 'Donation deleted successfully.');
+    }
+
+    /**
+     * Show the form for creating a manual donation.
+     */
+    public function manualCreate()
+    {
+        $users = User::where('role', 'member')
+            ->orWhereNull('role')
+            ->get();
+        return view('admin.donations.manual-create', compact('users'));
+    }
+}
+

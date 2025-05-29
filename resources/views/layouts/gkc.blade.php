@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'GKC FaithLink')</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
     @stack('styles')
 </head>
@@ -83,5 +84,58 @@
         }
     </script>
     @stack('scripts')
+    <!-- Add this to your layout file, just before the closing </body> tag -->
+    <script>
+        // Debug script to log navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            const links = document.querySelectorAll('a');
+            links.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    console.log('Clicked link:', this.href);
+                    // For staff event links, add a special log
+                    if (this.href.includes('/staff/events')) {
+                        console.log('STAFF EVENT LINK CLICKED:', this.href);
+                        // You can remove this line in production, it's just for debugging
+                        if (!confirm('You clicked a staff event link to: ' + this.href + '. Continue?')) {
+                            e.preventDefault();
+                        }
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html> 
+
+<!-- Staff Navigation -->
+@if(Auth::check() && Auth::user()->role == 'staff')
+<nav class="main-nav">
+    <ul>
+        <li><a href="{{ route('staff.dashboard') }}"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+        <li><a href="{{ route('staff.events.index') }}"><i class="fas fa-calendar-alt"></i> Events</a></li>
+        <li><a href="{{ route('staff.announcements.index') }}"><i class="fas fa-bullhorn"></i> Announcements</a></li>
+        <li><a href="{{ route('staff.profile.index') }}"><i class="fas fa-user"></i> My Profile</a></li>
+    </ul>
+</nav>
+@endif
+
+<!-- Admin Navigation -->
+@if(Auth::check() && Auth::user()->role == 'admin')
+<nav class="main-nav">
+    <ul>
+        <li><a href="{{ route('admin.dashboard') }}"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+        <li><a href="{{ route('admin.events.index') }}"><i class="fas fa-calendar-alt"></i> Events</a></li>
+        <li><a href="{{ route('announcements.index') }}"><i class="fas fa-bullhorn"></i> Announcements</a></li>
+        <li><a href="{{ route('admin.donations.index') }}"><i class="fas fa-donate"></i> Donations</a></li>
+        <li><a href="{{ route('members.index') }}"><i class="fas fa-users"></i> Members</a></li>
+        <li><a href="{{ route('reports.weekly') }}"><i class="fas fa-chart-bar"></i> Reports</a></li>
+        <li><a href="{{ route('profile.index') }}"><i class="fas fa-user"></i> My Profile</a></li>
+    </ul>
+</nav>
+@endif
+
+
+
+
+
+

@@ -5,7 +5,10 @@
 @section('content')
 <div class="reports-container">
     <div class="reports-header">
-        <h1>Weekly Report</h1>
+        <div class="header-content">
+            <h1>Weekly Report</h1>
+            <p class="subtitle">View and analyze weekly donation data</p>
+        </div>
         <div class="header-actions">
             <div class="report-period">
                 <span class="period-label">Period:</span>
@@ -15,25 +18,6 @@
                 <i class="fas fa-download"></i> Download PDF
             </a>
         </div>
-    </div>
-
-    <div class="filter-container">
-        <form method="GET" action="{{ route('reports.weekly') }}">
-            <div class="filter-group">
-                <label for="statusFilter">Filter by Status:</label>
-                <select name="status" id="statusFilter" class="filter-select">
-                    <option value="">All</option>
-                    <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
-                    <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>Completed</option>
-                    <option value="failed" {{ request('status') == 'failed' ? 'selected' : '' }}>Failed</option>
-                </select>
-            </div>
-            <div class="filter-group">
-                <label for="dateFilter">Filter by Date:</label>
-                <input type="date" name="date" id="dateFilter" value="{{ request('date') }}" class="filter-input">
-            </div>
-            <button type="submit" class="btn btn-primary">Apply Filters</button>
-        </form>
     </div>
 
     <div class="report-summary">
@@ -72,43 +56,31 @@
     </div>
 
     <div class="report-details">
-        <div class="donations-chart">
-            <h2>Donations by Day</h2>
-            <canvas id="donationsChart"></canvas>
-        </div>
-
-        <div class="donations-table">
-            <h2>Recent Donations</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Donor</th>
-                        <th>Amount</th>
-                        <th>Payment Method</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($recentDonations as $donation)
-                        <tr>
-                            <td>{{ $donation->created_at->format('M d, Y') }}</td>
-                            <td>{{ $donation->donor_name }}</td>
-                            <td>₱{{ number_format($donation->amount, 2) }}</td>
-                            <td>{{ ucfirst($donation->payment_method) }}</td>
-                            <td>
-                                <span class="status-badge status-{{ $donation->status }}">
-                                    {{ ucfirst($donation->status) }}
-                                </span>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="5" class="text-center">No donations this week.</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="donations-chart">
+                    <h2>Donations by Category (Stack)</h2>
+                    <canvas id="donationsStackChart"></canvas>
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="donations-distribution">
+                    <h2>Donations by Category (Doughnut)</h2>
+                    <canvas id="donationsDistributionChart"></canvas>
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="donations-chart">
+                    <h2>Donations by Category (Bar)</h2>
+                    <canvas id="donationsBarChart"></canvas>
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="donations-chart">
+                    <h2>Donations by Category (Column)</h2>
+                    <canvas id="donationsColumnChart"></canvas>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -127,65 +99,67 @@
         margin-bottom: 2rem;
     }
 
+    .header-content h1 {
+        color: #1a365d;
+        margin: 0;
+        font-size: 1.875rem;
+    }
+
+    .header-content .subtitle {
+        color: #4a5568;
+        margin: 0.5rem 0 0;
+        font-size: 1rem;
+    }
+
     .header-actions {
         display: flex;
         align-items: center;
-        gap: 1.5rem;
+        gap: 1rem;
     }
 
     .report-period {
         display: flex;
         align-items: center;
         gap: 0.5rem;
+        background: #f7fafc;
+        padding: 0.5rem 1rem;
+        border-radius: 0.375rem;
     }
 
     .period-label {
         font-weight: 500;
-        color: var(--text-light);
+        color: #4a5568;
     }
 
     .period-value {
-        color: var(--primary-dark);
+        color: #2b6cb0;
+        font-weight: 600;
     }
 
     .btn {
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
-        padding: 0.5rem 1rem;
-        border-radius: 4px;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.375rem;
         font-weight: 500;
         text-decoration: none;
         transition: all 0.2s;
+        border: none;
+        cursor: pointer;
     }
 
     .btn-primary {
-        background-color: var(--primary);
+        background-color: #3182ce;
         color: white;
     }
 
     .btn-primary:hover {
-        background-color: var(--primary-dark);
+        background-color: #2c5282;
     }
 
     .btn i {
         font-size: 1rem;
-    }
-
-    .filter-container {
-        margin-bottom: 2rem;
-    }
-
-    .filter-group {
-        margin-bottom: 1rem;
-    }
-
-    .filter-select,
-    .filter-input {
-        width: 100%;
-        padding: 0.5rem;
-        border: 1px solid var(--border);
-        border-radius: 4px;
     }
 
     .report-summary {
@@ -196,132 +170,309 @@
     }
 
     .summary-card {
-        background: var(--white);
-        border-radius: 8px;
+        background: white;
+        border-radius: 0.5rem;
         padding: 1.5rem;
         display: flex;
         align-items: center;
         gap: 1rem;
-        box-shadow: 0 2px 4px var(--shadow);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     }
 
     .summary-icon {
         width: 48px;
         height: 48px;
         border-radius: 50%;
-        background: var(--primary-light);
+        background: #ebf8ff;
         display: flex;
         align-items: center;
         justify-content: center;
-        color: var(--primary-dark);
+        color: #2b6cb0;
         font-size: 1.5rem;
     }
 
     .summary-info h3 {
         margin: 0;
         font-size: 1rem;
-        color: var(--text-light);
+        color: #4a5568;
     }
 
     .summary-value {
         margin: 0.25rem 0;
         font-size: 1.5rem;
         font-weight: 600;
-        color: var(--primary-dark);
+        color: #2b6cb0;
     }
 
     .summary-label {
         margin: 0;
         font-size: 0.875rem;
-        color: var(--text-light);
+        color: #718096;
     }
 
     .report-details {
-        display: grid;
-        grid-template-columns: 2fr 1fr;
-        gap: 2rem;
+        margin-top: 2rem;
     }
 
     .donations-chart,
-    .donations-table {
-        background: var(--white);
-        border-radius: 8px;
+    .donations-distribution {
+        background: white;
+        border-radius: 0.75rem;
         padding: 1.5rem;
-        box-shadow: 0 2px 4px var(--shadow);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s;
+        height: 400px;
+    }
+
+    .donations-chart:hover,
+    .donations-distribution:hover {
+        transform: translateY(-5px);
     }
 
     .donations-chart h2,
-    .donations-table h2 {
+    .donations-distribution h2 {
         margin: 0 0 1.5rem 0;
-        color: var(--primary-dark);
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-
-    th, td {
-        padding: 0.75rem;
-        text-align: left;
-        border-bottom: 1px solid var(--border);
-    }
-
-    th {
-        background-color: var(--background-light);
+        color: #2d3748;
+        font-size: 1.25rem;
         font-weight: 600;
-        color: var(--text-light);
-    }
-
-    .status-badge {
-        padding: 0.25rem 0.75rem;
-        border-radius: 20px;
-        font-size: 0.875rem;
-        font-weight: 500;
-    }
-
-    .status-pending {
-        background-color: #ffc107;
-        color: #000;
-    }
-
-    .status-completed {
-        background-color: #28a745;
-        color: var(--white);
-    }
-
-    .status-failed {
-        background-color: #dc3545;
-        color: var(--white);
-    }
-
-    .text-center {
         text-align: center;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #e2e8f0;
+    }
+
+    .chart-container {
+        position: relative;
+        height: 300px;
+        width: 100%;
     }
 </style>
 @endpush
 
 @push('scripts')
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const ctx = document.getElementById('donationsChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'line',
+        // Define common data and options
+        const labels = ['Tithes', 'Offerings', 'Mission Funds'];
+        const data = [
+            {{ $totalTithes }}, 
+            {{ $totalOfferings }}, 
+            {{ $totalMissionFunds }}
+        ];
+        
+        // Calculate percentages for display
+        const total = data.reduce((a, b) => a + b, 0);
+        const percentages = data.map(value => Math.round((value / total) * 100));
+        
+        // Define vibrant colors with gradients
+        const backgroundColors = [
+            'rgba(54, 162, 235, 0.8)',   // Blue
+            'rgba(75, 192, 150, 0.8)',   // Green
+            'rgba(255, 159, 64, 0.8)'    // Orange
+        ];
+        
+        const borderColors = [
+            'rgb(54, 162, 235)',
+            'rgb(75, 192, 150)',
+            'rgb(255, 159, 64)'
+        ];
+
+        // Common chart options
+        const commonOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 20,
+                        font: {
+                            size: 12,
+                            weight: 'bold'
+                        }
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    padding: 12,
+                    titleFont: {
+                        size: 14,
+                        weight: 'bold'
+                    },
+                    bodyFont: {
+                        size: 13
+                    },
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.label || '';
+                            const value = context.raw || 0;
+                            const percentage = percentages[context.dataIndex];
+                            return `${label}: ₱${value.toLocaleString()} (${percentage}%)`;
+                        }
+                    }
+                }
+            }
+        };
+
+        // Stack Chart
+        const stackCtx = document.getElementById('donationsStackChart').getContext('2d');
+        new Chart(stackCtx, {
+            type: 'bar',
             data: {
-                labels: {!! json_encode($donationDays) !!},
+                labels: labels,
                 datasets: [{
-                    label: 'Donations',
-                    data: {!! json_encode($donationAmounts) !!},
-                    borderColor: 'rgb(75, 192, 192)',
-                    tension: 0.1
+                    data: data,
+                    backgroundColor: backgroundColors,
+                    borderColor: borderColors,
+                    borderWidth: 2,
+                    stack: 'Stack 0',
+                    borderRadius: 5
                 }]
             },
             options: {
-                responsive: true,
+                ...commonOptions,
+                plugins: {
+                    ...commonOptions.plugins,
+                    legend: {
+                        display: false
+                    }
+                },
                 scales: {
                     y: {
-                        beginAtZero: true
+                        beginAtZero: true,
+                        stacked: true,
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.1)'
+                        },
+                        ticks: {
+                            callback: function(value) {
+                                return '₱' + value.toLocaleString();
+                            }
+                        }
+                    },
+                    x: {
+                        stacked: true,
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+
+        // Doughnut Chart
+        const doughnutCtx = document.getElementById('donationsDistributionChart').getContext('2d');
+        new Chart(doughnutCtx, {
+            type: 'doughnut',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: data,
+                    backgroundColor: backgroundColors,
+                    borderColor: borderColors,
+                    borderWidth: 2,
+                    cutout: '60%'
+                }]
+            },
+            options: {
+                ...commonOptions,
+                plugins: {
+                    ...commonOptions.plugins,
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 20,
+                            font: {
+                                size: 12,
+                                weight: 'bold'
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Bar Chart
+        const barCtx = document.getElementById('donationsBarChart').getContext('2d');
+        new Chart(barCtx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: data,
+                    backgroundColor: backgroundColors,
+                    borderColor: borderColors,
+                    borderWidth: 2,
+                    borderRadius: 5
+                }]
+            },
+            options: {
+                ...commonOptions,
+                indexAxis: 'y',
+                plugins: {
+                    ...commonOptions.plugins,
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            display: false
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.1)'
+                        },
+                        ticks: {
+                            callback: function(value) {
+                                return '₱' + value.toLocaleString();
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Column Chart
+        const columnCtx = document.getElementById('donationsColumnChart').getContext('2d');
+        new Chart(columnCtx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: data,
+                    backgroundColor: backgroundColors,
+                    borderColor: borderColors,
+                    borderWidth: 2,
+                    borderRadius: 5
+                }]
+            },
+            options: {
+                ...commonOptions,
+                plugins: {
+                    ...commonOptions.plugins,
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.1)'
+                        },
+                        ticks: {
+                            callback: function(value) {
+                                return '₱' + value.toLocaleString();
+                            }
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
                     }
                 }
             }
@@ -329,3 +480,7 @@
     });
 </script>
 @endpush
+
+
+
+

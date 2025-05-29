@@ -11,7 +11,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Make sure there are no bindings for 'role'
     }
 
     /**
@@ -19,8 +19,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
-        
         // Add a view composer to check user role
         \Illuminate\Support\Facades\View::composer('*', function ($view) {
             if (\Illuminate\Support\Facades\Auth::check()) {
@@ -32,4 +30,5 @@ class AppServiceProvider extends ServiceProvider
         });
     }
 }
+
 

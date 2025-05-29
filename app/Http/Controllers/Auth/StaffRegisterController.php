@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 
@@ -40,12 +39,10 @@ class StaffRegisterController extends Controller
             'is_active' => false, // Require admin approval
         ]);
 
-        // Notify admin about new staff registration
-        // You can implement notification logic here
-
-        // Don't auto-login, redirect to login with message
+        // Redirect to login page with success message
         return redirect()->route('staff.login')
-            ->with('success', 'Registration successful. Please wait for admin approval before logging in.');
+            ->with('success', 'Registration successful! Please wait for admin approval before logging in.');
     }
 }
+
 

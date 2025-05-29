@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Login - GKC FaithLink')
+@section('title', 'Admin Login - GKC FaithLink')
 
 @section('content')
 <div class="auth-container">
@@ -54,8 +54,7 @@
 
                 <div class="form-group checkbox-group">
                     <label class="checkbox-label">
-                        <input type="checkbox" name="remember" id="remember">
-                        <span class="checkmark"></span>
+                        <input type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
                         Remember me
                     </label>
                 </div>
@@ -242,24 +241,48 @@
 }
 
 .checkbox-group {
-    margin: 1rem 0;
+    margin: 1.5rem 0;
 }
 
 .checkbox-label {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 0.5rem;
     color: var(--accent-teal);
     cursor: pointer;
     font-size: 0.95rem;
-    position: relative;
 }
 
 .checkbox-label input[type="checkbox"] {
     width: 18px;
     height: 18px;
-    accent-color: var(--accent-teal);
     margin: 0;
+    border: 1px solid #d1d5db;
+    border-radius: 3px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-color: #fff;
+    position: relative;
+    cursor: pointer;
+    vertical-align: middle;
+}
+
+.checkbox-label input[type="checkbox"]:checked {
+    background-color: var(--accent-teal);
+    border-color: var(--accent-teal);
+}
+
+.checkbox-label input[type="checkbox"]:checked::after {
+    content: '';
+    position: absolute;
+    left: 6px;
+    top: 2px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
 }
 
 .btn {
@@ -293,25 +316,47 @@
 .auth-footer {
     text-align: center;
     margin-top: 2rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid #e1e5e9;
+    padding-top: 1rem;
+    color: #4a5568;
+    font-size: 0.95rem;
 }
 
 .auth-footer p {
-    color: var(--primary-dark);
     margin: 0;
 }
 
 .auth-link {
     color: var(--accent-teal);
     text-decoration: none;
-    font-weight: 600;
-    transition: all 0.3s ease;
+    font-weight: 500;
+    transition: color 0.2s ease;
 }
 
 .auth-link:hover {
     color: var(--primary-dark);
     text-decoration: underline;
+}
+
+.form-actions {
+    margin-top: 1.5rem;
+}
+
+.btn-primary {
+    background-color: var(--primary-dark);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 0.75rem 1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    width: 100%;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.btn-primary:hover {
+    background-color: var(--accent-teal);
 }
 
 .alert {
@@ -400,3 +445,7 @@
 </style>
 @endpush
 @endsection
+
+
+
+

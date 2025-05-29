@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
 class StaffLoginController extends Controller
 {
@@ -26,7 +27,7 @@ class StaffLoginController extends Controller
         ]);
 
         // Check if user exists and has staff role
-        $user = \App\Models\User::where('email', $credentials['email'])->first();
+        $user = User::where('email', $credentials['email'])->first();
         
         if (!$user || $user->role !== 'staff') {
             return back()->withErrors([
@@ -37,7 +38,10 @@ class StaffLoginController extends Controller
         // Attempt authentication
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            return redirect()->intended('staff/dashboard');
+            
+            // Debug information
+            return redirect()->route('staff.dashboard')
+                ->with('debug', 'Logged in as staff. User role: ' . Auth::user()->role);
         }
 
         return back()->withErrors([
@@ -53,5 +57,7 @@ class StaffLoginController extends Controller
         return redirect()->route('staff.login');
     }
 }
+
+
 
 

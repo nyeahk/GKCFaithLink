@@ -66,7 +66,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('admin.donations.index') }}" class="{{ request()->routeIs('admin.donations.*') ? 'active' : '' }}">
+                        <a href="{{ route('admin.donations.direct') }}" class="{{ request()->routeIs('admin.donations.*') ? 'active' : '' }}">
                             <i class="fas fa-donate"></i>
                             <span>Donations</span>
                         </a>
@@ -349,3 +349,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script> 
+
+
+

@@ -1,18 +1,35 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Staff;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules\Password;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rules\Password;
 
 class ProfileController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+        // Don't use can:staff here as we're already using the staff middleware in the route group
+    }
+
     public function index()
     {
-        return view('admin.profile.index');
+        // Log for debugging
+        Log::info('Staff ProfileController: index method called by user ' . Auth::id());
+        
+        // Double-check user role
+        if (Auth::user()->role !== 'staff') {
+            Log::warning('Non-staff user attempted to access staff profile: ' . Auth::user()->role);
+            abort(403, 'You do not have staff privileges. Your role is: ' . Auth::user()->role);
+        }
+        
+        return view('staff.profile.index');
     }
 
     public function update(Request $request)
@@ -52,22 +69,24 @@ class ProfileController extends Controller
                     return back()->withErrors(['image' => 'Failed to upload image. Please try again.']);
                 }
             }
-
+            
             // Update password if provided
-            if ($request->filled('current_password')) {
+            if ($request->filled('new_password')) {
+                // Verify current password
                 if (!Hash::check($request->current_password, $user->password)) {
                     return back()->withErrors(['current_password' => 'The current password is incorrect.']);
                 }
-
+                
                 $user->password = Hash::make($request->new_password);
             }
-
+            
             $user->save();
-
-            return redirect()->route('profile.index')->with('success', 'Profile updated successfully.');
+            
+            return redirect()->route('staff.profile.index')->with('success', 'Profile updated successfully.');
+            
         } catch (\Exception $e) {
-            Log::error('Profile update failed: ' . $e->getMessage());
-            return back()->withErrors(['error' => 'An error occurred while updating your profile. Please try again.']);
+            Log::error('Profile update error: ' . $e->getMessage());
+            return back()->withErrors(['general' => 'An error occurred while updating your profile. Please try again.']);
         }
     }
-} 
+}

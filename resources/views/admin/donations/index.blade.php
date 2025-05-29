@@ -5,7 +5,10 @@
 @section('content')
     <div class="donations-container">
         <div class="donations-header">
-            <h1>Donations</h1>
+            <div class="header-content">
+                <h1>Donations</h1>
+                <p class="subtitle">Manage and track all donations</p>
+            </div>
             <div class="header-actions">
                 <a href="{{ route('admin.donations.manual-create') }}" class="btn btn-primary">
                     <i class="fas fa-plus"></i> Add Manual Donation
@@ -27,11 +30,10 @@
                         <th>Donor</th>
                         <th>Amount</th>
                         <th>Purpose</th>
-                        <th>Reference Number</th>
                         <th>Payment Method</th>
                         <th>Date</th>
                         <th>Status</th>
-                        <th>Actions</th>
+                        <th class="text-center">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -55,47 +57,37 @@
                                     </span>
                                 @endif
                             </td>
-                            <td>₱{{ number_format($donation->amount, 2) }}</td>
+                            <td class="amount">₱{{ number_format($donation->amount, 2) }}</td>
                             <td>{{ ucfirst($donation->purpose) }}</td>
-                            <td>{{ $donation->reference_number ?? 'N/A' }}</td>
-                            <td>{{ $donation->payment_method }}</td>
+                            <td>{{ ucfirst($donation->payment_method) }}</td>
                             <td>{{ $donation->transaction_date ? $donation->transaction_date->format('M d, Y h:i A') : 'Not set' }}</td>
                             <td>
-                                <span class="status-badge status-{{ $donation->status }}">
+                                <span class="status-badge status-{{ strtolower($donation->status) }}">
                                     <i class="fas fa-circle"></i>
                                     {{ ucfirst($donation->status) }}
                                 </span>
                             </td>
-                            <td class="actions">
-                                <a href="{{ route('admin.donations.show', $donation->id) }}" class="btn btn-action btn-view" title="View Donation">
-                                    <i class="fas fa-eye"></i>
-                                </a>
-                                <a href="{{ route('admin.donations.edit', $donation->id) }}" class="btn btn-action btn-edit" title="Edit Donation">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                @if($donation->status === 'pending')
-                                    <form action="{{ route('admin.donations.approve', $donation->id) }}" method="POST" class="d-inline">
+                            <td>
+                                <div class="action-buttons">
+                                    <a href="{{ route('admin.donations.show', $donation->id) }}" class="btn btn-icon btn-view" title="View Details">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="{{ route('admin.donations.edit', $donation->id) }}" class="btn btn-icon btn-edit" title="Edit Donation">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <form action="{{ route('admin.donations.destroy', $donation->id) }}" method="POST" class="d-inline">
                                         @csrf
-                                        <button type="submit" class="btn btn-action btn-approve" title="Approve Donation" onclick="return confirm('Are you sure you want to approve this donation?')">
-                                            <i class="fas fa-check"></i>
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-icon btn-delete" title="Delete Donation" onclick="return confirm('Are you sure you want to delete this donation?')">
+                                            <i class="fas fa-trash"></i>
                                         </button>
                                     </form>
-                                    <button type="button" class="btn btn-action btn-decline" title="Decline Donation" onclick="showDeclineModal({{ $donation->id }})">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                @endif
-                                <form action="{{ route('admin.donations.destroy', $donation->id) }}" method="POST" class="d-inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-action btn-delete" title="Delete Donation" onclick="return confirm('Are you sure you want to delete this donation?')">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </form>
+                                </div>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="empty-state">
+                            <td colspan="7" class="empty-state">
                                 <div class="empty-content">
                                     <i class="fas fa-donate"></i>
                                     <p>No donations found</p>
@@ -146,22 +138,22 @@
         align-items: center;
     }
 
-    .header-actions {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-    }
-
-    .donations-header h1 {
+    .header-content h1 {
         color: #1a365d;
         margin: 0;
         font-size: 1.875rem;
     }
 
-    .donations-header .subtitle {
+    .header-content .subtitle {
         color: #4a5568;
-        margin: 0;
+        margin: 0.5rem 0 0;
         font-size: 1rem;
+    }
+
+    .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
     }
 
     .btn-primary {
@@ -206,13 +198,29 @@
         padding: 1rem;
         border-bottom: 1px solid #e2e8f0;
         color: #4a5568;
+        vertical-align: middle;
     }
 
-    .donor-info {
-        display: flex;
+    .donor-link {
+        display: inline-flex;
         align-items: center;
         gap: 0.5rem;
-        color: #4a5568;
+        color: #3182ce;
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+
+    .donor-link:hover {
+        color: #2c5282;
+    }
+
+    .donor-link i {
+        font-size: 0.875rem;
+    }
+
+    .amount {
+        font-weight: 600;
+        color: #2b6cb0;
     }
 
     .status-badge {
@@ -223,6 +231,10 @@
         border-radius: 9999px;
         font-size: 0.875rem;
         font-weight: 500;
+    }
+
+    .status-badge i {
+        font-size: 0.75rem;
     }
 
     .status-pending {
@@ -240,40 +252,28 @@
         color: #991b1b;
     }
 
-    .actions {
+    .action-buttons {
         display: flex;
         justify-content: center;
         align-items: center;
         gap: 0.5rem;
     }
 
-    .btn-action {
+    .btn-icon {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        width: 2rem;
-        height: 2rem;
-        font-size: 0.875rem;
+        width: 2.5rem;
+        height: 2.5rem;
         border-radius: 0.375rem;
         transition: all 0.2s;
+        border: none;
+        cursor: pointer;
+        font-size: 1rem;
     }
 
-    .btn-approve {
-        background-color: #dcfce7;
-        color: #166534;
-    }
-
-    .btn-approve:hover {
-        background-color: #bbf7d0;
-    }
-
-    .btn-decline {
-        background-color: #fee2e2;
-        color: #991b1b;
-    }
-
-    .btn-decline:hover {
-        background-color: #fed7d7;
+    .btn-icon i {
+        font-size: 1rem;
     }
 
     .btn-view {

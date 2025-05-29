@@ -57,6 +57,8 @@ class AnnouncementController extends Controller
     public function edit($id)
     {
         $announcement = Announcement::findOrFail($id);
+        // Add debugging to check if announcement is retrieved
+        \Log::info('Editing announcement', ['id' => $id, 'announcement' => $announcement->toArray()]);
         return view('admin.announcements.edit', compact('announcement'));
     }
 
@@ -95,3 +97,4 @@ class AnnouncementController extends Controller
         return redirect()->route('announcements.index')->with('success', 'Announcement deleted successfully.');
     }
 } 
+

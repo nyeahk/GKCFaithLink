@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Register - GKC FaithLink')
+@section('title', 'Admin Registration - GKC FaithLink')
 
 @section('content')
 <div class="auth-container">

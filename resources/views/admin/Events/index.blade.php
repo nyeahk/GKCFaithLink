@@ -57,19 +57,21 @@
                                 </span>
                             </td>
                             <td class="actions">
-                                <button class="btn btn-action btn-view" title="View Event" data-event-id="{{ $event->id }}">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <a href="{{ route('admin.events.edit', $event->id) }}" class="btn btn-action btn-edit" title="Edit Event">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                <form action="{{ route('admin.events.destroy', $event->id) }}" method="POST" class="d-inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-action btn-delete" title="Delete Event" onclick="return confirm('Are you sure you want to delete this event?')">
-                                        <i class="fas fa-trash"></i>
+                                <div class="action-buttons">
+                                    <button class="btn btn-action btn-view" title="View Event" data-event-id="{{ $event->id }}">
+                                        <i class="fas fa-eye"></i>
                                     </button>
-                                </form>
+                                    <a href="{{ route('admin.events.edit', $event->id) }}" class="btn btn-action btn-edit" title="Edit Event">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <form action="{{ route('admin.events.destroy', $event->id) }}" method="POST" class="d-inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-action btn-delete" title="Delete Event" onclick="return confirm('Are you sure you want to delete this event?')">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                     @empty
@@ -246,45 +248,65 @@
     }
 
     .actions {
+        text-align: center;
+        width: 150px;
+    }
+
+    .action-buttons {
         display: flex;
-        gap: 0.5rem;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
     }
 
     .btn-action {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        width: 2.5rem;
-        height: 2.5rem;
-        border-radius: 0.375rem;
+        width: 36px;
+        height: 36px;
+        border-radius: 4px;
+        border: none;
+        cursor: pointer;
         transition: all 0.2s;
     }
 
     .btn-view {
-        background-color: #ebf8ff;
-        color: #2b6cb0;
+        background-color: #3182ce;
+        color: white;
     }
 
     .btn-view:hover {
-        background-color: #bee3f8;
+        background-color: #2c5282;
     }
 
     .btn-edit {
-        background-color: #ebf8ff;
-        color: #2b6cb0;
+        background-color: #38a169;
+        color: white;
     }
 
     .btn-edit:hover {
-        background-color: #bee3f8;
+        background-color: #2f855a;
     }
 
     .btn-delete {
-        background-color: #fff5f5;
-        color: #c53030;
+        background-color: #e53e3e;
+        color: white;
     }
 
     .btn-delete:hover {
-        background-color: #fed7d7;
+        background-color: #c53030;
+    }
+
+    /* Make sure the form doesn't affect alignment */
+    .d-inline {
+        display: inline-block;
+    }
+
+    /* Ensure table cells have consistent padding */
+    table td, table th {
+        padding: 12px 16px;
+        vertical-align: middle;
     }
 
     .empty-state {
@@ -680,3 +702,4 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 @endpush 
+
