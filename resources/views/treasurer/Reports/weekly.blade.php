@@ -11,14 +11,14 @@
                 <span class="period-label">Period:</span>
                 <span class="period-value">{{ $startDate->format('M d, Y') }} - {{ $endDate->format('M d, Y') }}</span>
             </div>
-            <a href="{{ route('reports.weekly.download', ['date' => $startDate->format('Y-m-d')]) }}" class="btn btn-primary">
+            <a href="{{ route('treasurer.reports.weekly.download', ['date' => $startDate->format('Y-m-d')]) }}" class="btn btn-primary">
                 <i class="fas fa-download"></i> Download PDF
             </a>
         </div>
     </div>
 
     <div class="filter-container">
-        <form method="GET" action="{{ route('reports.weekly') }}">
+        <form method="GET" action="{{ route('treasurer.reports.weekly') }}">
             <div class="filter-group">
                 <label for="statusFilter">Filter by Status:</label>
                 <select name="status" id="statusFilter" class="filter-select">
@@ -329,3 +329,5 @@
     });
 </script>
 @endpush
+
+

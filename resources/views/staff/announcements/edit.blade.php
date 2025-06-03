@@ -6,7 +6,7 @@
     <div class="announcements-container">
         <div class="announcements-header">
             <h1>Edit Announcement</h1>
-            <a href="{{ route('announcements.index') }}" class="btn btn-back">
+            <a href="{{ route('staff.announcements.index') }}" class="btn btn-back">
                 <i class="fas fa-arrow-left"></i> Back to Announcements
             </a>
         </div>
@@ -19,7 +19,7 @@
         @endif
 
         <div class="announcement-form-card">
-            <form action="{{ route('announcements.update', $announcement->id) }}" method="POST" enctype="multipart/form-data" class="announcement-form">
+            <form action="{{ route('staff.announcements.update', $announcement->id) }}" method="POST" enctype="multipart/form-data" class="announcement-form">
                 @csrf
                 @method('PUT')
                 
@@ -81,7 +81,7 @@
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-save"></i> Update Announcement
                     </button>
-                    <a href="{{ route('announcements.index') }}" class="btn btn-secondary">
+                    <a href="{{ route('staff.announcements.index') }}" class="btn btn-secondary">
                         <i class="fas fa-times"></i> Cancel
                     </a>
                 </div>

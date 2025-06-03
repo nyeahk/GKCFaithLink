@@ -61,9 +61,14 @@ class DashboardController extends Controller
     {
         // Convert the date string to a Carbon instance
         $dateObj = Carbon::parse($date);
+        $currentDate = Carbon::now()->startOfDay();
         
-        // Get all events for this date
+        // Get all current and future events for this date
         $events = Event::whereDate('start_date', $dateObj)
+            ->where(function($query) use ($currentDate) {
+                $query->whereDate('start_date', '>=', $currentDate)
+                      ->orWhereDate('end_date', '>=', $currentDate);
+            })
             ->where('status', 'published')
             ->get()
             ->map(function($event) {
@@ -84,11 +89,8 @@ class DashboardController extends Controller
         ]);
     }
     
-    private function generateCalendarData($date)
+    protected function generateCalendarData($date)
     {
-        // Clone the date to avoid modifying the original
-        $date = $date->copy();
-        
         // Get the first day of the month
         $firstDayOfMonth = $date->copy()->startOfMonth();
         
@@ -110,8 +112,13 @@ class DashboardController extends Controller
         // Get today's date for comparison
         $today = Carbon::today();
         
-        // Get all events for this month
-        $events = Event::whereBetween('start_date', [$firstDayOfCalendar, $lastDayOfCalendar])
+        // Get current and future events for this month (exclude past events)
+        $currentDate = Carbon::now()->startOfDay();
+        $events = Event::where(function($query) use ($currentDate) {
+                $query->whereDate('start_date', '>=', $currentDate)
+                      ->orWhereDate('end_date', '>=', $currentDate);
+            })
+            ->whereBetween('start_date', [$firstDayOfCalendar, $lastDayOfCalendar])
             ->where('status', 'published')
             ->get();
         
@@ -156,3 +163,5 @@ class DashboardController extends Controller
         return $calendar;
     }
 }
+
+

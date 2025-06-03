@@ -18,7 +18,6 @@ class RegisterController extends Controller
 
     public function register(Request $request)
     {
-        
         $request->validate([
             'username' => 'required|string|max:255|unique:users',
             'email' => 'required|string|email|max:255|unique:users',
@@ -31,11 +30,9 @@ class RegisterController extends Controller
             'password' => Hash::make($request->password),
             'role' => 3,
         ]);
-
         
-        Auth::login($user);
-
+        // Instead of logging in the user immediately, redirect to login with success message
         return redirect()->route('login')
-            ->with('success', 'Registration successful! You are now logged in.');
+            ->with('success', 'Registration successful! Please login with your credentials.');
     }
 }

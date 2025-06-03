@@ -9,7 +9,7 @@
             <h1>Edit Event</h1>
             <p class="subtitle">Update the event details below</p>
         </div>
-        <a href="{{ route('admin.events.index') }}" class="btn btn-back">
+        <a href="{{ route('staff.events.index') }}" class="btn btn-back">
             <i class="fas fa-arrow-left"></i> Back to Events
         </a>
     </div>
@@ -22,7 +22,7 @@
     @endif
 
     <div class="event-form-card">
-        <form action="{{ route('admin.events.update', $event->id) }}" method="POST" enctype="multipart/form-data" class="event-form">
+        <form action="{{ route('staff.events.update', $event->id) }}" method="POST" enctype="multipart/form-data" class="event-form">
             @csrf
             @method('PUT')
             
@@ -103,7 +103,7 @@
                 <button type="submit" class="btn btn-primary">
                     <i class="fas fa-save"></i> Update Event
                 </button>
-                <a href="{{ route('admin.events.index') }}" class="btn btn-secondary">
+                <a href="{{ route('staff.events.index') }}" class="btn btn-secondary">
                     <i class="fas fa-times"></i> Cancel
                 </a>
             </div>

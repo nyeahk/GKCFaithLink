@@ -11,10 +11,20 @@
                 <span class="period-label">Period:</span>
                 <span class="period-value">{{ $startDate->format('F Y') }}</span>
             </div>
-            <a href="{{ route('reports.monthly.download', ['date' => $startDate->format('Y-m-d')]) }}" class="btn btn-primary">
+            <a href="{{ route('treasurer.reports.monthly.download', ['date' => $startDate->format('Y-m-d')]) }}" class="btn btn-primary">
                 <i class="fas fa-download"></i> Download PDF
             </a>
         </div>
+    </div>
+
+    <div class="filter-container">
+        <form method="GET" action="{{ route('treasurer.reports.monthly') }}">
+            <div class="filter-group">
+                <label for="monthFilter">Filter by Month:</label>
+                <input type="month" name="month" id="monthFilter" value="{{ request('month', $startDate->format('Y-m')) }}" class="filter-input">
+            </div>
+            <button type="submit" class="btn btn-primary">Apply Filters</button>
+        </form>
     </div>
 
     <div class="report-summary">
@@ -297,23 +307,55 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const ctx = document.getElementById('donationsChart').getContext('2d');
+        
+        // Create gradient for chart
+        const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+        gradient.addColorStop(0, 'rgba(75, 192, 192, 0.6)');
+        gradient.addColorStop(1, 'rgba(75, 192, 192, 0.1)');
+        
         new Chart(ctx, {
             type: 'bar',
             data: {
                 labels: {!! json_encode($donationWeeks) !!},
                 datasets: [{
-                    label: 'Donations',
+                    label: 'Donations (₱)',
                     data: {!! json_encode($donationAmounts) !!},
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    backgroundColor: gradient,
                     borderColor: 'rgb(75, 192, 192)',
-                    borderWidth: 1
+                    borderWidth: 1,
+                    borderRadius: 4
                 }]
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed.y !== null) {
+                                    label += '₱' + new Intl.NumberFormat().format(context.parsed.y);
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                },
                 scales: {
                     y: {
-                        beginAtZero: true
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return '₱' + value;
+                            }
+                        }
                     }
                 }
             }
@@ -321,3 +363,5 @@
     });
 </script>
 @endpush
+
+

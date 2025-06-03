@@ -2,6 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\LogoutController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +16,24 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-}); 
+// Public API routes
+Route::post('/login', [LoginController::class, 'login']);
+
+// Protected API routes
+Route::middleware(['auth', 'user.active'])->group(function () {
+    // User info
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
+    
+    // Logout
+    Route::post('/logout', [LogoutController::class, 'logout']);
+    
+    // Add your other API routes here
+});
+
+
+
+
+
+

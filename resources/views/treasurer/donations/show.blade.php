@@ -3,855 +3,405 @@
 @section('title', 'Donation Details')
 
 @section('content')
-    <div class="donation-details-container">
-        <div class="donation-details-header">
-            <h1>Donation Details</h1>
-            <a href="{{ route('admin.donations.index') }}" class="btn btn-back">
-                <i class="fas fa-arrow-left"></i> Back to Donations
-            </a>
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ route('treasurer.dashboard') }}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('treasurer.donations.index') }}">Donations</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Donation #{{ $donation->id }}</li>
+                </ol>
+            </nav>
         </div>
-
-        <div class="donation-cards-grid">
-            <!-- Donor Information Card -->
-            <div class="donation-card donor-card">
-                <div class="card-header">
-                    <i class="fas fa-user-circle"></i>
-                    <h2>Donor Information</h2>
-                </div>
-                <div class="card-content">
-                    @if($donation->user_id)
-                        <div class="donor-profile">
-                            <div class="profile-header">
-                                @if($donation->user->profile_photo)
-                                    <img src="{{ asset('storage/' . $donation->user->profile_photo) }}" 
-                                         alt="{{ $donation->user->name }}" 
-                                         class="profile-photo">
-                                @else
-                                    <div class="profile-photo-placeholder">
-                                        <i class="fas fa-user"></i>
-                                    </div>
-                                @endif
-                                <div class="profile-info">
-                                    <h3>{{ $donation->user->name }}</h3>
-                                    <span class="member-since">Member since {{ $donation->user->created_at->format('M Y') }}</span>
-                                </div>
-                            </div>
-                            <div class="donor-details">
-                                <div class="detail-item">
-                                    <i class="fas fa-envelope"></i>
-                                    <div class="detail-content">
-                                        <label>Email</label>
-                                        <span>{{ $donation->user->email }}</span>
-                                    </div>
-                                </div>
-                                @if($donation->user->phone)
-                                    <div class="detail-item">
-                                        <i class="fas fa-phone"></i>
-                                        <div class="detail-content">
-                                            <label>Phone</label>
-                                            <span>{{ $donation->user->phone }}</span>
-                                        </div>
-                                    </div>
-                                @endif
-                                @if($donation->user->address)
-                                    <div class="detail-item">
-                                        <i class="fas fa-map-marker-alt"></i>
-                                        <div class="detail-content">
-                                            <label>Address</label>
-                                            <span>{{ $donation->user->address }}</span>
-                                        </div>
-                                    </div>
-                                @endif
-                            </div>
-                            <div class="profile-actions">
-                                <a href="{{ route('members.show', ['id' => $donation->user_id]) }}" class="btn btn-view-profile">
-                                    <i class="fas fa-user"></i> View Full Profile
-                                </a>
-                            </div>
-                        </div>
-                    @else
-                        <div class="donor-details">
-                            <div class="detail-item">
-                                <i class="fas fa-user"></i>
-                                <div class="detail-content">
-                                    <label>Name</label>
-                                    <span>{{ $donation->donor_name }}</span>
-                                </div>
-                            </div>
-                        </div>
-                    @endif
-                </div>
-            </div>
-
-            <!-- Transaction Details Card -->
-            <div class="donation-card transaction-card">
-                <div class="card-header">
-                    <i class="fas fa-receipt"></i>
-                    <h2>Transaction Details</h2>
-                </div>
-                <div class="card-content">
-                    <div class="detail-item">
-                        <i class="fas fa-money-bill-wave"></i>
-                        <div class="detail-content">
-                            <label>Amount</label>
-                            <span class="amount">₱{{ number_format($donation->amount, 2) }}</span>
-                        </div>
-                    </div>
-                    <div class="detail-item">
-                        <i class="fas fa-bullseye"></i>
-                        <div class="detail-content">
-                            <label>Purpose</label>
-                            <span>{{ ucfirst($donation->purpose) }}</span>
-                        </div>
-                    </div>
-                    <div class="detail-item">
-                        <i class="fas fa-credit-card"></i>
-                        <div class="detail-content">
-                            <label>Payment Method</label>
-                            <span>{{ $donation->payment_method }}</span>
-                        </div>
-                    </div>
-                    @if($donation->reference_number)
-                        <div class="detail-item">
-                            <i class="fas fa-hashtag"></i>
-                            <div class="detail-content">
-                                <label>Reference Number</label>
-                                <span>{{ $donation->reference_number }}</span>
-                            </div>
-                        </div>
-                    @endif
-                    <div class="detail-item">
-                        <i class="fas fa-calendar-alt"></i>
-                        <div class="detail-content">
-                            <label>Transaction Date</label>
-                            <span>{{ $donation->transaction_date ? $donation->transaction_date->format('M d, Y h:i A') : 'Not set' }}</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Status Card -->
-            <div class="donation-card status-card">
-                <div class="card-header">
-                    <i class="fas fa-info-circle"></i>
-                    <h2>Status Information</h2>
-                </div>
-                <div class="card-content">
-                    <div class="status-display">
-                        <span class="status-badge status-{{ $donation->status }}">
-                            <i class="fas fa-circle"></i>
-                            {{ ucfirst($donation->status) }}
-                        </span>
-                    </div>
-                    @if($donation->admin)
-                        <div class="detail-item">
-                            <i class="fas fa-user-shield"></i>
-                            <div class="detail-content">
-                                <label>Processed By</label>
-                                <span>{{ $donation->admin->name }}</span>
-                            </div>
-                        </div>
-                    @endif
-                    @if($donation->admin_response)
-                        <div class="detail-item">
-                            <i class="fas fa-comment-alt"></i>
-                            <div class="detail-content">
-                                <label>Admin Response</label>
-                                <span>{{ $donation->admin_response }}</span>
-                            </div>
-                        </div>
-                    @endif
-                </div>
-            </div>
-
-            <!-- Verification Card -->
-            @if($donation->verification_notes)
-                <div class="donation-card verification-card">
-                    <div class="card-header">
-                        <i class="fas fa-check-circle"></i>
-                        <h2>Verification Details</h2>
-                    </div>
-                    <div class="card-content">
-                        <div class="verification-notes">
-                            <p>{{ $donation->verification_notes }}</p>
-                        </div>
-                        @if($donation->verified_by)
-                            <div class="verification-meta">
-                                <div class="detail-item">
-                                    <i class="fas fa-user-check"></i>
-                                    <span>Verified by: {{ $donation->verified_by }}</span>
-                                </div>
-                                <div class="detail-item">
-                                    <i class="fas fa-calendar-check"></i>
-                                    <span>Date: {{ $donation->verification_date->format('M d, Y h:i A') }}</span>
-                                </div>
-                            </div>
-                        @endif
-                    </div>
-                </div>
-            @endif
-
-            <!-- Payment Screenshot Card -->
-            <div class="card">
-                <div class="card-header">
-                    <i class="fas fa-image"></i>
-                    <h3>Payment Screenshot</h3>
-                </div>
-                <div class="card-body">
-                    @if($donation->screenshot)
-                        <div class="screenshot-container">
-                            <a href="{{ asset('storage/' . $donation->screenshot) }}" class="screenshot-link" data-lightbox="payment-screenshot">
-                                <img src="{{ asset('storage/' . $donation->screenshot) }}" 
-                                     alt="Payment Screenshot" 
-                                     class="screenshot-image"
-                                     loading="lazy">
-                                <div class="screenshot-overlay">
-                                    <div class="overlay-content">
-                                        <i class="fas fa-search-plus"></i>
-                                        <span>Click to view full size</span>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                    @else
-                        <div class="no-screenshot">
-                            <i class="fas fa-image"></i>
-                            <p>No screenshot provided</p>
-                        </div>
-                    @endif
-                </div>
-            </div>
-        </div>
-
-        @if($donation->status === 'pending')
-            <div class="donation-actions">
-                <form action="{{ route('admin.donations.approve', $donation) }}" method="POST" class="d-inline">
-                    @csrf
-                    <button type="submit" class="btn btn-approve">
-                        <i class="fas fa-check"></i> Approve
-                    </button>
-                </form>
-
-                <button type="button" class="btn btn-decline" onclick="showDeclineModal({{ $donation->id }})">
-                    <i class="fas fa-times"></i> Decline
-                </button>
-            </div>
-        @endif
     </div>
 
-    <!-- Decline Modal -->
-    <div class="modal" id="declineModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Decline Donation</h3>
-                <button class="modal-close">&times;</button>
+    <div class="row">
+        <div class="col-lg-10 mx-auto">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="bi bi-cash-coin me-2"></i>Donation Details #{{ $donation->id }}</h5>
+                    <div>
+                        <a href="{{ route('treasurer.donations.index') }}" class="btn btn-light btn-sm">
+                            <i class="bi bi-arrow-left me-1"></i> Back
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <!-- Left column - Donation and donor details -->
+                        <div class="col-md-7">
+                            <!-- Donation status and amount -->
+                            <div class="mb-4">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="donation-amount-badge me-3">
+                                        <i class="bi bi-cash"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-muted small">Amount</div>
+                                        <div class="fs-3 fw-bold">₱{{ number_format($donation->amount, 2) }}</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="donation-status-container mb-3">
+                                    <div class="text-muted small mb-1">Status</div>
+                                    <div>
+                                        @if($donation->status == 'pending')
+                                            <span class="badge bg-warning text-dark px-3 py-2">
+                                                <i class="bi bi-hourglass-split me-1"></i> Pending
+                                            </span>
+                                        @elseif($donation->status == 'verified')
+                                            <span class="badge bg-success px-3 py-2">
+                                                <i class="bi bi-check-circle me-1"></i> Verified
+                                            </span>
+                                        @elseif($donation->status == 'declined')
+                                            <span class="badge bg-danger px-3 py-2">
+                                                <i class="bi bi-x-circle me-1"></i> Declined
+                                            </span>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Donation information -->
+                            <div class="donation-info-section mb-4">
+                                <h6 class="section-title border-bottom pb-2 mb-3">
+                                    <i class="bi bi-info-circle me-2"></i>Donation Information
+                                </h6>
+                                
+                                <div class="row mb-2">
+                                    <div class="col-md-4 text-muted">Purpose:</div>
+                                    <div class="col-md-8 fw-medium">{{ ucfirst($donation->purpose) }}</div>
+                                </div>
+                                
+                                <div class="row mb-2">
+                                    <div class="col-md-4 text-muted">Payment Method:</div>
+                                    <div class="col-md-8 fw-medium">{{ ucfirst(str_replace('_', ' ', $donation->payment_method)) }}</div>
+                                </div>
+                                
+                                <div class="row mb-2">
+                                    <div class="col-md-4 text-muted">Reference Number:</div>
+                                    <div class="col-md-8 fw-medium">{{ $donation->reference_number ?: 'N/A' }}</div>
+                                </div>
+                                
+                                <div class="row mb-2">
+                                    <div class="col-md-4 text-muted">Transaction Date:</div>
+                                    <div class="col-md-8 fw-medium">{{ $donation->transaction_date->format('F d, Y h:i A') }}</div>
+                                </div>
+                                
+                                <div class="row mb-2">
+                                    <div class="col-md-4 text-muted">Submitted On:</div>
+                                    <div class="col-md-8 fw-medium">{{ $donation->created_at->format('F d, Y h:i A') }}</div>
+                                </div>
+                                
+                                @if($donation->notes)
+                                <div class="row mb-2">
+                                    <div class="col-md-4 text-muted">Notes:</div>
+                                    <div class="col-md-8 fw-medium">{{ $donation->notes }}</div>
+                                </div>
+                                @endif
+                                
+                                @if($donation->status == 'verified')
+                                <div class="row mb-2">
+                                    <div class="col-md-4 text-muted">Verified By:</div>
+                                    <div class="col-md-8 fw-medium">{{ $donation->verified_by }}</div>
+                                </div>
+                                
+                                <div class="row mb-2">
+                                    <div class="col-md-4 text-muted">Verification Date:</div>
+                                    <div class="col-md-8 fw-medium">{{ $donation->verification_date->format('F d, Y h:i A') }}</div>
+                                </div>
+                                @endif
+                                
+                                @if($donation->status == 'declined' && $donation->treasurer_response)
+                                <div class="row mb-2">
+                                    <div class="col-md-4 text-muted">Decline Reason:</div>
+                                    <div class="col-md-8 fw-medium">{{ $donation->treasurer_response }}</div>
+                                </div>
+                                @endif
+                            </div>
+                            
+                            <!-- Donor information -->
+                            <div class="donor-info-section">
+                                <h6 class="section-title border-bottom pb-2 mb-3">
+                                    <i class="bi bi-person-circle me-2"></i>Donor Information
+                                </h6>
+                                
+                                @if($donation->user_id)
+                                <div class="donor-profile d-flex align-items-center mb-3">
+                                    <div class="donor-avatar me-3">
+                                        @if($donation->user->profile_photo)
+                                            <img src="{{ asset('storage/' . $donation->user->profile_photo) }}" 
+                                                alt="{{ $donation->user->name }}" 
+                                                class="rounded-circle" width="60" height="60">
+                                        @else
+                                            <div class="avatar-placeholder">
+                                                <i class="bi bi-person-fill"></i>
+                                            </div>
+                                        @endif
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1">{{ $donation->user->name }}</h6>
+                                        <p class="text-muted mb-0 small">Member since {{ $donation->user->created_at->format('M Y') }}</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="row mb-2">
+                                    <div class="col-md-4 text-muted">Email:</div>
+                                    <div class="col-md-8 fw-medium">{{ $donation->user->email }}</div>
+                                </div>
+                                
+                                <div class="row mb-2">
+                                    <div class="col-md-4 text-muted">Phone:</div>
+                                    <div class="col-md-8 fw-medium">{{ $donation->user->contact_number ?? 'N/A' }}</div>
+                                </div>
+                                
+                                <div class="row mb-2">
+                                    <div class="col-md-4 text-muted">Address:</div>
+                                    <div class="col-md-8 fw-medium">{{ $donation->user->address ?? 'N/A' }}</div>
+                                </div>
+                                @else
+                                <div class="alert alert-info mb-0">
+                                    <i class="bi bi-info-circle me-2"></i>
+                                    This donation was manually added by the treasurer.
+                                </div>
+                                @endif
+                            </div>
+                        </div>
+                        
+                        <!-- Right column - Screenshots and receipt -->
+                        <div class="col-md-5">
+                            <!-- Payment proof -->
+                            @if($donation->screenshot)
+                            <div class="mb-4">
+                                <h6 class="section-title border-bottom pb-2 mb-3">
+                                    <i class="bi bi-image me-2"></i>Payment Screenshot
+                                </h6>
+                                <div class="text-center mb-3">
+                                    <div class="screenshot-container">
+                                        <a href="{{ asset('storage/' . $donation->screenshot) }}" target="_blank" class="screenshot-link">
+                                            <img src="{{ asset('storage/' . $donation->screenshot) }}" 
+                                                alt="Payment Screenshot" 
+                                                class="img-fluid rounded shadow-sm">
+                                            <div class="screenshot-overlay">
+                                                <i class="bi bi-zoom-in"></i>
+                                                <span>Click to enlarge</span>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            @endif
+                            
+                            <!-- Receipt image -->
+                            @if($donation->receipt_image)
+                            <div class="mb-4">
+                                <h6 class="section-title border-bottom pb-2 mb-3">
+                                    <i class="bi bi-receipt me-2"></i>Receipt Image
+                                </h6>
+                                <div class="text-center mb-3">
+                                    <div class="screenshot-container">
+                                        <a href="{{ asset('storage/' . $donation->receipt_image) }}" target="_blank" class="screenshot-link">
+                                            <img src="{{ asset('storage/' . $donation->receipt_image) }}" 
+                                                alt="Receipt Image" 
+                                                class="img-fluid rounded shadow-sm">
+                                            <div class="screenshot-overlay">
+                                                <i class="bi bi-zoom-in"></i>
+                                                <span>Click to enlarge</span>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            @endif
+                            
+                            <!-- Verification actions for pending donations -->
+                            @if($donation->status == 'pending')
+                            <div class="verification-actions mt-4">
+                                <div class="alert alert-warning">
+                                    <div class="d-flex">
+                                        <div class="me-3">
+                                            <i class="bi bi-exclamation-triangle-fill fs-4"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="alert-heading">Verification Required</h6>
+                                            <p class="mb-0">Please verify this donation by checking the payment details and screenshot.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="d-grid gap-2">
+                                    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#verifyModal">
+                                        <i class="bi bi-check-circle me-2"></i> Verify Donation
+                                    </button>
+                                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#declineModal">
+                                        <i class="bi bi-x-circle me-2"></i> Decline Donation
+                                    </button>
+                                </div>
+                            </div>
+                            @endif
+                        </div>
+                    </div>
+                </div>
             </div>
-            <form id="declineForm" method="POST">
+        </div>
+    </div>
+</div>
+
+<!-- Verify Modal -->
+<div class="modal fade" id="verifyModal" tabindex="-1" aria-labelledby="verifyModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="{{ route('treasurer.donations.verify', $donation->id) }}" method="POST">
                 @csrf
+                <div class="modal-header">
+                    <h5 class="modal-title" id="verifyModalLabel">Verify Donation</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
                 <div class="modal-body">
-                    <div class="form-group">
-                        <label for="admin_response">Reason for Declining</label>
-                        <textarea id="admin_response" name="admin_response" class="form-control" rows="3" required></textarea>
+                    <p>Are you sure you want to verify this donation of <strong>₱{{ number_format($donation->amount, 2) }}</strong>?</p>
+                    
+                    <input type="hidden" name="status" value="verified">
+                    
+                    <div class="mb-3">
+                        <label for="verification_notes" class="form-label">Verification Notes (Optional)</label>
+                        <textarea class="form-control" id="verification_notes" name="verification_notes" rows="3" placeholder="Add any notes about this verification"></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" onclick="closeDeclineModal()">Cancel</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success">Verify Donation</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Decline Modal -->
+<div class="modal fade" id="declineModal" tabindex="-1" aria-labelledby="declineModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="{{ route('treasurer.donations.verify', $donation->id) }}" method="POST">
+                @csrf
+                <div class="modal-header">
+                    <h5 class="modal-title" id="declineModalLabel">Decline Donation</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to decline this donation of <strong>₱{{ number_format($donation->amount, 2) }}</strong>?</p>
+                    
+                    <input type="hidden" name="status" value="declined">
+                    
+                    <div class="mb-3">
+                        <label for="verification_notes" class="form-label">Reason for Declining (Required)</label>
+                        <textarea class="form-control" id="verification_notes" name="verification_notes" rows="3" placeholder="Please provide a reason for declining this donation" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-danger">Decline Donation</button>
                 </div>
             </form>
         </div>
     </div>
+</div>
 @endsection
 
 @push('styles')
 <style>
-    .donation-details-container {
-        padding: 2rem;
-    }
-
-    .donation-details-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 2rem;
-    }
-
-    .donation-details-header h1 {
-        color: #1a365d;
-        margin: 0;
-        font-size: 1.875rem;
-    }
-
-    .btn-back {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.5rem 1rem;
-        background-color: #e2e8f0;
-        color: #4a5568;
-        border-radius: 0.375rem;
-        text-decoration: none;
-        transition: all 0.2s;
-    }
-
-    .btn-back:hover {
-        background-color: #cbd5e0;
-    }
-
-    .donation-cards-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 1.5rem;
-        margin-bottom: 2rem;
-    }
-
-    .donation-card {
-        background: white;
-        border-radius: 1rem;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        overflow: hidden;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .donation-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-    }
-
-    .card-header {
-        background: linear-gradient(135deg, var(--primary-dark), var(--accent-teal));
-        color: white;
-        padding: 1.25rem;
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-    }
-
-    .card-header i {
-        font-size: 1.5rem;
-    }
-
-    .card-header h2 {
-        margin: 0;
-        font-size: 1.25rem;
+    .section-title {
+        color: #495057;
+        font-size: 1rem;
         font-weight: 600;
     }
-
-    .card-content {
-        padding: 1.5rem;
-    }
-
-    .detail-item {
+    
+    .donation-amount-badge {
+        width: 60px;
+        height: 60px;
+        background-color: rgba(13, 110, 253, 0.1);
+        border-radius: 50%;
         display: flex;
-        align-items: flex-start;
-        gap: 1rem;
-        margin-bottom: 1rem;
-        padding-bottom: 1rem;
-        border-bottom: 1px solid #e2e8f0;
+        align-items: center;
+        justify-content: center;
     }
-
-    .detail-item:last-child {
-        margin-bottom: 0;
-        padding-bottom: 0;
-        border-bottom: none;
+    
+    .donation-amount-badge i {
+        font-size: 1.75rem;
+        color: #0d6efd;
     }
-
-    .detail-item i {
-        color: var(--accent-teal);
-        font-size: 1.25rem;
-        width: 1.5rem;
-        text-align: center;
-    }
-
-    .detail-content {
-        flex: 1;
-    }
-
-    .detail-content label {
-        display: block;
-        color: #718096;
-        font-size: 0.875rem;
-        margin-bottom: 0.25rem;
-    }
-
-    .detail-content span {
-        color: #2d3748;
+    
+    .fw-medium {
         font-weight: 500;
     }
-
-    .amount {
-        color: var(--primary-dark);
-        font-size: 1.25rem;
-        font-weight: 600;
-    }
-
-    .donor-link {
+    
+    .avatar-placeholder {
+        width: 60px;
+        height: 60px;
+        background-color: #e9ecef;
+        border-radius: 50%;
         display: flex;
         align-items: center;
-        gap: 0.75rem;
-        color: var(--primary-dark);
-        text-decoration: none;
-        font-weight: 600;
-        margin-bottom: 1rem;
+        justify-content: center;
+        color: #6c757d;
+        font-size: 1.5rem;
     }
-
-    .donor-link:hover {
-        color: var(--accent-teal);
-    }
-
-    .donor-details {
-        display: flex;
-        flex-direction: column;
-        gap: 0.75rem;
-    }
-
-    .verification-notes {
-        background-color: #f7fafc;
-        padding: 1rem;
-        border-radius: 0.5rem;
-        border-left: 4px solid var(--accent-teal);
-        margin-bottom: 1rem;
-    }
-
-    .verification-notes p {
-        margin: 0;
-        color: #2d3748;
-        line-height: 1.5;
-    }
-
-    .verification-meta {
-        display: flex;
-        flex-direction: column;
-        gap: 0.75rem;
-    }
-
+    
     .screenshot-container {
-        width: 100%;
-        max-width: 100%;
-        margin: 0 auto;
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         position: relative;
-        background: #f8f9fa;
-        min-height: 200px;
+        display: inline-block;
+        max-width: 100%;
+        border-radius: 0.375rem;
+        overflow: hidden;
     }
-
+    
     .screenshot-link {
         display: block;
         position: relative;
-        width: 100%;
-        height: 100%;
-        cursor: pointer;
     }
-
-    .screenshot-image {
-        width: 100%;
-        height: auto;
-        display: block;
-        object-fit: contain;
-        transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        max-height: 400px;
-        margin: 0 auto;
-    }
-
+    
     .screenshot-overlay {
         position: absolute;
         top: 0;
         left: 0;
-        right: 0;
-        bottom: 0;
-        background: linear-gradient(to bottom, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.6));
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        color: white;
         display: flex;
+        flex-direction: column;
         align-items: center;
         justify-content: center;
         opacity: 0;
         transition: opacity 0.3s ease;
     }
-
-    .overlay-content {
-        text-align: center;
-        transform: translateY(20px);
-        transition: transform 0.3s ease;
-    }
-
+    
     .screenshot-overlay i {
-        font-size: 2.5rem;
-        margin-bottom: 0.75rem;
-        color: white;
-        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    }
-
-    .screenshot-overlay span {
-        font-size: 1rem;
-        color: white;
-        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-        display: block;
-    }
-
-    .screenshot-link:hover .screenshot-overlay {
-        opacity: 1;
-    }
-
-    .screenshot-link:hover .overlay-content {
-        transform: translateY(0);
-    }
-
-    .screenshot-link:hover .screenshot-image {
-        transform: scale(1.05);
-    }
-
-    .no-screenshot {
-        text-align: center;
-        padding: 3rem 2rem;
-        color: #6c757d;
-        background: #f8f9fa;
-        border-radius: 12px;
-        border: 2px dashed #dee2e6;
-    }
-
-    .no-screenshot i {
-        font-size: 3.5rem;
-        margin-bottom: 1rem;
-        color: #dee2e6;
-        opacity: 0.7;
-    }
-
-    .no-screenshot p {
-        margin: 0;
-        font-size: 1.1rem;
-        font-weight: 500;
-    }
-
-    .status-display {
-        margin-bottom: 1.5rem;
-    }
-
-    .status-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.5rem 1rem;
-        border-radius: 9999px;
-        font-weight: 600;
-    }
-
-    .status-pending {
-        background-color: #fef3c7;
-        color: #92400e;
-    }
-
-    .status-approved {
-        background-color: #dcfce7;
-        color: #166534;
-    }
-
-    .status-declined {
-        background-color: #fee2e2;
-        color: #991b1b;
-    }
-
-    .donation-actions {
-        display: flex;
-        gap: 1rem;
-        margin-top: 2rem;
-        justify-content: center;
-    }
-
-    .btn-approve {
-        background-color: #10b981;
-        color: white;
-        padding: 0.75rem 1.5rem;
-        border-radius: 0.5rem;
-        border: none;
-        cursor: pointer;
-        transition: all 0.2s;
-        font-weight: 600;
-    }
-
-    .btn-approve:hover {
-        background-color: #059669;
-        transform: translateY(-2px);
-    }
-
-    .btn-decline {
-        background-color: #ef4444;
-        color: white;
-        padding: 0.75rem 1.5rem;
-        border-radius: 0.5rem;
-        border: none;
-        cursor: pointer;
-        transition: all 0.2s;
-        font-weight: 600;
-    }
-
-    .btn-decline:hover {
-        background-color: #dc2626;
-        transform: translateY(-2px);
-    }
-
-    /* Modal Styles */
-    .modal {
-        display: none;
-        position: fixed;
-        z-index: 1000;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
-    }
-
-    .modal-content {
-        background-color: white;
-        margin: 15% auto;
-        padding: 2rem;
-        border-radius: 1rem;
-        width: 50%;
-        max-width: 600px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-
-    .modal-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 1.5rem;
-    }
-
-    .modal-header h3 {
-        margin: 0;
-        color: #1a365d;
-    }
-
-    .modal-close {
-        background: none;
-        border: none;
-        font-size: 1.5rem;
-        cursor: pointer;
-        color: #718096;
-    }
-
-    .modal-body {
-        margin-bottom: 1.5rem;
-    }
-
-    .modal-footer {
-        display: flex;
-        justify-content: flex-end;
-        gap: 1rem;
-    }
-
-    .btn-secondary {
-        background-color: #e2e8f0;
-        color: #4a5568;
-        padding: 0.75rem 1.5rem;
-        border-radius: 0.5rem;
-        border: none;
-        cursor: pointer;
-        font-weight: 600;
-    }
-
-    .btn-danger {
-        background-color: #ef4444;
-        color: white;
-        padding: 0.75rem 1.5rem;
-        border-radius: 0.5rem;
-        border: none;
-        cursor: pointer;
-        font-weight: 600;
-    }
-
-    @media (max-width: 768px) {
-        .donation-cards-grid {
-            grid-template-columns: 1fr;
-        }
-
-        .modal-content {
-            width: 90%;
-            margin: 10% auto;
-        }
-    }
-
-    /* Lightbox Customization */
-    .lb-data .lb-caption {
-        font-size: 1rem;
-        font-weight: 500;
-    }
-
-    .lb-data .lb-number {
-        font-size: 0.9rem;
-        color: #6c757d;
-    }
-
-    .lb-nav a.lb-prev,
-    .lb-nav a.lb-next {
-        opacity: 0.9;
-    }
-
-    .lb-nav a.lb-prev:hover,
-    .lb-nav a.lb-next:hover {
-        opacity: 1;
-    }
-
-    .lb-outerContainer {
-        border-radius: 8px;
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
     }
     
-    .lb-image {
-        border-radius: 4px;
+    .screenshot-container:hover .screenshot-overlay {
+        opacity: 1;
     }
-
-    .donor-profile {
-        display: flex;
-        flex-direction: column;
-        gap: 1.5rem;
+    
+    .screenshot-container img {
+        transition: transform 0.3s ease;
+        max-height: 400px;
+        width: auto;
     }
-
-    .profile-header {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        padding-bottom: 1rem;
-        border-bottom: 1px solid #e2e8f0;
+    
+    .screenshot-container:hover img {
+        transform: scale(1.02);
     }
-
-    .profile-photo {
-        width: 64px;
-        height: 64px;
-        border-radius: 50%;
-        object-fit: cover;
-        border: 3px solid var(--accent-teal);
+    
+    .card-header {
+        padding: 1rem 1.25rem;
     }
-
-    .profile-photo-placeholder {
-        width: 64px;
-        height: 64px;
-        border-radius: 50%;
-        background: #e2e8f0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border: 3px solid var(--accent-teal);
-    }
-
-    .profile-photo-placeholder i {
-        font-size: 1.5rem;
-        color: #718096;
-    }
-
-    .profile-info {
-        flex: 1;
-    }
-
-    .profile-info h3 {
-        margin: 0;
-        color: var(--primary-dark);
-        font-size: 1.25rem;
-    }
-
-    .member-since {
-        font-size: 0.875rem;
-        color: #718096;
-    }
-
-    .donor-details {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-    }
-
-    .detail-item {
-        display: flex;
-        align-items: flex-start;
-        gap: 1rem;
-    }
-
-    .detail-item i {
-        color: var(--accent-teal);
-        font-size: 1.25rem;
-        width: 1.5rem;
-        text-align: center;
-        margin-top: 0.25rem;
-    }
-
-    .detail-content {
-        flex: 1;
-    }
-
-    .detail-content label {
-        display: block;
-        color: #718096;
-        font-size: 0.875rem;
-        margin-bottom: 0.25rem;
-    }
-
-    .detail-content span {
-        color: #2d3748;
+    
+    .badge {
         font-weight: 500;
-    }
-
-    .profile-actions {
-        margin-top: 1rem;
-        padding-top: 1rem;
-        border-top: 1px solid #e2e8f0;
-    }
-
-    .btn-view-profile {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.5rem 1rem;
-        background-color: var(--accent-teal);
-        color: white;
-        border-radius: 0.375rem;
-        text-decoration: none;
-        font-weight: 500;
-        transition: all 0.2s;
-    }
-
-    .btn-view-profile:hover {
-        background-color: var(--primary-dark);
-        transform: translateY(-2px);
     }
 </style>
 @endpush
 
-@push('styles')
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css">
-@endpush
 
-@push('scripts')
-<script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
-<script>
-    function showDeclineModal(donationId) {
-        const modal = document.getElementById('declineModal');
-        const form = document.getElementById('declineForm');
-        form.action = `/donations/${donationId}/decline`;
-        modal.style.display = 'block';
-    }
-
-    function closeDeclineModal() {
-        const modal = document.getElementById('declineModal');
-        modal.style.display = 'none';
-    }
-
-    // Close modal when clicking outside
-    window.onclick = function(event) {
-        const modal = document.getElementById('declineModal');
-        if (event.target == modal) {
-            closeDeclineModal();
-        }
-    }
-
-    lightbox.option({
-        'resizeDuration': 200,
-        'wrapAround': true,
-        'albumLabel': 'Image %1 of %2',
-        'fadeDuration': 300,
-        'imageFadeDuration': 300,
-        'showImageNumberLabel': true,
-        'alwaysShowNavOnTouchDevices': true
-    });
-</script>
-@endpush 

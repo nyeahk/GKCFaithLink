@@ -12,10 +12,10 @@
                         {{ $event->title }}
                     </h1>
                     <div class="header-actions">
-                        <a href="{{ route('admin.events.edit', $event->id) }}" class="btn btn-primary">
+                        <a href="{{ route('staff.events.edit', $event->id) }}" class="btn btn-primary">
                             <i class="fas fa-edit"></i> Edit Event
                         </a>
-                        <form action="{{ route('admin.events.destroy', $event->id) }}" method="POST" class="d-inline">
+                        <form action="{{ route('staff.events.destroy', $event->id) }}" method="POST" class="d-inline">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this event?')">
@@ -73,7 +73,7 @@
         </div>
 
         <div class="event-footer">
-            <a href="{{ route('admin.events.index') }}" class="btn btn-secondary">
+            <a href="{{ route('staff.events.index') }}" class="btn btn-secondary">
                 <i class="fas fa-arrow-left"></i> Back to Events
             </a>
         </div>

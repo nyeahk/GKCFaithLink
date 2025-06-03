@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\Models\Event;
+use App\Models\User;
 
 class DashboardController extends Controller
 {
@@ -32,12 +33,20 @@ public function index(Request $request)
     // Generate calendar data
     $calendar = $this->generateCalendarData($currentDate);
 
+    // Get counts for dashboard stats
+    $membersCount = User::where('role', 3)->count();
+    $treasurersCount = User::where('role', 2)->count();
+    $staffCount = User::where('role', 4)->count();
+
     return view('admin.dashboard.dashboard', [
         'calendar' => $calendar,
         'currentDate' => $currentDate,
         'todayTimestamp' => $todayTimestamp,
         'lastMonthTimestamp' => $lastMonthTimestamp,
-        'nextMonthTimestamp' => $nextMonthTimestamp
+        'nextMonthTimestamp' => $nextMonthTimestamp,
+        'membersCount' => $membersCount,
+        'treasurersCount' => $treasurersCount,
+        'staffCount' => $staffCount
     ]);
 }
     /**
@@ -46,11 +55,8 @@ public function index(Request $request)
      * @param Carbon $date
      * @return array
      */
-    private function generateCalendarData(Carbon $date)
+    protected function generateCalendarData($date)
     {
-        // Clone the date to avoid modifying the original
-        $date = $date->copy();
-        
         // Get the first day of the month
         $firstDayOfMonth = $date->copy()->startOfMonth();
         
@@ -58,16 +64,27 @@ public function index(Request $request)
         $lastDayOfMonth = $date->copy()->endOfMonth();
         
         // Get the first day of the calendar (the Sunday before or on the first day of the month)
-        $firstDayOfCalendar = $firstDayOfMonth->copy()->startOfWeek(Carbon::SUNDAY);
+        $firstDayOfCalendar = $firstDayOfMonth->copy();
+        if ($firstDayOfCalendar->dayOfWeek !== 0) { // 0 is Sunday
+            $firstDayOfCalendar->subDays($firstDayOfCalendar->dayOfWeek);
+        }
         
         // Get the last day of the calendar (the Saturday after or on the last day of the month)
-        $lastDayOfCalendar = $lastDayOfMonth->copy()->endOfWeek(Carbon::SATURDAY);
+        $lastDayOfCalendar = $lastDayOfMonth->copy();
+        if ($lastDayOfCalendar->dayOfWeek !== 6) { // 6 is Saturday
+            $lastDayOfCalendar->addDays(6 - $lastDayOfCalendar->dayOfWeek);
+        }
         
         // Get today's date for highlighting
         $today = Carbon::today();
         
-        // Get all events for the month
-        $events = Event::whereBetween('start_date', [
+        // Get current and future events for the month (exclude past events)
+        $currentDate = Carbon::now()->startOfDay();
+        $events = Event::where(function($query) use ($currentDate) {
+                $query->whereDate('start_date', '>=', $currentDate)
+                      ->orWhereDate('end_date', '>=', $currentDate);
+            })
+            ->whereBetween('start_date', [
                 $firstDayOfCalendar->copy()->startOfDay(),
                 $lastDayOfCalendar->copy()->endOfDay()
             ])
@@ -111,8 +128,14 @@ public function index(Request $request)
     public function getEventsForDate(Request $request, $date)
     {
         $date = Carbon::parse($date);
+        $currentDate = Carbon::now()->startOfDay();
         
+        // Only get current and future events
         $events = Event::whereDate('start_date', $date)
+            ->where(function($query) use ($currentDate) {
+                $query->whereDate('start_date', '>=', $currentDate)
+                      ->orWhereDate('end_date', '>=', $currentDate);
+            })
             ->select('id', 'title', 'start_date', 'end_date', 'location', 'status', 'description')
             ->get()
             ->map(function ($event) {
@@ -147,3 +170,6 @@ public function index(Request $request)
         }
     }
 }
+
+
+

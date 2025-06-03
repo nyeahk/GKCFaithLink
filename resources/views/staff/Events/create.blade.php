@@ -9,7 +9,7 @@
             <p class="subtitle">Fill in the details to create a new church event</p>
         </div>
 
-        <form action="{{ route('admin.events.store') }}" method="POST" class="create-event-form" enctype="multipart/form-data">
+        <form action="{{ route('staff.events.store') }}" method="POST" class="create-event-form" enctype="multipart/form-data">
             @csrf
             <div class="form-grid">
                 <div class="form-group">
@@ -60,7 +60,7 @@
             </div>
 
             <div class="form-actions">
-                <a href="{{ route('admin.events.index') }}" class="btn btn-secondary">Cancel</a>
+                <a href="{{ route('staff.events.index') }}" class="btn btn-secondary">Cancel</a>
                 <button type="submit" class="btn btn-primary">Create Event</button>
             </div>
         </form>

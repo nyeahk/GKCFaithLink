@@ -9,7 +9,7 @@
                 <h1>Announcements</h1>
                 <p class="subtitle">Manage and publish announcements for your community</p>
             </div>
-            <a href="{{ route('announcements.create') }}" class="btn btn-primary">
+            <a href="{{ route('staff.announcements.create') }}" class="btn btn-primary">
                 <i class="fas fa-plus"></i> Create New Announcement
             </a>
         </div>
@@ -56,13 +56,13 @@
                                 </div>
                             </td>
                             <td class="actions">
-                                <a href="{{ route('announcements.show', $announcement->id) }}" class="btn btn-action btn-view" title="View Announcement">
+                                <a href="{{ route('staff.announcements.show', $announcement->id) }}" class="btn btn-action btn-view" title="View Announcement">
                                     <i class="fas fa-eye"></i>
                                 </a>
-                                <a href="{{ route('announcements.edit', $announcement->id) }}" class="btn btn-action btn-edit" title="Edit Announcement">
+                                <a href="{{ route('staff.announcements.edit', $announcement->id) }}" class="btn btn-action btn-edit" title="Edit Announcement">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                <form action="{{ route('announcements.destroy', $announcement->id) }}" method="POST" class="d-inline">
+                                <form action="{{ route('staff.announcements.destroy', $announcement->id) }}" method="POST" class="d-inline">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-action btn-delete" title="Delete Announcement" onclick="return confirm('Are you sure you want to delete this announcement?')">
@@ -77,7 +77,7 @@
                                 <div class="empty-content">
                                     <i class="fas fa-bullhorn"></i>
                                     <p>No announcements found</p>
-                                    <a href="{{ route('announcements.create') }}" class="btn btn-primary">
+                                    <a href="{{ route('staff.announcements.create') }}" class="btn btn-primary">
                                         <i class="fas fa-plus"></i> Create Your First Announcement
                                     </a>
                                 </div>

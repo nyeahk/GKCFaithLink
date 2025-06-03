@@ -9,7 +9,7 @@
             <h1>View Announcement</h1>
             <p class="subtitle">View and manage announcement details</p>
         </div>
-        <a href="{{ route('announcements.index') }}" class="btn btn-back">
+        <a href="{{ route('staff.announcements.index') }}" class="btn btn-back">
             <i class="fas fa-arrow-left"></i> Back to Announcements
         </a>
     </div>
@@ -29,9 +29,11 @@
             </div>
         </div>
 
-        @if($announcement->image_path)
-            <div class="announcement-image">
-                <img src="{{ asset('storage/' . $announcement->image_path) }}" alt="{{ $announcement->title }}">
+        @if($announcement->image)
+            <div class="announcement-image mb-4">
+                <img src="{{ asset('storage/' . $announcement->image) }}" 
+                    alt="{{ $announcement->title }}" 
+                    class="img-fluid rounded">
             </div>
         @endif
 
@@ -40,17 +42,17 @@
         </div>
 
         <div class="announcement-actions">
-            <a href="{{ route('announcements.edit', $announcement->id) }}" class="btn btn-primary">
+            <a href="{{ route('staff.announcements.edit', $announcement->id) }}" class="btn btn-primary">
                 <i class="fas fa-edit"></i> Edit Announcement
             </a>
-            <form action="{{ route('announcements.destroy', $announcement->id) }}" method="POST" class="d-inline">
+            <form action="{{ route('staff.announcements.destroy', $announcement->id) }}" method="POST" class="d-inline">
                 @csrf
                 @method('DELETE')
                 <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this announcement?')">
                     <i class="fas fa-trash"></i> Delete Announcement
                 </button>
             </form>
-            <a href="{{ route('announcements.index') }}" class="btn btn-secondary">
+            <a href="{{ route('staff.announcements.index') }}" class="btn btn-secondary">
                 <i class="fas fa-arrow-left"></i> Back to List
             </a>
         </div>

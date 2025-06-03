@@ -153,10 +153,18 @@ class DonationController extends Controller
 
     public function approve(Donation $donation)
     {
+        // Validate request if there are any inputs
+        $validated = request()->validate([
+            'verification_notes' => 'nullable|string|max:500',
+        ]);
+
         $donation->update([
             'status' => 'approved',
             'admin_id' => auth()->id(),
-            'admin_response' => 'Donation approved successfully.'
+            'admin_response' => 'Donation approved successfully.',
+            'verification_notes' => $validated['verification_notes'] ?? $donation->verification_notes,
+            'verification_date' => now(),
+            'verified_by' => auth()->user()->name
         ]);
 
         // Notify donor about approval
@@ -189,3 +197,5 @@ class DonationController extends Controller
             ->with('success', 'Donation declined successfully.');
     }
 }
+
+

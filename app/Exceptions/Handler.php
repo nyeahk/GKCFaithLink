@@ -1,4 +1,16 @@
-/**
+<?php
+
+namespace App\Exceptions;
+
+use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Throwable;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+
+class Handler extends ExceptionHandler
+{
+    /**
  * Register the exception handling callbacks for the application.
  */
 public function register(): void
@@ -14,21 +26,13 @@ public function register(): void
             if (Auth::check()) {
                 $user = Auth::user();
                 
-                switch ($user->role) {
-                    case 1: // Admin
-                        return redirect()->route('admin.dashboard')
-                            ->with('error', 'You do not have permission to access that page.');
-                    case 2: // Treasurer
-                        return redirect()->route('treasurer.dashboard')
-                            ->with('error', 'You do not have permission to access that page.');
-                    case 3: // Member
-                        return redirect()->route('member.dashboard')
-                            ->with('error', 'You do not have permission to access that page.');
-                    case 4: // Staff
-                        return redirect()->route('staff.dashboard')
-                            ->with('error', 'You do not have permission to access that page.');
-                    default:
-                        return redirect('/');
+                try {
+                    // Use the getRoleDashboardRoute method
+                    return redirect()->route($user->getRoleDashboardRoute())
+                        ->with('error', 'You do not have permission to access that page.');
+                } catch (\Exception $redirectException) {
+                    Log::error('Error during 403 redirect: ' . $redirectException->getMessage());
+                    return redirect('/');
                 }
             }
             
@@ -36,4 +40,5 @@ public function register(): void
             return redirect()->route('login');
         }
     });
+}
 }

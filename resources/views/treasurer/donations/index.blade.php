@@ -7,7 +7,7 @@
         <div class="donations-header">
             <h1>Donations</h1>
             <div class="header-actions">
-                <a href="{{ route('admin.donations.manual-create') }}" class="btn btn-primary">
+                <a href="{{ route('treasurer.donations.create') }}" class="btn btn-primary">
                     <i class="fas fa-plus"></i> Add Manual Donation
                 </a>
             </div>
@@ -39,10 +39,10 @@
                         <tr>
                             <td>
                                 @if($donation->user && $donation->user->name)
-                                    <a href="{{ route('members.show', ['id' => $donation->user_id]) }}" class="donor-link">
+                                    <span class="donor-link">
                                         <i class="fas fa-user"></i>
                                         {{ $donation->user->name }}
-                                    </a>
+                                    </span>
                                 @elseif($donation->donor_name)
                                     <span class="donor-link">
                                         <i class="fas fa-user"></i>
@@ -67,68 +67,22 @@
                                 </span>
                             </td>
                             <td class="actions">
-                                <a href="{{ route('admin.donations.show', $donation->id) }}" class="btn btn-action btn-view" title="View Donation">
-                                    <i class="fas fa-eye"></i>
+                                <a href="{{ route('treasurer.donations.show', $donation->id) }}" class="btn btn-action btn-view" title="View Donation">
+                                    <i class="fas fa-eye"></i> View
                                 </a>
-                                <a href="{{ route('admin.donations.edit', $donation->id) }}" class="btn btn-action btn-edit" title="Edit Donation">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                @if($donation->status === 'pending')
-                                    <form action="{{ route('admin.donations.approve', $donation->id) }}" method="POST" class="d-inline">
-                                        @csrf
-                                        <button type="submit" class="btn btn-action btn-approve" title="Approve Donation" onclick="return confirm('Are you sure you want to approve this donation?')">
-                                            <i class="fas fa-check"></i>
-                                        </button>
-                                    </form>
-                                    <button type="button" class="btn btn-action btn-decline" title="Decline Donation" onclick="showDeclineModal({{ $donation->id }})">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                @endif
-                                <form action="{{ route('admin.donations.destroy', $donation->id) }}" method="POST" class="d-inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-action btn-delete" title="Delete Donation" onclick="return confirm('Are you sure you want to delete this donation?')">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </form>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="empty-state">
-                                <div class="empty-content">
-                                    <i class="fas fa-donate"></i>
-                                    <p>No donations found</p>
-                                </div>
-                            </td>
+                            <td colspan="8" class="text-center">No donations found.</td>
                         </tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
-
-        @if($donations->hasPages())
-            <div class="pagination">
-                {{ $donations->links() }}
-            </div>
-        @endif
-    </div>
-
-    <!-- Decline Modal -->
-    <div id="declineModal" class="modal">
-        <div class="modal-content">
-            <h2>Decline Donation</h2>
-            <form id="declineForm" method="POST">
-                @csrf
-                <div class="form-group">
-                    <label for="reason">Reason for Decline</label>
-                    <textarea id="reason" name="reason" class="form-input" required></textarea>
-                </div>
-                <div class="modal-actions">
-                    <button type="button" class="btn btn-secondary" onclick="closeDeclineModal()">Cancel</button>
-                    <button type="submit" class="btn btn-danger">Decline</button>
-                </div>
-            </form>
+        
+        <div class="pagination-container">
+            {{ $donations->links() }}
         </div>
     </div>
 @endsection
@@ -136,321 +90,127 @@
 @push('styles')
 <style>
     .donations-container {
-        padding: 2rem;
+        padding: 20px;
     }
-
+    
     .donations-header {
-        margin-bottom: 2rem;
         display: flex;
         justify-content: space-between;
         align-items: center;
+        margin-bottom: 20px;
     }
-
-    .header-actions {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-    }
-
-    .donations-header h1 {
-        color: #1a365d;
-        margin: 0;
-        font-size: 1.875rem;
-    }
-
-    .donations-header .subtitle {
-        color: #4a5568;
-        margin: 0;
-        font-size: 1rem;
-    }
-
-    .btn-primary {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.75rem 1.5rem;
-        background-color: #3182ce;
-        color: white;
-        border-radius: 0.375rem;
-        text-decoration: none;
-        font-weight: 500;
-        transition: background-color 0.2s;
-    }
-
-    .btn-primary:hover {
-        background-color: #2c5282;
-    }
-
+    
     .donations-table {
         background: white;
-        border-radius: 0.5rem;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         overflow: hidden;
     }
-
-    table {
+    
+    .donations-table table {
         width: 100%;
         border-collapse: collapse;
     }
-
-    th {
-        background-color: #f7fafc;
-        color: #1a365d;
-        font-weight: 600;
-        padding: 1rem;
+    
+    .donations-table th, 
+    .donations-table td {
+        padding: 12px 15px;
         text-align: left;
-        border-bottom: 1px solid #e2e8f0;
+        border-bottom: 1px solid #eee;
     }
-
-    td {
-        padding: 1rem;
-        border-bottom: 1px solid #e2e8f0;
-        color: #4a5568;
+    
+    .donations-table th {
+        background-color: #f8f9fa;
+        font-weight: 600;
     }
-
-    .donor-info {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        color: #4a5568;
+    
+    .donations-table tr:hover {
+        background-color: #f8f9fa;
     }
-
+    
+    .donor-link {
+        color: #3490dc;
+        font-weight: 500;
+    }
+    
     .status-badge {
         display: inline-flex;
         align-items: center;
-        gap: 0.375rem;
-        padding: 0.375rem 0.75rem;
-        border-radius: 9999px;
-        font-size: 0.875rem;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.85rem;
         font-weight: 500;
     }
-
+    
+    .status-badge i {
+        font-size: 0.7rem;
+        margin-right: 5px;
+    }
+    
     .status-pending {
-        background-color: #fef3c7;
-        color: #92400e;
+        background-color: #fff8e1;
+        color: #f6c23e;
     }
-
-    .status-approved {
-        background-color: #dcfce7;
-        color: #166534;
+    
+    .status-verified {
+        background-color: #e8f5e9;
+        color: #1cc88a;
     }
-
+    
     .status-declined {
-        background-color: #fee2e2;
-        color: #991b1b;
+        background-color: #ffebee;
+        color: #e74a3b;
     }
-
-    .actions {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
+    
     .btn-action {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 2rem;
-        height: 2rem;
-        font-size: 0.875rem;
-        border-radius: 0.375rem;
-        transition: all 0.2s;
-    }
-
-    .btn-approve {
-        background-color: #dcfce7;
-        color: #166534;
-    }
-
-    .btn-approve:hover {
-        background-color: #bbf7d0;
-    }
-
-    .btn-decline {
-        background-color: #fee2e2;
-        color: #991b1b;
-    }
-
-    .btn-decline:hover {
-        background-color: #fed7d7;
-    }
-
-    .btn-view {
-        background-color: #ebf8ff;
-        color: #2b6cb0;
-    }
-
-    .btn-view:hover {
-        background-color: #bee3f8;
-    }
-
-    .btn-edit {
-        background-color: #fefcbf;
-        color: #b7791f;
-    }
-
-    .btn-edit:hover {
-        background-color: #faf089;
-    }
-
-    .btn-delete {
-        background-color: #fee2e2;
-        color: #991b1b;
-    }
-
-    .btn-delete:hover {
-        background-color: #fed7d7;
-    }
-
-    .empty-state {
-        text-align: center;
-        padding: 3rem;
-    }
-
-    .empty-content {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 1rem;
-    }
-
-    .empty-content i {
-        font-size: 3rem;
-        color: #cbd5e0;
-    }
-
-    .empty-content p {
-        color: #4a5568;
-        font-size: 1.125rem;
-    }
-
-    .alert {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        padding: 1rem;
-        border-radius: 0.375rem;
-        margin-bottom: 1.5rem;
-    }
-
-    .alert-success {
-        background-color: #f0fff4;
-        color: #2f855a;
-        border: 1px solid #c6f6d5;
-    }
-
-    .alert i {
-        font-size: 1.25rem;
-    }
-
-    .pagination {
-        margin-top: 2rem;
-        display: flex;
-        justify-content: center;
-    }
-
-    .pagination .page-link {
-        padding: 0.5rem 1rem;
-        margin: 0 0.25rem;
-        border-radius: 0.375rem;
-        color: #2b6cb0;
-        background-color: white;
-        border: 1px solid #e2e8f0;
-    }
-
-    .pagination .page-item.active .page-link {
-        background-color: #2b6cb0;
+        padding: 5px 10px;
+        border-radius: 4px;
+        margin-right: 5px;
         color: white;
-        border-color: #2b6cb0;
-    }
-
-    /* Modal Styles */
-    .modal {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
-        z-index: 1000;
-    }
-
-    .modal-content {
-        position: relative;
-        background-color: white;
-        margin: 10% auto;
-        padding: 0;
-        width: 90%;
-        max-width: 500px;
-        border-radius: 0.5rem;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-
-    .modal-header {
-        padding: 1rem 1.5rem;
-        border-bottom: 1px solid #e2e8f0;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .modal-title {
-        margin: 0;
-        color: #1a365d;
-        font-size: 1.25rem;
-    }
-
-    .modal-close {
-        background: none;
         border: none;
-        font-size: 1.5rem;
-        color: #4a5568;
         cursor: pointer;
-        padding: 0.25rem;
     }
-
-    .modal-body {
-        padding: 1.5rem;
+    
+    .btn-view {
+        background-color: #36b9cc;
     }
-
-    .modal-footer {
-        padding: 1rem 1.5rem;
-        border-top: 1px solid #e2e8f0;
+    
+    .btn-edit {
+        background-color: #4e73df;
+    }
+    
+    .btn-approve {
+        background-color: #1cc88a;
+    }
+    
+    .btn-decline {
+        background-color: #e74a3b;
+    }
+    
+    .btn-delete {
+        background-color: #e74a3b;
+    }
+    
+    .pagination-container {
+        margin-top: 20px;
         display: flex;
-        justify-content: flex-end;
-        gap: 1rem;
+        justify-content: center;
     }
-
-    .btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.75rem 1.5rem;
-        border-radius: 0.375rem;
-        font-weight: 500;
-        transition: all 0.2s;
-        cursor: pointer;
-        border: none;
+    
+    .alert {
+        padding: 15px;
+        margin-bottom: 20px;
+        border-radius: 4px;
     }
-
-    .btn-secondary {
-        background-color: #e2e8f0;
-        color: #4a5568;
+    
+    .alert-success {
+        background-color: #e8f5e9;
+        color: #1cc88a;
+        border: 1px solid #c8e6c9;
     }
-
-    .btn-secondary:hover {
-        background-color: #cbd5e0;
-    }
-
-    .btn-danger {
-        background-color: #fee2e2;
-        color: #991b1b;
-    }
-
-    .btn-danger:hover {
-        background-color: #fed7d7;
+    
+    .alert i {
+        margin-right: 8px;
     }
 </style>
 @endpush
@@ -478,3 +238,7 @@
     }
 </script>
 @endpush
+
+
+
+

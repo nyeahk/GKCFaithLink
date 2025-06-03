@@ -9,7 +9,7 @@
                 <h1>Events</h1>
                 <p class="subtitle">Manage your church events and activities</p>
             </div>
-            <a href="{{ route('admin.events.create') }}" class="btn btn-primary">
+            <a href="{{ route('staff.events.create') }}" class="btn btn-primary">
                 <i class="fas fa-plus"></i> Create Event
             </a>
         </div>
@@ -60,10 +60,10 @@
                                 <button class="btn btn-action btn-view" title="View Event" data-event-id="{{ $event->id }}">
                                     <i class="fas fa-eye"></i>
                                 </button>
-                                <a href="{{ route('admin.events.edit', $event->id) }}" class="btn btn-action btn-edit" title="Edit Event">
+                                <a href="{{ route('staff.events.edit', $event->id) }}" class="btn btn-action btn-edit" title="Edit Event">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                <form action="{{ route('admin.events.destroy', $event->id) }}" method="POST" class="d-inline">
+                                <form action="{{ route('staff.events.destroy', $event->id) }}" method="POST" class="d-inline">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-action btn-delete" title="Delete Event" onclick="return confirm('Are you sure you want to delete this event?')">
@@ -78,7 +78,7 @@
                                 <div class="empty-content">
                                     <i class="fas fa-calendar-times"></i>
                                     <p>No events found</p>
-                                    <a href="{{ route('admin.events.create') }}" class="btn btn-primary">
+                                    <a href="{{ route('staff.events.create') }}" class="btn btn-primary">
                                         <i class="fas fa-plus"></i> Create Your First Event
                                     </a>
                                 </div>
@@ -582,7 +582,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // Fetch event details
-        fetch(`/admin/events/${eventId}`, {
+        fetch(`/staff/events/${eventId}`, {
             headers: {
                 'Accept': 'application/json',
                 'X-Requested-With': 'XMLHttpRequest'

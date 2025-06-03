@@ -48,8 +48,8 @@
                                         <div class="day-number">{{ $day['day'] }}</div>
                                         @if(isset($day['events']) && count($day['events']) > 0)
                                             <div class="event-indicator">
-                                                <i class="bi bi-calendar-event me-1"></i>
-                                                {{ count($day['events']) }} event(s)
+                                                <i class="bi bi-calendar-event"></i>
+                                                <span class="event-count">{{ count($day['events']) }}</span>
                                             </div>
                                         @endif
                                     </td>

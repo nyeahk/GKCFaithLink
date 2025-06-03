@@ -5,9 +5,10 @@ namespace App\Http\Controllers\Member;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Donation;
-use Illuminate\Support\Facades\Auth;
+use App\Models\User;
+use App\Notifications\NewDonationNotification;
 use Illuminate\Support\Facades\Storage;
-use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class DonationController extends Controller
 {
@@ -43,57 +44,68 @@ class DonationController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        $rules = [
             'amount' => 'required|numeric|min:1',
-            'purpose' => 'required|string|in:tithes,offering,mission',
-            'payment_method' => 'required|string|in:gcash,bank_transfer',
-            'reference_number' => 'required|numeric|digits:13',
-            'screenshot' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-            // Remove notes validation
-        ]);
+            'payment_method' => 'required|in:gcash',
+            'purpose' => 'required|string',
+            'notes' => 'nullable|string',
+            'screenshot' => 'required|image|max:2048',
+            'reference_number' => 'required|string',
+        ];
+        
+        $validated = $request->validate($rules);
 
-        try {
-            // Create storage directory if it doesn't exist
-            $storagePath = storage_path('app/public/donation-screenshots');
-            if (!file_exists($storagePath)) {
-                mkdir($storagePath, 0755, true);
-            }
-            
-            // Handle screenshot upload first to catch any file upload issues
-            $path = null;
-            if ($request->hasFile('screenshot')) {
-                $path = $request->file('screenshot')->store('donation-screenshots', 'public');
-            }
-            
-            // Create donation record
-            $donation = new Donation();
-            $donation->user_id = Auth::id();
-            $donation->amount = $validated['amount'];
-            $donation->purpose = $validated['purpose'];
-            $donation->payment_method = $validated['payment_method'];
-            $donation->reference_number = $validated['reference_number'];
-            // Remove notes assignment
-            $donation->status = 'pending';
-            $donation->transaction_date = Carbon::now();
+        $donation = new \App\Models\Donation();
+        $donation->user_id = auth()->id();
+        $donation->amount = $validated['amount'];
+        $donation->payment_method = $validated['payment_method'];
+        $donation->purpose = $validated['purpose'];
+        $donation->reference_number = $validated['reference_number'];
+        
+        // Set transaction_date to current time
+        $donation->transaction_date = now();
+        
+        $donation->notes = $validated['notes'] ?? null;
+        $donation->status = 'pending';
+        
+        // Handle screenshot upload
+        if ($request->hasFile('screenshot')) {
+            $path = $request->file('screenshot')->store('donations', 'public');
             $donation->screenshot = $path;
-            
-            $donation->save();
-            
-            return redirect()->route('member.donations.show', $donation->id)
-                ->with('success', 'Your donation has been submitted and is pending approval.');
-                
-        } catch (\Exception $e) {
-            // Log the detailed error for debugging
-            \Log::error('Donation creation failed: ' . $e->getMessage());
-            \Log::error($e->getTraceAsString());
-            
-            // In development environment, show the actual error
-            if (config('app.debug')) {
-                return back()->withInput()->withErrors(['error' => 'Error: ' . $e->getMessage()]);
-            }
-            
-            return back()->withInput()->withErrors(['error' => 'An error occurred while submitting your donation. Please try again.']);
         }
+        
+        $donation->save();
+
+        // Find all treasurers
+        $treasurers = \App\Models\User::where('role', 2)->get();
+
+        // Log how many treasurers were found
+        \Illuminate\Support\Facades\Log::info('Found ' . $treasurers->count() . ' treasurers to notify about donation #' . $donation->id);
+
+        // If we found any treasurers, notify them
+        if ($treasurers->isNotEmpty()) {
+            foreach ($treasurers as $treasurer) {
+                try {
+                    // Log before sending notification
+                    \Illuminate\Support\Facades\Log::info('Attempting to notify treasurer: ' . $treasurer->id . ' - ' . $treasurer->name);
+                    
+                    // Send notification immediately
+                    $treasurer->notifyNow(new \App\Notifications\NewDonationNotification($donation));
+                    
+                    // Log success
+                    \Illuminate\Support\Facades\Log::info('Successfully sent notification to treasurer: ' . $treasurer->id);
+                } catch (\Exception $e) {
+                    // Log the error but continue execution
+                    \Illuminate\Support\Facades\Log::error('Failed to send notification to treasurer ' . $treasurer->id . ': ' . $e->getMessage());
+                }
+            }
+        } else {
+            // If no treasurers found, log this issue
+            \Illuminate\Support\Facades\Log::warning('No treasurers found to notify about donation #' . $donation->id);
+        }
+
+        return redirect()->route('member.donations.index')
+            ->with('success', 'Donation submitted successfully and is pending approval.');
     }
 
     /**
@@ -111,6 +123,23 @@ class DonationController extends Controller
         return view('member.donations.show', compact('donation'));
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -61,15 +61,14 @@
                             <select class="form-select" id="payment_method" name="payment_method" required>
                                 <option value="" selected disabled>Select payment method</option>
                                 <option value="gcash" {{ old('payment_method') == 'gcash' ? 'selected' : '' }}>GCash</option>
-                                <option value="bank_transfer" {{ old('payment_method') == 'bank_transfer' ? 'selected' : '' }}>Bank Transfer</option>
                             </select>
                         </div>
-                        
+
                         <div id="payment_details" class="mb-3" style="{{ old('payment_method') ? '' : 'display: none;' }}">
                             <div class="card mb-3">
                                 <div class="card-body">
                                     <h6 class="card-title">Payment Instructions</h6>
-                                    <div id="gcash_instructions" style="{{ old('payment_method') == 'gcash' ? '' : 'display: none;' }}">
+                                    <div id="gcash_instructions">
                                         <p>Please send your donation to our GCash account:</p>
                                         <div class="d-flex justify-content-center mb-3">
                                             <div class="qr-code-container text-center">
@@ -78,29 +77,37 @@
                                                 <p class="mb-0"><strong>GCash Number:</strong> 09123456789</p>
                                             </div>
                                         </div>
-                                    </div>
-                                    
-                                    <div id="bank_instructions" style="{{ old('payment_method') == 'bank_transfer' ? '' : 'display: none;' }}">
-                                        <p>Please transfer your donation to our bank account:</p>
-                                        <p><strong>Bank:</strong> Sample Bank</p>
-                                        <p><strong>Account Name:</strong> Church Account</p>
-                                        <p><strong>Account Number:</strong> 1234-5678-9012</p>
+                                        <div class="alert alert-info">
+                                            <i class="fas fa-info-circle me-2"></i>
+                                            <strong>Important:</strong> After making your payment, please copy the GCash transaction reference number. You'll need to enter it below.
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                             
                             <div class="mb-3">
-                                <label for="reference_number" class="form-label">Reference Number</label>
-                                <input type="text" class="form-control" id="reference_number" name="reference_number" value="{{ old('reference_number') }}" required>
-                                <div class="form-text">Enter the reference number from your payment receipt.</div>
+                                <label for="reference_number" class="form-label">GCash Transaction Reference Number <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control @error('reference_number') is-invalid @enderror" 
+                                       id="reference_number" name="reference_number" 
+                                       value="{{ old('reference_number') }}" required>
+                                <div class="form-text">Enter the reference number from your GCash transaction (e.g., GC123456789).</div>
+                                @error('reference_number')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
                             
                             <div class="mb-3">
-                                <label for="screenshot" class="form-label">Payment Screenshot</label>
-                                <input type="file" class="form-control" id="screenshot" name="screenshot" accept="image/*" required>
-                                <div class="form-text">Upload a screenshot of your payment confirmation.</div>
+                                <label for="screenshot" class="form-label">Payment Screenshot <span class="text-danger">*</span></label>
+                                <input type="file" class="form-control @error('screenshot') is-invalid @enderror" 
+                                       id="screenshot" name="screenshot" accept="image/*" required>
+                                <div class="form-text">Upload a screenshot of your payment confirmation from GCash.</div>
+                                @error('screenshot')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
+                        
+                        <input type="hidden" name="transaction_date" value="{{ now()->format('Y-m-d H:i:s') }}">
                         
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                             <a href="{{ route('member.donations.index') }}" class="btn btn-secondary me-md-2">Cancel</a>
@@ -120,23 +127,25 @@
         // Handle payment method selection
         const paymentMethodSelect = document.getElementById('payment_method');
         const paymentDetails = document.getElementById('payment_details');
-        const gcashInstructions = document.getElementById('gcash_instructions');
-        const bankInstructions = document.getElementById('bank_instructions');
         
         paymentMethodSelect.addEventListener('change', function() {
-            paymentDetails.style.display = 'block';
-            
             if (this.value === 'gcash') {
-                gcashInstructions.style.display = 'block';
-                bankInstructions.style.display = 'none';
-            } else if (this.value === 'bank_transfer') {
-                gcashInstructions.style.display = 'none';
-                bankInstructions.style.display = 'block';
+                paymentDetails.style.display = 'block';
+            } else {
+                paymentDetails.style.display = 'none';
             }
         });
     });
 </script>
 @endpush
+
+
+
+
+
+
+
+
 
 
 

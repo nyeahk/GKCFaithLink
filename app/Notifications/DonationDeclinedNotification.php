@@ -2,11 +2,11 @@
 
 namespace App\Notifications;
 
-use App\Models\Donation;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use App\Models\Donation;
 
 class DonationDeclinedNotification extends Notification implements ShouldQueue
 {
@@ -26,20 +26,29 @@ class DonationDeclinedNotification extends Notification implements ShouldQueue
 
     public function toMail($notifiable)
     {
+        $declineReason = $this->donation->verification_notes ?? $this->donation->treasurer_response ?? 'No reason provided';
+        
         return (new MailMessage)
             ->subject('Donation Status Update')
             ->line('Your donation has been declined.')
-            ->line("Amount: {$this->donation->amount}")
-            ->line("Reason: {$this->donation->admin_response}")
+            ->line("Amount: ₱" . number_format($this->donation->amount, 2))
+            ->line("Reason: {$declineReason}")
             ->line('Please contact support if you have any questions.');
     }
 
     public function toArray($notifiable)
     {
+        $declineReason = $this->donation->verification_notes ?? $this->donation->treasurer_response ?? 'No reason provided';
+        
         return [
             'donation_id' => $this->donation->id,
             'amount' => $this->donation->amount,
-            'message' => $this->donation->admin_response,
+            'message' => 'Your donation of ₱' . number_format($this->donation->amount, 2) . ' has been declined.',
+            'description' => $declineReason,
+            'url' => route('member.donations.show', $this->donation->id)
         ];
     }
-} 
+}
+
+
+
