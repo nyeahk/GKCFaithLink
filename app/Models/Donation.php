@@ -63,3 +63,4 @@ class Donation extends Model
         return $query->where('status', 'declined');
     }
 } 
+

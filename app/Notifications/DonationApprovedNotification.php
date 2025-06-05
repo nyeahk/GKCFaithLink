@@ -2,11 +2,11 @@
 
 namespace App\Notifications;
 
-use App\Models\Donation;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use App\Models\Donation;
 
 class DonationApprovedNotification extends Notification implements ShouldQueue
 {
@@ -17,6 +17,7 @@ class DonationApprovedNotification extends Notification implements ShouldQueue
     public function __construct(Donation $donation)
     {
         $this->donation = $donation;
+        $this->afterCommit(); // Ensure notification is sent after database transaction is committed
     }
 
     public function via($notifiable)
@@ -26,12 +27,19 @@ class DonationApprovedNotification extends Notification implements ShouldQueue
 
     public function toMail($notifiable)
     {
+        $amount = number_format($this->donation->amount, 2);
+        $notes = $this->donation->notes ?? 'No additional notes provided.';
+        $verificationNotes = $this->donation->verification_notes ?? 'No verification notes provided.';
+        
         return (new MailMessage)
             ->subject('Donation Approved')
-            ->line('Your donation has been approved!')
-            ->line("Amount: {$this->donation->amount}")
-            ->line("Message: {$this->donation->admin_response}")
-            ->line('Thank you for your generosity!');
+            ->greeting('Hello ' . $notifiable->name . ',')
+            ->line('Your donation has been approved. Thank you for your contribution!')
+            ->line("Amount: ₱{$amount}")
+            ->line("Your Notes: {$notes}")
+            ->line("Verification Notes: {$verificationNotes}")
+            ->action('View Donation Details', route('member.donations.show', $this->donation->id))
+            ->line('Thank you for your generosity and support for our church community.');
     }
 
     public function toArray($notifiable)
@@ -39,7 +47,12 @@ class DonationApprovedNotification extends Notification implements ShouldQueue
         return [
             'donation_id' => $this->donation->id,
             'amount' => $this->donation->amount,
-            'message' => $this->donation->admin_response,
+            'message' => 'Your donation of ₱' . number_format($this->donation->amount, 2) . ' has been approved!',
+            'description' => $this->donation->verification_notes ?? 'No verification notes provided.',
+            'notes' => $this->donation->notes ?? 'No additional notes provided.',
+            'url' => route('member.donations.show', $this->donation->id)
         ];
     }
-} 
+}
+
+

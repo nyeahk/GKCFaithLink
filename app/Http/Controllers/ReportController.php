@@ -22,9 +22,8 @@ class ReportController extends Controller
         $startDate = $now->copy()->startOfWeek();
         $endDate = $now->copy()->endOfWeek();
         
-        // Get total donations for the week
-        $totalDonations = Donation::whereBetween('created_at', [$startDate, $endDate])
-            ->sum('amount');
+        // Get total donations
+        $totalDonations = Donation::sum('amount');
         
         // Get new members for the week
         $newMembers = Member::whereBetween('created_at', [$startDate, $endDate])
@@ -34,9 +33,8 @@ class ReportController extends Controller
         $upcomingEvents = Event::whereBetween('start_date', [$now, $now->copy()->addDays(7)])
             ->count();
         
-        // Get recent donations for the week
-        $recentDonations = Donation::whereBetween('created_at', [$startDate, $endDate])
-            ->orderBy('created_at', 'desc')
+        // Get recent donations
+        $recentDonations = Donation::orderBy('created_at', 'desc')
             ->take(10)
             ->get();
         
@@ -68,7 +66,7 @@ class ReportController extends Controller
         ));
     }
     
-    public function monthly()
+    public function monthly(Request $request)
     {
         // Set timezone to Asia/Manila
         date_default_timezone_set('Asia/Manila');
@@ -80,9 +78,8 @@ class ReportController extends Controller
         $startDate = $now->copy()->startOfMonth();
         $endDate = $now->copy()->endOfMonth();
         
-        // Get total donations for the month
-        $totalDonations = Donation::whereBetween('created_at', [$startDate, $endDate])
-            ->sum('amount');
+        // Get total donations
+        $totalDonations = Donation::sum('amount');
         
         // Get new members for the month
         $newMembers = Member::whereBetween('created_at', [$startDate, $endDate])
@@ -92,11 +89,13 @@ class ReportController extends Controller
         $upcomingEvents = Event::whereBetween('start_date', [$now, $now->copy()->addDays(30)])
             ->count();
         
-        // Get recent donations for the month
-        $recentDonations = Donation::whereBetween('created_at', [$startDate, $endDate])
-            ->orderBy('created_at', 'desc')
+        // Get recent donations
+        $recentDonations = Donation::orderBy('created_at', 'desc')
             ->take(10)
             ->get();
+        
+        // Define filtered donations (if needed, adjust the logic as per requirements)
+        $filteredDonations = Donation::orderBy('created_at', 'desc')->get();
         
         // Prepare data for the donations chart by week
         $donationWeeks = [];
@@ -118,7 +117,7 @@ class ReportController extends Controller
             
             $currentWeek->addWeek();
         }
-        
+
         return view('admin.reports.monthly', compact(
             'startDate',
             'endDate',

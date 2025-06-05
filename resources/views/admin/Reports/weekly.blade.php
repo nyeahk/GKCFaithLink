@@ -1,90 +1,241 @@
-@extends('layouts.gkc')
+@extends('layouts.admin')
 
 @section('title', 'Weekly Report')
 
 @section('content')
-<div class="reports-container">
-    <div class="reports-header">
-        <h1>Weekly Report</h1>
-        <div class="report-period">
-            <span class="period-label">Period:</span>
-            <span class="period-value">{{ $startDate->format('M d, Y') }} - {{ $endDate->format('M d, Y') }}</span>
+<div class="container-fluid">
+    <!-- Clean Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0 text-gray-800">
+                <i class="bi bi-calendar-week me-2"></i>Weekly Report
+            </h1>
+            <p class="text-muted mb-0">{{ $startDate->format('M d') }} - {{ $endDate->format('M d, Y') }}</p>
+        </div>
+        <div class="d-flex gap-2">
+            <span class="badge bg-primary fs-6 px-3 py-2">
+                <i class="bi bi-calendar-range me-1"></i>
+                {{ $startDate->format('M d') }} - {{ $endDate->format('M d, Y') }}
+            </span>
+            <a href="{{ route('admin.reports.weekly.download', ['date' => $startDate->format('Y-m-d')]) }}"
+               class="btn btn-success">
+                <i class="bi bi-download me-1"></i> Download PDF
+            </a>
         </div>
     </div>
 
-    <div class="report-summary">
-        <div class="summary-card">
-            <div class="summary-icon">
-                <i class="fas fa-donate"></i>
-            </div>
-            <div class="summary-info">
-                <h3>Total Donations</h3>
-                <p class="summary-value">₱{{ number_format($totalDonations, 2) }}</p>
-                <p class="summary-label">This Week</p>
+    <!-- Filter Section -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="card-title mb-0">
+                <i class="bi bi-funnel me-2"></i>Filters
+            </h5>
+        </div>
+        <div class="card-body">
+            <form method="GET" action="{{ route('admin.reports.weekly') }}" class="row g-3">
+                <div class="col-md-4">
+                    <label for="statusFilter" class="form-label">Filter by Status</label>
+                    <select name="status" id="statusFilter" class="form-select">
+                        <option value="">All Statuses</option>
+                        <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
+                        <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>Completed</option>
+                        <option value="failed" {{ request('status') == 'failed' ? 'selected' : '' }}>Failed</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label for="dateFilter" class="form-label">Filter by Week</label>
+                    <input type="week" name="date" id="dateFilter" class="form-control"
+                           value="{{ request('date', $startDate->format('Y-\WW')) }}">
+                </div>
+                <div class="col-md-4 d-flex align-items-end">
+                    <div class="btn-group w-100">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-search me-1"></i>Apply Filters
+                        </button>
+                        <a href="{{ route('admin.reports.weekly') }}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-clockwise me-1"></i>Reset
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="row mb-4">
+        <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card border-start border-primary border-4 shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs fw-bold text-primary text-uppercase mb-1">
+                                Total Tithes
+                            </div>
+                            <div class="h5 mb-0 fw-bold text-gray-800">
+                                ₱{{ number_format($totalTithes, 2) }}
+                            </div>
+                            <div class="text-xs text-muted">This Week</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-cash-coin fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="summary-card">
-            <div class="summary-icon">
-                <i class="fas fa-users"></i>
-            </div>
-            <div class="summary-info">
-                <h3>New Members</h3>
-                <p class="summary-value">{{ $newMembers }}</p>
-                <p class="summary-label">This Week</p>
+        <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card border-start border-success border-4 shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs fw-bold text-success text-uppercase mb-1">
+                                Total Offerings
+                            </div>
+                            <div class="h5 mb-0 fw-bold text-gray-800">
+                                ₱{{ number_format($totalOfferings, 2) }}
+                            </div>
+                            <div class="text-xs text-muted">This Week</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-gift fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="summary-card">
-            <div class="summary-icon">
-                <i class="fas fa-calendar-check"></i>
-            </div>
-            <div class="summary-info">
-                <h3>Upcoming Events</h3>
-                <p class="summary-value">{{ $upcomingEvents }}</p>
-                <p class="summary-label">Next 7 Days</p>
+        <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card border-start border-info border-4 shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs fw-bold text-info text-uppercase mb-1">
+                                Mission Funds
+                            </div>
+                            <div class="h5 mb-0 fw-bold text-gray-800">
+                                ₱{{ number_format($totalMissionFunds, 2) }}
+                            </div>
+                            <div class="text-xs text-muted">This Week</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-globe fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="report-details">
-        <div class="donations-chart">
-            <h2>Donations by Day</h2>
-            <canvas id="donationsChart"></canvas>
+    <!-- Charts and Tables -->
+    <div class="row">
+        <!-- Chart Section -->
+        <div class="col-xl-8 col-lg-7">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 fw-bold text-primary">
+                        <i class="bi bi-bar-chart me-2"></i>Donations by Day
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-area">
+                        <canvas id="donationsChart" style="height: 300px;"></canvas>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div class="donations-table">
-            <h2>Recent Donations</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Donor</th>
-                        <th>Amount</th>
-                        <th>Payment Method</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($recentDonations as $donation)
+        <!-- Total Summary -->
+        <div class="col-xl-4 col-lg-5">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 fw-bold text-primary">
+                        <i class="bi bi-calculator me-2"></i>Weekly Summary
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="text-center">
+                        <div class="mb-3">
+                            <h4 class="text-primary">Grand Total</h4>
+                            <h2 class="text-success">₱{{ number_format($totalTithes + $totalOfferings + $totalMissionFunds, 2) }}</h2>
+                        </div>
+                        <hr>
+                        <div class="row text-center">
+                            <div class="col-12 mb-2">
+                                <small class="text-muted">Breakdown</small>
+                            </div>
+                            <div class="col-12 mb-1">
+                                <span class="badge bg-primary">Tithes: ₱{{ number_format($totalTithes, 2) }}</span>
+                            </div>
+                            <div class="col-12 mb-1">
+                                <span class="badge bg-success">Offerings: ₱{{ number_format($totalOfferings, 2) }}</span>
+                            </div>
+                            <div class="col-12 mb-1">
+                                <span class="badge bg-info">Missions: ₱{{ number_format($totalMissionFunds, 2) }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Donations Table -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 fw-bold text-primary">
+                <i class="bi bi-table me-2"></i>Recent Donations
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
                         <tr>
-                            <td>{{ $donation->created_at->format('M d, Y') }}</td>
-                            <td>{{ $donation->donor_name }}</td>
-                            <td>₱{{ number_format($donation->amount, 2) }}</td>
-                            <td>{{ ucfirst($donation->payment_method) }}</td>
-                            <td>
-                                <span class="status-badge status-{{ $donation->status }}">
-                                    {{ ucfirst($donation->status) }}
-                                </span>
-                            </td>
+                            <th>Date</th>
+                            <th>Donor</th>
+                            <th>Purpose</th>
+                            <th>Amount</th>
+                            <th>Payment Method</th>
+                            <th>Status</th>
                         </tr>
-                    @empty
-                        <tr>
-                            <td colspan="5" class="text-center">No donations this week.</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @forelse($recentDonations as $donation)
+                            <tr>
+                                <td>{{ $donation->created_at->format('M d, Y') }}</td>
+                                <td>{{ $donation->donor_name }}</td>
+                                <td>
+                                    <span class="badge bg-secondary">{{ ucfirst($donation->purpose) }}</span>
+                                </td>
+                                <td class="fw-bold">₱{{ number_format($donation->amount, 2) }}</td>
+                                <td>{{ ucfirst($donation->payment_method ?? 'N/A') }}</td>
+                                <td>
+                                    @if($donation->status == 'completed')
+                                        <span class="badge bg-success">
+                                            <i class="bi bi-check-circle me-1"></i>Completed
+                                        </span>
+                                    @elseif($donation->status == 'pending')
+                                        <span class="badge bg-warning">
+                                            <i class="bi bi-clock me-1"></i>Pending
+                                        </span>
+                                    @else
+                                        <span class="badge bg-danger">
+                                            <i class="bi bi-x-circle me-1"></i>Failed
+                                        </span>
+                                    @endif
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="6" class="text-center text-muted py-4">
+                                    <i class="bi bi-inbox me-2"></i>No donations found for this week.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
@@ -92,141 +243,32 @@
 
 @push('styles')
 <style>
-    .reports-container {
-        padding: 2rem;
+    /* Custom styles for admin reports */
+    .border-left-primary {
+        border-left: 0.25rem solid #4e73df !important;
     }
-
-    .reports-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 2rem;
+    .border-left-success {
+        border-left: 0.25rem solid #1cc88a !important;
     }
-
-    .report-period {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
+    .border-left-info {
+        border-left: 0.25rem solid #36b9cc !important;
     }
-
-    .period-label {
-        font-weight: 500;
-        color: var(--text-light);
+    .text-xs {
+        font-size: 0.75rem;
     }
-
-    .period-value {
-        color: var(--primary-dark);
-    }
-
-    .report-summary {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 1.5rem;
-        margin-bottom: 2rem;
-    }
-
-    .summary-card {
-        background: var(--white);
-        border-radius: 8px;
-        padding: 1.5rem;
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        box-shadow: 0 2px 4px var(--shadow);
-    }
-
-    .summary-icon {
-        width: 48px;
-        height: 48px;
-        border-radius: 50%;
-        background: var(--primary-light);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--primary-dark);
-        font-size: 1.5rem;
-    }
-
-    .summary-info h3 {
-        margin: 0;
-        font-size: 1rem;
-        color: var(--text-light);
-    }
-
-    .summary-value {
-        margin: 0.25rem 0;
-        font-size: 1.5rem;
-        font-weight: 600;
-        color: var(--primary-dark);
-    }
-
-    .summary-label {
-        margin: 0;
-        font-size: 0.875rem;
-        color: var(--text-light);
-    }
-
-    .report-details {
-        display: grid;
-        grid-template-columns: 2fr 1fr;
-        gap: 2rem;
-    }
-
-    .donations-chart,
-    .donations-table {
-        background: var(--white);
-        border-radius: 8px;
-        padding: 1.5rem;
-        box-shadow: 0 2px 4px var(--shadow);
-    }
-
-    .donations-chart h2,
-    .donations-table h2 {
-        margin: 0 0 1.5rem 0;
-        color: var(--primary-dark);
-    }
-
-    table {
+    .chart-area {
+        position: relative;
+        height: 300px;
         width: 100%;
-        border-collapse: collapse;
     }
-
-    th, td {
-        padding: 0.75rem;
-        text-align: left;
-        border-bottom: 1px solid var(--border);
+    .text-gray-300 {
+        color: #dddfeb !important;
     }
-
-    th {
-        background-color: var(--background-light);
-        font-weight: 600;
-        color: var(--text-light);
+    .text-gray-800 {
+        color: #5a5c69 !important;
     }
-
-    .status-badge {
-        padding: 0.25rem 0.75rem;
-        border-radius: 20px;
-        font-size: 0.875rem;
-        font-weight: 500;
-    }
-
-    .status-pending {
-        background-color: #ffc107;
-        color: #000;
-    }
-
-    .status-completed {
-        background-color: #28a745;
-        color: var(--white);
-    }
-
-    .status-failed {
-        background-color: #dc3545;
-        color: var(--white);
-    }
-
-    .text-center {
-        text-align: center;
+    .font-weight-bold {
+        font-weight: 700 !important;
     }
 </style>
 @endpush
@@ -241,21 +283,40 @@
             data: {
                 labels: {!! json_encode($donationDays) !!},
                 datasets: [{
-                    label: 'Donations',
+                    label: 'Daily Donations (₱)',
                     data: {!! json_encode($donationAmounts) !!},
-                    borderColor: 'rgb(75, 192, 192)',
-                    tension: 0.1
+                    borderColor: '#4e73df',
+                    backgroundColor: 'rgba(78, 115, 223, 0.1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.3,
+                    pointBackgroundColor: '#4e73df',
+                    pointBorderColor: '#ffffff',
+                    pointBorderWidth: 2,
+                    pointRadius: 5
                 }]
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    }
+                },
                 scales: {
                     y: {
-                        beginAtZero: true
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return '₱' + value.toLocaleString();
+                            }
+                        }
                     }
                 }
             }
         });
     });
 </script>
-@endpush 
+@endpush

@@ -18,22 +18,30 @@ class DonationController extends Controller
         $validated = $request->validate([
             'donor_name' => 'required|string|max:255',
             'amount' => 'required|numeric|min:0',
-            'purpose' => 'required|string|max:255',
-            'reference_number' => 'nullable|string|max:255',
-            'screenshot' => 'nullable|image|max:2048',
-            'payment_method' => 'required|string|max:255',
-            'transaction_date' => 'required|date',
-            'status' => 'required|string|max:255',
-            'verification_notes' => 'nullable|string',
+            'purpose' => 'required|in:tithes,offering,mission',
+            'payment_method' => 'required|in:cash,check',
+            'notes' => 'nullable|string',
         ]);
 
-        if ($request->hasFile('screenshot')) {
-            $path = $request->file('screenshot')->store('donation-screenshots', 'public');
-            $validated['screenshot'] = $path;
-        }
-
+        // Set transaction date to current time
+        $validated['transaction_date'] = now();
         $validated['admin_id'] = auth()->id();
-        $validated['donor_name'] = $request->donor_name;
+        
+        // For manual donations, automatically set status to verified
+        $validated['status'] = 'verified';
+        $validated['verified_by'] = auth()->user()->name;
+        $validated['verification_date'] = now();
+
+        // If payment method is check, validate check details
+        if ($request->payment_method === 'check') {
+            $checkValidation = $request->validate([
+                'check_number' => 'required|string|max:255',
+                'bank_name' => 'required|string|max:255',
+                'check_date' => 'required|date',
+            ]);
+            
+            $validated = array_merge($validated, $checkValidation);
+        }
 
         Donation::create($validated);
 
@@ -41,3 +49,5 @@ class DonationController extends Controller
             ->with('success', 'Manual donation added successfully.');
     }
 } 
+
+

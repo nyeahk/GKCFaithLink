@@ -1,264 +1,185 @@
-@extends('layouts.gkc')
+@extends('layouts.admin')
 
 @section('title', 'Users')
 
 @section('content')
-    <div class="users-container">
-        <div class="users-header">
-            <h1>Users</h1>
-            <a href="{{ route('users.create') }}" class="btn btn-primary">
-                <i class="fas fa-plus"></i> Add New User
-            </a>
+<div class="container py-4">
+    <h1 class="mb-4">Users</h1>
+    
+    @if(session('success'))
+        <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
+    
+    <!-- Search and Filters -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form action="{{ route('admin.users.index') }}" method="GET" class="row g-3">
+                <!-- Search -->
+                <div class="col-md-4">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search by name, email or username" 
+                               name="search" value="{{ request('search') }}">
+                        <button class="btn btn-outline-secondary" type="submit">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Role Filter -->
+                <div class="col-md-3">
+                    <select name="role" class="form-select">
+                        <option value="">All Roles</option>
+                        <option value="1" {{ request('role') == '1' ? 'selected' : '' }}>Administrator</option>
+                        <option value="2" {{ request('role') == '2' ? 'selected' : '' }}>Treasurer</option>
+                        <option value="3" {{ request('role') == '3' ? 'selected' : '' }}>Member</option>
+                        <option value="4" {{ request('role') == '4' ? 'selected' : '' }}>Staff</option>
+                    </select>
+                </div>
+                
+                <!-- Status Filter -->
+                <div class="col-md-3">
+                    <select name="status" class="form-select">
+                        <option value="">All Status</option>
+                        <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Active</option>
+                        <option value="disabled" {{ request('status') == 'disabled' ? 'selected' : '' }}>Disabled</option>
+                    </select>
+                </div>
+                
+                <!-- Filter Button -->
+                <div class="col-md-2">
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-filter"></i> Filter
+                        </button>
+                        @if(request()->anyFilled(['search', 'role', 'status']))
+                            <a href="{{ route('admin.users.index') }}" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-circle"></i> Clear
+                            </a>
+                        @endif
+                    </div>
+                </div>
+            </form>
         </div>
-
-        @if(session('success'))
-            <div class="alert alert-success">
-                <i class="fas fa-check-circle"></i>
-                {{ session('success') }}
-            </div>
-        @endif
-
-        <div class="users-table-container">
-            <table class="users-table">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Role</th>
-                        <th>Status</th>
-                        <th>Last Active</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($users as $user)
+    </div>
+    
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                            <th>Assign Role</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($users as $user)
                         <tr>
                             <td>
-                                <div class="user-info">
-                                    @if($user->image_path)
-                                        <img src="{{ asset('storage/' . $user->image_path) }}" alt="{{ $user->name }}" class="user-avatar">
-                                    @else
-                                        <div class="user-avatar-placeholder">
-                                            {{ substr($user->name, 0, 1) }}
-                                        </div>
-                                    @endif
-                                    <span>{{ $user->name }}</span>
+                                <div class="d-flex align-items-center">
+                                    <div class="me-3">
+                                        @if($user->image_path)
+                                            <img src="{{ asset('storage/' . $user->image_path) }}" alt="{{ $user->username }}" 
+                                                class="rounded-circle" width="40" height="40" style="object-fit: cover;">
+                                        @else
+                                            <div class="bg-light rounded-circle d-flex align-items-center justify-content-center" 
+                                                style="width: 40px; height: 40px;">
+                                                <i class="bi bi-person" style="font-size: 1.2rem;"></i>
+                                            </div>
+                                        @endif
+                                    </div>
+                                    <div>
+                                        <a href="{{ route('admin.users.show', $user->id) }}" class="text-decoration-none">
+                                            {{ $user->username }}
+                                        </a>
+                                        @if($user->name)
+                                            <div class="small text-muted">{{ $user->name }}</div>
+                                        @endif
+                                    </div>
                                 </div>
                             </td>
                             <td>{{ $user->email }}</td>
                             <td>
-                                <span class="badge badge-{{ $user->role === 'admin' ? 'primary' : 'secondary' }}">
-                                    {{ ucfirst($user->role) }}
-                                </span>
+                                @switch($user->role)
+                                    @case(1)
+                                        <span class="badge bg-primary">Admin</span>
+                                        @break
+                                    @case(2)
+                                        <span class="badge bg-info">Treasurer</span>
+                                        @break
+                                    @case(3)
+                                        <span class="badge bg-success">Member</span>
+                                        @break
+                                    @case(4)
+                                        <span class="badge bg-secondary">Staff</span>
+                                        @break
+                                    @default
+                                        <span class="badge bg-light text-dark">Unknown</span>
+                                @endswitch
                             </td>
                             <td>
-                                <span class="status-badge status-{{ $user->isCurrentlyActive() ? 'active' : 'inactive' }}">
-                                    <i class="fas fa-circle"></i>
-                                    {{ $user->isCurrentlyActive() ? 'Active' : 'Inactive' }}
-                                </span>
-                            </td>
-                            <td>
-                                @if($user->last_active_at)
-                                    {{ $user->last_active_at->diffForHumans() }}
+                                @if($user->is_active)
+                                    <span class="badge bg-success">Active</span>
                                 @else
-                                    Never
+                                    <span class="badge bg-danger">Disabled</span>
                                 @endif
                             </td>
                             <td>
-                                <div class="action-buttons">
-                                    <a href="{{ route('users.edit', $user->id) }}" class="btn btn-sm btn-edit">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <form action="{{ route('users.destroy', $user->id) }}" method="POST" class="d-inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-delete" onclick="return confirm('Are you sure you want to delete this user?')">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </form>
+                                <form action="{{ route('admin.users.toggle', $user->id) }}" method="POST" style="display:inline;">
+                                    @csrf
+                                    @method('PATCH')
+                                    <button type="submit" class="btn btn-sm {{ $user->is_active ? 'btn-danger' : 'btn-success' }}">
+                                        {{ $user->is_active ? 'Disable' : 'Enable' }}
+                                    </button>
+                                </form>
+                                <a href="{{ route('admin.users.show', $user->id) }}" class="btn btn-info btn-sm ms-2">
+                                    View
+                                </a>
+                            </td>
+                            <td>
+                                <form action="{{ route('admin.users.assignRole', $user->id) }}" method="POST" class="d-inline">
+                                    @csrf
+                                    @method('PATCH')
+                                    <select name="role" onchange="this.form.submit()" class="form-select form-select-sm" style="width: auto;">
+                                        <option value="1" {{ $user->role == 1 ? 'selected' : '' }}>Admin</option>
+                                        <option value="2" {{ $user->role == 2 ? 'selected' : '' }}>Treasurer</option>
+                                        <option value="3" {{ $user->role == 3 ? 'selected' : '' }}>Member</option>
+                                        <option value="4" {{ $user->role == 4 ? 'selected' : '' }}>Staff</option>
+                                    </select>
+                                </form>
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="6" class="text-center py-4">
+                                <div class="d-flex flex-column align-items-center">
+                                    <i class="bi bi-people text-muted" style="font-size: 3rem;"></i>
+                                    <h5 class="mt-3">No Users Found</h5>
+                                    <p class="text-muted">No users match your search criteria.</p>
                                 </div>
                             </td>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Enhanced Pagination -->
+            @if($users->hasPages())
+            <div class="d-flex justify-content-between align-items-center mt-4">
+                <div>
+                    Showing {{ $users->firstItem() }} to {{ $users->lastItem() }} of {{ $users->total() }} users
+                </div>
+                <div>
+                    {{ $users->appends(request()->query())->links('pagination::bootstrap-5') }}
+                </div>
+            </div>
+            @endif
         </div>
     </div>
+</div>
 @endsection
-
-@push('styles')
-<style>
-    .users-container {
-        padding: 2rem;
-    }
-
-    .users-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 2rem;
-    }
-
-    .users-header h1 {
-        color: #1a365d;
-        margin: 0;
-        font-size: 1.875rem;
-    }
-
-    .users-table-container {
-        background: white;
-        border-radius: 0.5rem;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        overflow: hidden;
-    }
-
-    .users-table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-
-    .users-table th,
-    .users-table td {
-        padding: 1rem;
-        text-align: left;
-        border-bottom: 1px solid #e2e8f0;
-    }
-
-    .users-table th {
-        background-color: #f7fafc;
-        font-weight: 600;
-        color: #4a5568;
-    }
-
-    .user-info {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-    }
-
-    .user-avatar {
-        width: 2.5rem;
-        height: 2.5rem;
-        border-radius: 50%;
-        object-fit: cover;
-    }
-
-    .user-avatar-placeholder {
-        width: 2.5rem;
-        height: 2.5rem;
-        border-radius: 50%;
-        background-color: #4299e1;
-        color: white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 600;
-    }
-
-    .badge {
-        padding: 0.25rem 0.5rem;
-        border-radius: 0.25rem;
-        font-size: 0.875rem;
-        font-weight: 500;
-    }
-
-    .badge-primary {
-        background-color: #ebf8ff;
-        color: #2b6cb0;
-    }
-
-    .badge-secondary {
-        background-color: #f7fafc;
-        color: #4a5568;
-    }
-
-    .status-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.25rem 0.5rem;
-        border-radius: 0.25rem;
-        font-size: 0.875rem;
-        font-weight: 500;
-    }
-
-    .status-active {
-        background-color: #f0fff4;
-        color: #2f855a;
-    }
-
-    .status-inactive {
-        background-color: #fff5f5;
-        color: #c53030;
-    }
-
-    .status-badge i {
-        font-size: 0.5rem;
-    }
-
-    .action-buttons {
-        display: flex;
-        gap: 0.5rem;
-    }
-
-    .btn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        padding: 0.5rem;
-        border-radius: 0.25rem;
-        transition: all 0.2s;
-    }
-
-    .btn-sm {
-        padding: 0.25rem 0.5rem;
-        font-size: 0.875rem;
-    }
-
-    .btn-primary {
-        background-color: #3182ce;
-        color: white;
-    }
-
-    .btn-primary:hover {
-        background-color: #2c5282;
-    }
-
-    .btn-edit {
-        background-color: #e2e8f0;
-        color: #4a5568;
-    }
-
-    .btn-edit:hover {
-        background-color: #cbd5e0;
-    }
-
-    .btn-delete {
-        background-color: #fed7d7;
-        color: #c53030;
-    }
-
-    .btn-delete:hover {
-        background-color: #feb2b2;
-    }
-
-    .alert {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        padding: 1rem;
-        border-radius: 0.375rem;
-        margin-bottom: 1.5rem;
-    }
-
-    .alert-success {
-        background-color: #f0fff4;
-        color: #2f855a;
-        border: 1px solid #c6f6d5;
-    }
-
-    .alert i {
-        font-size: 1.25rem;
-    }
-</style>
-@endpush 
