@@ -16,7 +16,7 @@
                             <span class="badge bg-danger rounded-pill">{{ auth()->user()->unreadNotifications->count() }}</span>
                         @endif
                     </a>
-                    <ul class="dropdown-menu dropdown-menu-end notification-dropdown" aria-labelledby="navbarDropdownNotifications">
+                    <ul class="dropdown-menu dropdown-menu-end notification-dropdown" aria-labelledby="navbarDropdownNotifications" style="width: 320px; max-height: 500px; overflow-y: auto;">
                         <li class="dropdown-header bg-light">
                             <div class="d-flex justify-content-between align-items-center px-2 py-2">
                                 <span class="fw-bold">Notifications</span>
@@ -33,43 +33,50 @@
                         </li>
                         
                         @forelse(auth()->user()->notifications()->latest()->take(5)->get() as $notification)
-                            <li>
-                                <a class="dropdown-item d-flex align-items-center py-2 {{ $notification->read_at ? '' : 'unread-notification' }}" 
-                                   href="{{ route('notifications.show', $notification->id) }}">
-                                    <div class="flex-shrink-0 me-2">
-                                        @if($notification->type == 'App\Notifications\DonationApprovedNotification')
-                                            <div class="notification-icon bg-success-light">
-                                                <i class="fas fa-donate text-success"></i>
-                                            </div>
-                                        @elseif($notification->type == 'App\Notifications\DonationDeclinedNotification')
-                                            <div class="notification-icon bg-danger-light">
-                                                <i class="fas fa-times-circle text-danger"></i>
-                                            </div>
-                                        @elseif($notification->type == 'App\Notifications\DonationStatusNotification')
-                                            @if(isset($notification->data['status']) && $notification->data['status'] == 'declined')
-                                                <div class="notification-icon bg-danger-light">
-                                                    <i class="fas fa-times-circle text-danger"></i>
+                            <li class="px-2 py-2">
+                                <div class="card notification-card {{ $notification->read_at ? 'border-light' : 'border-primary' }}">
+                                    <div class="card-body p-2">
+                                        <a class="text-decoration-none text-dark" href="{{ route('notifications.show', $notification->id) }}">
+                                            <div class="d-flex align-items-center">
+                                                <div class="flex-shrink-0 me-2">
+                                                    @if($notification->type == 'App\Notifications\DonationApprovedNotification')
+                                                        <div class="notification-icon bg-success-light">
+                                                            <i class="fas fa-donate text-success"></i>
+                                                        </div>
+                                                    @elseif($notification->type == 'App\Notifications\DonationDeclinedNotification')
+                                                        <div class="notification-icon bg-danger-light">
+                                                            <i class="fas fa-times-circle text-danger"></i>
+                                                        </div>
+                                                    @elseif($notification->type == 'App\Notifications\DonationStatusNotification')
+                                                        @if(isset($notification->data['status']) && $notification->data['status'] == 'declined')
+                                                            <div class="notification-icon bg-danger-light">
+                                                                <i class="fas fa-times-circle text-danger"></i>
+                                                            </div>
+                                                        @else
+                                                            <div class="notification-icon bg-primary-light">
+                                                                <i class="fas fa-check-circle text-primary"></i>
+                                                            </div>
+                                                        @endif
+                                                    @elseif($notification->type == 'App\Notifications\NewDonationNotification')
+                                                        <div class="notification-icon bg-warning-light">
+                                                            <i class="fas fa-hand-holding-usd text-warning"></i>
+                                                        </div>
+                                                    @else
+                                                        <div class="notification-icon bg-secondary-light">
+                                                            <i class="fas fa-bell text-secondary"></i>
+                                                        </div>
+                                                    @endif
                                                 </div>
-                                            @else
-                                                <div class="notification-icon bg-primary-light">
-                                                    <i class="fas fa-check-circle text-primary"></i>
+                                                <div class="flex-grow-1">
+                                                    <div class="fw-bold text-truncate {{ $notification->read_at ? '' : 'text-primary' }}">
+                                                        {{ $notification->data['message'] ?? 'New notification' }}
+                                                    </div>
+                                                    <div class="small text-muted">{{ $notification->created_at->diffForHumans() }}</div>
                                                 </div>
-                                            @endif
-                                        @elseif($notification->type == 'App\Notifications\NewDonationNotification')
-                                            <div class="notification-icon bg-warning-light">
-                                                <i class="fas fa-hand-holding-usd text-warning"></i>
                                             </div>
-                                        @else
-                                            <div class="notification-icon bg-secondary-light">
-                                                <i class="fas fa-bell text-secondary"></i>
-                                            </div>
-                                        @endif
+                                        </a>
                                     </div>
-                                    <div class="flex-grow-1">
-                                        <div class="fw-bold text-truncate">{{ $notification->data['message'] ?? 'New notification' }}</div>
-                                        <div class="small text-muted">{{ $notification->created_at->diffForHumans() }}</div>
-                                    </div>
-                                </a>
+                                </div>
                             </li>
                         @empty
                             <li><div class="dropdown-item text-center py-3 text-muted">No notifications</div></li>
@@ -95,6 +102,7 @@
         </div>
     </div>
 </nav>
+
 
 
 

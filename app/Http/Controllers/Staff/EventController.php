@@ -33,6 +33,9 @@ class EventController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
 
+        // Add the authenticated user's ID
+        $validated['created_by'] = auth()->id();
+
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('events', 'public');
             $validated['image_path'] = $path;
@@ -81,6 +84,11 @@ class EventController extends Controller
             'status' => 'required|in:draft,published,cancelled',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
+
+        // Preserve the created_by field if it already exists
+        if (!$event->created_by) {
+            $validated['created_by'] = auth()->id();
+        }
 
         if ($request->hasFile('image')) {
             // Delete old image if exists

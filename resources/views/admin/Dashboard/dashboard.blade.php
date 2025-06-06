@@ -44,8 +44,9 @@
                                     <td class="{{ !$day['isCurrentMonth'] ? 'other-month' : '' }} 
                                              {{ $day['isToday'] ? 'today' : '' }}
                                              {{ isset($day['events']) && count($day['events']) > 0 ? 'has-events' : '' }}" 
-                                        onclick="showEventsForDate('{{ $day['date']->format('Y-m-d') }}')">
-                                        <div class="day-number">{{ $day['day'] }}</div>
+                                        data-date="{{ $day['date']->format('Y-m-d') }}"
+                                        onclick="showEventsForDate('{{ $day['date']->format('Y-m-d') }}')"
+                                        <div class="day-number">{{ $day['day'] }}></div>
                                         @if(isset($day['events']) && count($day['events']) > 0)
                                             <div class="event-indicator">
                                                 <i class="bi bi-calendar-event"></i>
@@ -170,3 +171,7 @@
     }
 </script>
 @endpush
+
+
+
+

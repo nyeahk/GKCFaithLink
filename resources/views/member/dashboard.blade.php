@@ -244,3 +244,74 @@
     }
 </script>
 @endpush
+
+@push('styles')
+<style>
+    /* Enhanced dashboard styles using app color scheme */
+    .calendar-container {
+        background-color: var(--white);
+        border-radius: 8px;
+        box-shadow: 0 2px 8px var(--shadow);
+    }
+    
+    .calendar-header {
+        background-color: var(--primary);
+        color: var(--white);
+    }
+    
+    .calendar-title {
+        font-weight: 600;
+    }
+    
+    .calendar-nav-btn {
+        background-color: var(--primary-light);
+        color: var(--white);
+        border: none;
+        transition: var(--hover-transition);
+    }
+    
+    .calendar-nav-btn:hover {
+        background-color: var(--primary-dark);
+        transform: var(--hover-scale);
+    }
+    
+    .calendar-table th {
+        background-color: var(--primary-light);
+        color: var(--primary-dark);
+    }
+    
+    .today {
+        background-color: var(--background-light);
+    }
+    
+    .event-indicator {
+        background-color: var(--primary-light);
+        color: var(--primary-dark);
+    }
+    
+    .card {
+        transition: var(--hover-transition);
+    }
+    
+    .card:hover {
+        transform: var(--hover-scale);
+        box-shadow: var(--hover-shadow);
+    }
+    
+    .card-header {
+        background-color: var(--primary);
+        color: var(--white);
+    }
+    
+    .btn-primary {
+        background-color: var(--primary);
+        border-color: var(--primary);
+    }
+    
+    .btn-primary:hover {
+        background-color: var(--primary-dark);
+        border-color: var(--primary-dark);
+    }
+</style>
+@endpush
+
