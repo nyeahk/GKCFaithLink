@@ -37,6 +37,7 @@
                             </a>
                         </li>
                         <li class="nav-item mb-2">
+<<<<<<< HEAD
                             <a class="nav-link admin-sidebar-link admin-sidebar-dropdown d-flex align-items-center {{ request()->routeIs('admin.reports*') ? 'active' : '' }}" href="#reportsSubmenu" data-bs-toggle="collapse" aria-expanded="{{ request()->routeIs('admin.reports*') ? 'true' : 'false' }}">
                                 <i class="bi bi-bar-chart-line me-3 admin-sidebar-icon"></i>
                                 <span class="admin-sidebar-text">Reports</span>
@@ -54,6 +55,27 @@
                                         <a class="nav-link admin-sidebar-link admin-submenu-link d-flex align-items-center {{ request()->routeIs('admin.reports.monthly') ? 'active' : '' }}" href="{{ route('admin.reports.monthly') }}">
                                             <i class="bi bi-calendar-month me-3 admin-sidebar-icon"></i>
                                             <span class="admin-sidebar-text">Monthly Report</span>
+=======
+                            <a class="nav-link d-flex align-items-center" 
+                               href="#reportsSubmenu" 
+                               data-bs-toggle="collapse" 
+                               aria-expanded="{{ request()->routeIs('reports.*') ? 'true' : 'false' }}">
+                                <i class="bi bi-bar-chart-line me-2"></i> Reports
+                                <i class="bi bi-chevron-down ms-auto"></i>
+                            </a>
+                            <div class="collapse {{ request()->routeIs('reports.*') ? 'show' : '' }}" id="reportsSubmenu">
+                                <ul class="nav flex-column ms-3 mt-2">
+                                    <li class="nav-item mb-2">
+                                        <a class="nav-link d-flex align-items-center {{ request()->routeIs('reports.weekly') ? 'active' : '' }}" 
+                                           href="{{ route('reports.weekly') }}">
+                                            <i class="bi bi-calendar-week me-2"></i> Weekly Report
+                                        </a>
+                                    </li>
+                                    <li class="nav-item mb-2">
+                                        <a class="nav-link d-flex align-items-center {{ request()->routeIs('reports.monthly') ? 'active' : '' }}" 
+                                           href="{{ route('reports.monthly') }}">
+                                            <i class="bi bi-calendar-month me-2"></i> Monthly Report
+>>>>>>> 70a61f8a1b2736bf77305a50653004188f6627e9
                                         </a>
                                     </li>
                                 </ul>
@@ -102,6 +124,7 @@
                     </a>
                 </li>
                 <li class="nav-item mb-2">
+<<<<<<< HEAD
                     <a class="nav-link admin-sidebar-link admin-sidebar-dropdown d-flex align-items-center {{ request()->routeIs('admin.reports*') ? 'active' : '' }}" href="#reportsSubmenuMobile" data-bs-toggle="collapse" aria-expanded="{{ request()->routeIs('admin.reports*') ? 'true' : 'false' }}">
                         <i class="bi bi-bar-chart-line me-3 admin-sidebar-icon"></i>
                         <span class="admin-sidebar-text">Reports</span>
@@ -119,6 +142,27 @@
                                 <a class="nav-link admin-sidebar-link admin-submenu-link d-flex align-items-center {{ request()->routeIs('admin.reports.monthly') ? 'active' : '' }}" href="{{ route('admin.reports.monthly') }}">
                                     <i class="bi bi-calendar-month me-3 admin-sidebar-icon"></i>
                                     <span class="admin-sidebar-text">Monthly Report</span>
+=======
+                    <a class="nav-link d-flex align-items-center" 
+                       href="#reportsSubmenuMobile" 
+                       data-bs-toggle="collapse" 
+                       aria-expanded="{{ request()->routeIs('reports.*') ? 'true' : 'false' }}">
+                        <i class="bi bi-bar-chart-line me-2"></i> Reports
+                        <i class="bi bi-chevron-down ms-auto"></i>
+                    </a>
+                    <div class="collapse {{ request()->routeIs('reports.*') ? 'show' : '' }}" id="reportsSubmenuMobile">
+                        <ul class="nav flex-column ms-3 mt-2">
+                            <li class="nav-item mb-2">
+                                <a class="nav-link d-flex align-items-center {{ request()->routeIs('reports.weekly') ? 'active' : '' }}" 
+                                   href="{{ route('reports.weekly') }}">
+                                    <i class="bi bi-calendar-week me-2"></i> Weekly Report
+                                </a>
+                            </li>
+                            <li class="nav-item mb-2">
+                                <a class="nav-link d-flex align-items-center {{ request()->routeIs('reports.monthly') ? 'active' : '' }}" 
+                                   href="{{ route('reports.monthly') }}">
+                                    <i class="bi bi-calendar-month me-2"></i> Monthly Report
+>>>>>>> 70a61f8a1b2736bf77305a50653004188f6627e9
                                 </a>
                             </li>
                         </ul>
@@ -136,6 +180,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     @stack('scripts')
+<<<<<<< HEAD
 
     <style>
         /* Enhanced Admin Dashboard Styling */
@@ -696,5 +741,24 @@
             z-index: 2;
         }
     </style>
+=======
+    @push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if reports submenu should be expanded
+            if (window.location.href.includes('/reports')) {
+                if (document.getElementById('reportsSubmenu')) {
+                    document.getElementById('reportsSubmenu').classList.add('show');
+                }
+                
+                // For mobile
+                if (document.getElementById('reportsSubmenuMobile')) {
+                    document.getElementById('reportsSubmenuMobile').classList.add('show');
+                }
+            }
+        });
+    </script>
+    @endpush
+>>>>>>> 70a61f8a1b2736bf77305a50653004188f6627e9
 </body>
 </html>

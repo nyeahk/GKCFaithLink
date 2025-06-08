@@ -289,13 +289,40 @@ return [
         'font_height_ratio' => 1.1,
 
         /**
-         * Use the HTML5 Lib parser
-         *
-         * @deprecated This feature is now always on in dompdf 2.x
-         *
-         * @var bool
+         * Use the more-than-experimental HTML5 Lib parser
          */
         'enable_html5_parser' => true,
+        
+        /**
+         * Enable font subsetting
+         */
+        'enable_font_subsetting' => true,
+        
+        /**
+         * Enable remote file access
+         */
+        'enable_remote' => true,
+        
+        /**
+         * Use Unicode fonts for international characters
+         */
+        'default_font' => 'dejavu sans',
+        
+        /**
+         * Set the default paper size
+         */
+        'default_paper_size' => 'a4',
+        
+        /**
+         * Set the default font
+         */
+        'font_height_ratio' => 0.9,
+        
+        /**
+         * Set the default character encoding
+         */
+        'default_encoding' => 'UTF-8',
     ],
 
 ];
+

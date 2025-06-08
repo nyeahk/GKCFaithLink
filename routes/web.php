@@ -239,4 +239,35 @@ Route::middleware(['auth', 'verified', CheckUserActive::class, RoleMiddleware::c
     Route::get('/reports/monthly/download', [App\Http\Controllers\Treasurer\ReportsController::class, 'downloadMonthlyReport'])->name('reports.monthly.download');
 });
 
+// Reports routes - accessible by both admin and treasurer
+Route::middleware(['auth', 'verified', CheckUserActive::class, RoleMiddleware::class.':1,2'])->group(function () {
+    Route::get('/reports', [App\Http\Controllers\ReportController::class, 'index'])->name('reports.index');
+    Route::get('/reports/weekly', [App\Http\Controllers\ReportController::class, 'weekly'])->name('reports.weekly');
+    Route::get('/reports/monthly', [App\Http\Controllers\ReportController::class, 'monthly'])->name('reports.monthly');
+    Route::get('/reports/weekly/download', [App\Http\Controllers\ReportController::class, 'downloadWeeklyReport'])->name('reports.weekly.download');
+    Route::get('/reports/monthly/download', [App\Http\Controllers\ReportController::class, 'downloadMonthlyReport'])->name('reports.monthly.download');
+    
+    // Add these routes for filtering
+    Route::get('/reports/weekly/filter', [App\Http\Controllers\ReportController::class, 'filterWeekly'])->name('reports.weekly.filter');
+    Route::get('/reports/monthly/filter', [App\Http\Controllers\ReportController::class, 'filterMonthly'])->name('reports.monthly.filter');
+});
+
+// Admin-specific report routes
+Route::middleware(['auth', 'verified', CheckUserActive::class, RoleMiddleware::class.':1'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/reports', [App\Http\Controllers\Admin\ReportsController::class, 'index'])->name('reports.index');
+    Route::get('/reports/weekly', [App\Http\Controllers\Admin\ReportsController::class, 'weekly'])->name('reports.weekly');
+    Route::get('/reports/monthly', [App\Http\Controllers\Admin\ReportsController::class, 'monthly'])->name('reports.monthly');
+    Route::get('/reports/weekly/download', [App\Http\Controllers\Admin\ReportsController::class, 'downloadWeeklyReport'])->name('reports.weekly.download');
+    Route::get('/reports/monthly/download', [App\Http\Controllers\Admin\ReportsController::class, 'downloadMonthlyReport'])->name('reports.monthly.download');
+});
+
+// Treasurer-specific report routes
+Route::middleware(['auth', 'verified', CheckUserActive::class, RoleMiddleware::class.':2'])->prefix('treasurer')->name('treasurer.')->group(function () {
+    Route::get('/reports', [App\Http\Controllers\Treasurer\ReportsController::class, 'index'])->name('reports.index');
+    Route::get('/reports/weekly', [App\Http\Controllers\Treasurer\ReportsController::class, 'weekly'])->name('reports.weekly');
+    Route::get('/reports/monthly', [App\Http\Controllers\Treasurer\ReportsController::class, 'monthly'])->name('reports.monthly');
+    Route::get('/reports/weekly/download', [App\Http\Controllers\Treasurer\ReportsController::class, 'downloadWeeklyReport'])->name('reports.weekly.download');
+    Route::get('/reports/monthly/download', [App\Http\Controllers\Treasurer\ReportsController::class, 'downloadMonthlyReport'])->name('reports.monthly.download');
+});
+
 

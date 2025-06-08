@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends($layout ?? 'layouts.app')
 
 @section('title', 'Weekly Report')
 
@@ -17,10 +17,23 @@
                 <i class="bi bi-calendar-range me-1"></i>
                 {{ $startDate->format('M d') }} - {{ $endDate->format('M d, Y') }}
             </span>
-            <a href="{{ route('admin.reports.weekly.download', ['date' => $startDate->format('Y-m-d')]) }}"
-               class="btn btn-success">
-                <i class="bi bi-download me-1"></i> Download PDF
-            </a>
+            
+            @if(auth()->user()->role_id == 1)
+                <a href="{{ route('admin.reports.weekly.download', ['date' => $startDate->format('Y-m-d')]) }}"
+                   class="btn btn-success">
+                    <i class="bi bi-download me-1"></i> Download PDF
+                </a>
+            @elseif(auth()->user()->role_id == 2)
+                <a href="{{ route('treasurer.reports.weekly.download', ['date' => $startDate->format('Y-m-d')]) }}"
+                   class="btn btn-success">
+                    <i class="bi bi-download me-1"></i> Download PDF
+                </a>
+            @else
+                <a href="{{ route('reports.weekly.download', ['date' => $startDate->format('Y-m-d')]) }}"
+                   class="btn btn-success">
+                    <i class="bi bi-download me-1"></i> Download PDF
+                </a>
+            @endif
         </div>
     </div>
 
@@ -32,7 +45,13 @@
             </h5>
         </div>
         <div class="card-body">
-            <form method="GET" action="{{ route('admin.reports.weekly') }}" class="row g-3">
+            @if(auth()->user()->role_id == 1)
+                <form method="GET" action="{{ route('admin.reports.weekly') }}" class="row g-3">
+            @elseif(auth()->user()->role_id == 2)
+                <form method="GET" action="{{ route('treasurer.reports.weekly') }}" class="row g-3">
+            @else
+                <form method="GET" action="{{ route('reports.weekly') }}" class="row g-3">
+            @endif
                 <div class="col-md-4">
                     <label for="statusFilter" class="form-label">Filter by Status</label>
                     <select name="status" id="statusFilter" class="form-select">
@@ -93,7 +112,7 @@
                                 Total Offerings
                             </div>
                             <div class="h5 mb-0 fw-bold text-gray-800">
-                                ₱{{ number_format($totalOfferings, 2) }}
+                                ₱{{ number_format($totalOfferings ?? 0, 2) }}
                             </div>
                             <div class="text-xs text-muted">This Week</div>
                         </div>
@@ -204,14 +223,22 @@
                         @forelse($recentDonations as $donation)
                             <tr>
                                 <td>{{ $donation->created_at->format('M d, Y') }}</td>
-                                <td>{{ $donation->donor_name }}</td>
+                                <td>
+                                    @if($donation->user)
+                                        {{ $donation->user->name }}
+                                    @elseif($donation->donor_name)
+                                        {{ $donation->donor_name }}
+                                    @else
+                                        Anonymous
+                                    @endif
+                                </td>
                                 <td>
                                     <span class="badge bg-secondary">{{ ucfirst($donation->purpose) }}</span>
                                 </td>
                                 <td class="fw-bold">₱{{ number_format($donation->amount, 2) }}</td>
                                 <td>{{ ucfirst($donation->payment_method ?? 'N/A') }}</td>
                                 <td>
-                                    @if($donation->status == 'completed')
+                                    @if($donation->status == 'completed' || $donation->status == 'approved' || $donation->status == 'verified')
                                         <span class="badge bg-success">
                                             <i class="bi bi-check-circle me-1"></i>Completed
                                         </span>
@@ -219,9 +246,13 @@
                                         <span class="badge bg-warning">
                                             <i class="bi bi-clock me-1"></i>Pending
                                         </span>
-                                    @else
+                                    @elseif($donation->status == 'declined' || $donation->status == 'failed')
                                         <span class="badge bg-danger">
                                             <i class="bi bi-x-circle me-1"></i>Failed
+                                        </span>
+                                    @else
+                                        <span class="badge bg-secondary">
+                                            {{ ucfirst($donation->status) }}
                                         </span>
                                     @endif
                                 </td>
@@ -320,3 +351,7 @@
     });
 </script>
 @endpush
+
+
+
+
