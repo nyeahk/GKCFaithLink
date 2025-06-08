@@ -196,13 +196,9 @@ class ReportsController extends Controller
             ->where(function($query) {
                 $query->where('purpose', 'offering')
                       ->orWhere('purpose', 'like', '%offering%')
-                      ->orWhere('purpose', 'like', '%love offering%')
-                      ->orWhere('purpose', 'like', '%special offering%');
+                      ->orWhere('purpose', 'like', '%offerings%');
             })
-            ->where(function($query) {
-                $query->where('purpose', 'not like', '%tithe%')
-                      ->where('purpose', 'not like', '%mission%');
-            })
+            ->whereRaw("(purpose NOT LIKE '%tithe%' AND purpose NOT LIKE '%mission%')")
             ->sum('amount');
 
         // Get total mission funds for the week
@@ -210,9 +206,7 @@ class ReportsController extends Controller
             ->where('status', 'approved')
             ->where(function($query) {
                 $query->where('purpose', 'mission')
-                      ->orWhere('purpose', 'like', '%mission%')
-                      ->orWhere('purpose', 'like', '%missions%')
-                      ->orWhere('purpose', 'like', '%missionary%');
+                      ->orWhere('purpose', 'like', '%mission%');
             })
             ->sum('amount');
 
@@ -241,7 +235,8 @@ class ReportsController extends Controller
             $currentDay->addDay();
         }
 
-        return view('treasurer.reports.weekly', compact(
+        // Use the reports.weekly view instead of treasurer.reports.weekly
+        return view('reports.weekly', compact(
             'startDate',
             'endDate',
             'totalTithes',
@@ -270,36 +265,50 @@ class ReportsController extends Controller
         $endDate = $startDate->copy()->endOfWeek();
 
         // Get all donations for the week
-        $recentDonations = Donation::whereBetween('created_at', [$startDate, $endDate])
+        $donations = Donation::whereBetween('created_at', [$startDate, $endDate])
             ->orderBy('created_at', 'desc')
             ->get();
 
         // Get totals with more specific conditions
-        $totalTithes = $recentDonations->filter(function($donation) {
+        $totalTithes = $donations->filter(function($donation) {
             return strtolower($donation->purpose) === 'tithe' || 
                    str_contains(strtolower($donation->purpose), 'tithe');
         })->sum('amount');
 
-        $totalOfferings = $recentDonations->filter(function($donation) {
-            return strtolower($donation->purpose) === 'offering' || 
-                   str_contains(strtolower($donation->purpose), 'offering');
+        $totalOfferings = $donations->filter(function($donation) {
+            return (strtolower($donation->purpose) === 'offering' || 
+                   str_contains(strtolower($donation->purpose), 'offering')) &&
+                   !str_contains(strtolower($donation->purpose), 'tithe') &&
+                   !str_contains(strtolower($donation->purpose), 'mission');
         })->sum('amount');
 
-        $totalMissionFunds = $recentDonations->filter(function($donation) {
+        $totalMissionFunds = $donations->filter(function($donation) {
             return strtolower($donation->purpose) === 'mission' || 
                    str_contains(strtolower($donation->purpose), 'mission');
         })->sum('amount');
 
-        $pdf = PDF::loadView('treasurer.reports.pdf.weekly', compact(
-            'startDate',
-            'endDate',
-            'recentDonations',
-            'totalTithes',
-            'totalOfferings',
-            'totalMissionFunds'
-        ));
+        $totalAmount = $donations->sum('amount');
 
-        return $pdf->download('weekly_donations_report_' . $startDate->format('Y-m-d') . '.pdf');
+        // Create PDF using the reports.pdf.weekly view
+        $pdf = PDF::loadView('reports.pdf.weekly', [
+            'startDate' => $startDate,
+            'endDate' => $endDate,
+            'donations' => $donations,
+            'totalTithes' => $totalTithes,
+            'totalOfferings' => $totalOfferings,
+            'totalMissionFunds' => $totalMissionFunds,
+            'totalAmount' => $totalAmount
+        ]);
+
+        // Generate filename
+        $filename = 'weekly_report_' . $startDate->format('Y_m_d') . '_to_' . $endDate->format('Y_m_d') . '.pdf';
+
+        // Return the PDF for download
+        return $pdf->download($filename);
     }
 }
+
+
+
+
 

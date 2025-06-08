@@ -35,19 +35,24 @@
                             </a>
                         </li>
                         <li class="nav-item mb-2">
-                            <a class="nav-link d-flex align-items-center collapsed" href="#reportsSubmenu" data-bs-toggle="collapse" aria-expanded="false">
+                            <a class="nav-link d-flex align-items-center" 
+                               href="#reportsSubmenu" 
+                               data-bs-toggle="collapse" 
+                               aria-expanded="{{ request()->routeIs('reports.*') ? 'true' : 'false' }}">
                                 <i class="bi bi-bar-chart-line me-2"></i> Reports
                                 <i class="bi bi-chevron-down ms-auto"></i>
                             </a>
-                            <div class="collapse" id="reportsSubmenu">
+                            <div class="collapse {{ request()->routeIs('reports.*') ? 'show' : '' }}" id="reportsSubmenu">
                                 <ul class="nav flex-column ms-3 mt-2">
                                     <li class="nav-item mb-2">
-                                        <a class="nav-link d-flex align-items-center" href="{{ route('admin.reports.weekly') }}">
+                                        <a class="nav-link d-flex align-items-center {{ request()->routeIs('reports.weekly') ? 'active' : '' }}" 
+                                           href="{{ route('reports.weekly') }}">
                                             <i class="bi bi-calendar-week me-2"></i> Weekly Report
                                         </a>
                                     </li>
                                     <li class="nav-item mb-2">
-                                        <a class="nav-link d-flex align-items-center" href="{{ route('admin.reports.monthly') }}">
+                                        <a class="nav-link d-flex align-items-center {{ request()->routeIs('reports.monthly') ? 'active' : '' }}" 
+                                           href="{{ route('reports.monthly') }}">
                                             <i class="bi bi-calendar-month me-2"></i> Monthly Report
                                         </a>
                                     </li>
@@ -94,19 +99,24 @@
                     </a>
                 </li>
                 <li class="nav-item mb-2">
-                    <a class="nav-link d-flex align-items-center" href="#reportsSubmenuMobile" data-bs-toggle="collapse" aria-expanded="false">
+                    <a class="nav-link d-flex align-items-center" 
+                       href="#reportsSubmenuMobile" 
+                       data-bs-toggle="collapse" 
+                       aria-expanded="{{ request()->routeIs('reports.*') ? 'true' : 'false' }}">
                         <i class="bi bi-bar-chart-line me-2"></i> Reports
                         <i class="bi bi-chevron-down ms-auto"></i>
                     </a>
-                    <div class="collapse" id="reportsSubmenuMobile">
+                    <div class="collapse {{ request()->routeIs('reports.*') ? 'show' : '' }}" id="reportsSubmenuMobile">
                         <ul class="nav flex-column ms-3 mt-2">
                             <li class="nav-item mb-2">
-                                <a class="nav-link d-flex align-items-center" href="{{ route('admin.reports.weekly') }}">
+                                <a class="nav-link d-flex align-items-center {{ request()->routeIs('reports.weekly') ? 'active' : '' }}" 
+                                   href="{{ route('reports.weekly') }}">
                                     <i class="bi bi-calendar-week me-2"></i> Weekly Report
                                 </a>
                             </li>
                             <li class="nav-item mb-2">
-                                <a class="nav-link d-flex align-items-center" href="{{ route('admin.reports.monthly') }}">
+                                <a class="nav-link d-flex align-items-center {{ request()->routeIs('reports.monthly') ? 'active' : '' }}" 
+                                   href="{{ route('reports.monthly') }}">
                                     <i class="bi bi-calendar-month me-2"></i> Monthly Report
                                 </a>
                             </li>
@@ -124,5 +134,22 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     @stack('scripts')
+    @push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if reports submenu should be expanded
+            if (window.location.href.includes('/reports')) {
+                if (document.getElementById('reportsSubmenu')) {
+                    document.getElementById('reportsSubmenu').classList.add('show');
+                }
+                
+                // For mobile
+                if (document.getElementById('reportsSubmenuMobile')) {
+                    document.getElementById('reportsSubmenuMobile').classList.add('show');
+                }
+            }
+        });
+    </script>
+    @endpush
 </body>
 </html>

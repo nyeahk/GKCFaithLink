@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends($layout ?? 'layouts.app')
 
 @section('title', 'Monthly Report')
 
@@ -17,7 +17,8 @@
                 <i class="bi bi-calendar-range me-1"></i>
                 {{ $startDate->format('F Y') }}
             </span>
-            <a href="{{ route('admin.reports.monthly.download', ['date' => $startDate->format('Y-m-d')]) }}"
+            
+            <a href="{{ route('reports.monthly.download', ['date' => $startDate->format('Y-m-d')]) }}"
                class="btn btn-success">
                 <i class="bi bi-download me-1"></i> Download PDF
             </a>
@@ -32,16 +33,7 @@
             </h5>
         </div>
         <div class="card-body">
-            <form method="GET" action="{{ route('admin.reports.monthly') }}" class="row g-3">
-                <div class="col-md-4">
-                    <label for="statusFilter" class="form-label">Filter by Status</label>
-                    <select name="status" id="statusFilter" class="form-select">
-                        <option value="">All Statuses</option>
-                        <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
-                        <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>Completed</option>
-                        <option value="failed" {{ request('status') == 'failed' ? 'selected' : '' }}>Failed</option>
-                    </select>
-                </div>
+            <form method="GET" action="{{ route('reports.monthly') }}" class="row g-3">
                 <div class="col-md-4">
                     <label for="dateFilter" class="form-label">Filter by Month</label>
                     <input type="month" name="date" id="dateFilter" class="form-control"
@@ -52,7 +44,7 @@
                         <button type="submit" class="btn btn-primary">
                             <i class="bi bi-search me-1"></i>Apply Filters
                         </button>
-                        <a href="{{ route('admin.reports.monthly') }}" class="btn btn-outline-secondary">
+                        <a href="{{ route('reports.monthly') }}" class="btn btn-outline-secondary">
                             <i class="bi bi-arrow-clockwise me-1"></i>Reset
                         </a>
                     </div>
@@ -63,7 +55,7 @@
 
     <!-- Summary Cards -->
     <div class="row mb-4">
-        <div class="col-xl-4 col-md-6 mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
             <div class="card border-start border-primary border-4 shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
@@ -72,7 +64,7 @@
                                 Total Tithes
                             </div>
                             <div class="h5 mb-0 fw-bold text-gray-800">
-                                ₱{{ number_format($totalTithes ?? 0, 2) }}
+                                ₱{{ number_format($totalTithes, 2) }}
                             </div>
                             <div class="text-xs text-muted">This Month</div>
                         </div>
@@ -84,7 +76,7 @@
             </div>
         </div>
 
-        <div class="col-xl-4 col-md-6 mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
             <div class="card border-start border-success border-4 shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
@@ -93,7 +85,7 @@
                                 Total Offerings
                             </div>
                             <div class="h5 mb-0 fw-bold text-gray-800">
-                                ₱{{ number_format($totalOfferings ?? 0, 2) }}
+                                ₱{{ number_format($totalOfferings, 2) }}
                             </div>
                             <div class="text-xs text-muted">This Month</div>
                         </div>
@@ -105,16 +97,16 @@
             </div>
         </div>
 
-        <div class="col-xl-4 col-md-6 mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
             <div class="card border-start border-info border-4 shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-xs fw-bold text-info text-uppercase mb-1">
-                                Mission Funds
+                                Total Mission Funds
                             </div>
                             <div class="h5 mb-0 fw-bold text-gray-800">
-                                ₱{{ number_format($totalMissionFunds ?? 0, 2) }}
+                                ₱{{ number_format($totalMissionFunds, 2) }}
                             </div>
                             <div class="text-xs text-muted">This Month</div>
                         </div>
@@ -125,10 +117,7 @@
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Enhanced Statistics Row -->
-    <div class="row mb-4">
         <div class="col-xl-3 col-md-6 mb-4">
             <div class="card border-start border-warning border-4 shadow h-100 py-2">
                 <div class="card-body">
@@ -138,75 +127,12 @@
                                 Total Donations
                             </div>
                             <div class="h5 mb-0 fw-bold text-gray-800">
-                                {{ $recentDonations->count() }}
+                                {{ $donations->count() }}
                             </div>
                             <div class="text-xs text-muted">This Month</div>
                         </div>
                         <div class="col-auto">
                             <i class="bi bi-list-check fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-start border-success border-4 shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs fw-bold text-success text-uppercase mb-1">
-                                Average Donation
-                            </div>
-                            <div class="h5 mb-0 fw-bold text-gray-800">
-                                ₱{{ $recentDonations->count() > 0 ? number_format($recentDonations->avg('amount'), 2) : '0.00' }}
-                            </div>
-                            <div class="text-xs text-muted">Per Donation</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="bi bi-graph-up fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-start border-danger border-4 shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs fw-bold text-danger text-uppercase mb-1">
-                                Largest Donation
-                            </div>
-                            <div class="h5 mb-0 fw-bold text-gray-800">
-                                ₱{{ $recentDonations->count() > 0 ? number_format($recentDonations->max('amount'), 2) : '0.00' }}
-                            </div>
-                            <div class="text-xs text-muted">Single Amount</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="bi bi-trophy fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-start border-secondary border-4 shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs fw-bold text-secondary text-uppercase mb-1">
-                                Completed
-                            </div>
-                            <div class="h5 mb-0 fw-bold text-gray-800">
-                                {{ $recentDonations->where('status', 'completed')->count() }}
-                            </div>
-                            <div class="text-xs text-muted">Successful</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="bi bi-check-circle fa-2x text-gray-300"></i>
                         </div>
                     </div>
                 </div>
@@ -223,16 +149,6 @@
                     <h6 class="m-0 fw-bold text-primary">
                         <i class="bi bi-bar-chart me-2"></i>Donations by Week
                     </h6>
-                    <div class="dropdown no-arrow">
-                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="bi bi-three-dots-vertical text-gray-400"></i>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
-                            <div class="dropdown-header">Chart Options:</div>
-                            <a class="dropdown-item" href="#" onclick="changeChartType('bar')">Bar Chart</a>
-                            <a class="dropdown-item" href="#" onclick="changeChartType('line')">Line Chart</a>
-                        </div>
-                    </div>
                 </div>
                 <div class="card-body">
                     <div class="chart-area">
@@ -251,69 +167,41 @@
                     </h6>
                 </div>
                 <div class="card-body">
-                    <div class="text-center">
-                        <div class="mb-3">
-                            <h4 class="text-primary">Grand Total</h4>
-                            <h2 class="text-success">₱{{ number_format(($totalTithes ?? 0) + ($totalOfferings ?? 0) + ($totalMissionFunds ?? 0), 2) }}</h2>
-                        </div>
-                        <hr>
-                        <div class="row text-center">
-                            <div class="col-12 mb-2">
-                                <small class="text-muted">Category Breakdown</small>
-                            </div>
-                            <div class="col-12 mb-2">
-                                <div class="progress mb-1" style="height: 20px;">
-                                    @php
-                                        $total = ($totalTithes ?? 0) + ($totalOfferings ?? 0) + ($totalMissionFunds ?? 0);
-                                        $tithePercent = $total > 0 ? (($totalTithes ?? 0) / $total) * 100 : 0;
-                                        $offeringPercent = $total > 0 ? (($totalOfferings ?? 0) / $total) * 100 : 0;
-                                        $missionPercent = $total > 0 ? (($totalMissionFunds ?? 0) / $total) * 100 : 0;
-                                    @endphp
-                                    <div class="progress-bar bg-primary" role="progressbar" style="width: {{ $tithePercent }}%" aria-valuenow="{{ $tithePercent }}" aria-valuemin="0" aria-valuemax="100"></div>
-                                    <div class="progress-bar bg-success" role="progressbar" style="width: {{ $offeringPercent }}%" aria-valuenow="{{ $offeringPercent }}" aria-valuemin="0" aria-valuemax="100"></div>
-                                    <div class="progress-bar bg-info" role="progressbar" style="width: {{ $missionPercent }}%" aria-valuenow="{{ $missionPercent }}" aria-valuemin="0" aria-valuemax="100"></div>
-                                </div>
-                            </div>
-                            <div class="col-12 mb-1">
-                                <small class="text-primary">■ Tithes: {{ number_format($tithePercent, 1) }}%</small>
-                            </div>
-                            <div class="col-12 mb-1">
-                                <small class="text-success">■ Offerings: {{ number_format($offeringPercent, 1) }}%</small>
-                            </div>
-                            <div class="col-12 mb-1">
-                                <small class="text-info">■ Missions: {{ number_format($missionPercent, 1) }}%</small>
-                            </div>
-                        </div>
-                        <hr>
-                        <div class="text-center">
-                            <small class="text-muted">
-                                <i class="bi bi-calendar-check me-1"></i>
-                                Report generated on {{ now()->format('M d, Y') }}
-                            </small>
-                        </div>
+                    <div class="chart-pie pt-4 pb-2">
+                        <canvas id="donationsPieChart"></canvas>
+                    </div>
+                    <div class="mt-4 text-center small">
+                        <span class="me-2">
+                            <i class="fas fa-circle text-primary"></i> Tithes
+                        </span>
+                        <span class="me-2">
+                            <i class="fas fa-circle text-success"></i> Offerings
+                        </span>
+                        <span class="me-2">
+                            <i class="fas fa-circle text-info"></i> Mission
+                        </span>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Donations Table -->
+    <!-- Recent Donations Table -->
     <div class="card shadow mb-4">
         <div class="card-header py-3">
             <h6 class="m-0 fw-bold text-primary">
-                <i class="bi bi-table me-2"></i>Monthly Donations Details
+                <i class="bi bi-table me-2"></i>Recent Donations
             </h6>
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <table class="table table-bordered" width="100%" cellspacing="0">
                     <thead>
                         <tr>
                             <th>Date</th>
                             <th>Donor</th>
                             <th>Purpose</th>
                             <th>Amount</th>
-                            <th>Payment Method</th>
                             <th>Status</th>
                         </tr>
                     </thead>
@@ -321,33 +209,32 @@
                         @forelse($recentDonations as $donation)
                             <tr>
                                 <td>{{ $donation->created_at->format('M d, Y') }}</td>
-                                <td>{{ $donation->donor_name }}</td>
                                 <td>
-                                    <span class="badge bg-secondary">{{ ucfirst($donation->purpose ?? 'General') }}</span>
-                                </td>
-                                <td class="fw-bold">₱{{ number_format($donation->amount, 2) }}</td>
-                                <td>{{ ucfirst($donation->payment_method ?? 'N/A') }}</td>
-                                <td>
-                                    @if($donation->status == 'completed')
-                                        <span class="badge bg-success">
-                                            <i class="bi bi-check-circle me-1"></i>Completed
-                                        </span>
-                                    @elseif($donation->status == 'pending')
-                                        <span class="badge bg-warning">
-                                            <i class="bi bi-clock me-1"></i>Pending
-                                        </span>
+                                    @if($donation->user)
+                                        {{ $donation->user->name }}
+                                    @elseif($donation->donor_name)
+                                        {{ $donation->donor_name }}
                                     @else
-                                        <span class="badge bg-danger">
-                                            <i class="bi bi-x-circle me-1"></i>Failed
-                                        </span>
+                                        Anonymous
+                                    @endif
+                                </td>
+                                <td>{{ ucfirst($donation->purpose) }}</td>
+                                <td>₱{{ number_format($donation->amount, 2) }}</td>
+                                <td>
+                                    @if($donation->status == 'pending')
+                                        <span class="badge bg-warning text-dark">Pending</span>
+                                    @elseif($donation->status == 'verified' || $donation->status == 'approved')
+                                        <span class="badge bg-success">Verified</span>
+                                    @elseif($donation->status == 'declined')
+                                        <span class="badge bg-danger">Declined</span>
+                                    @else
+                                        <span class="badge bg-secondary">{{ ucfirst($donation->status) }}</span>
                                     @endif
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="text-center text-muted py-4">
-                                    <i class="bi bi-inbox me-2"></i>No donations found for this month.
-                                </td>
+                                <td colspan="5" class="text-center">No donations found for this period</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -409,11 +296,10 @@
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    let donationsChart;
-
     document.addEventListener('DOMContentLoaded', function() {
+        // Bar chart for weekly donations
         const ctx = document.getElementById('donationsChart').getContext('2d');
-
+        
         // Create gradient for chart
         const gradient = ctx.createLinearGradient(0, 0, 0, 400);
         gradient.addColorStop(0, 'rgba(78, 115, 223, 0.8)');
@@ -516,35 +402,74 @@
         };
 
         // Create chart
-        donationsChart = new Chart(ctx, {
+        const donationsChart = new Chart(ctx, {
             type: 'bar',
             data: chartData,
             options: chartOptions
         });
-    });
 
-    // Function to change chart type
-    function changeChartType(type) {
-        if (donationsChart) {
-            donationsChart.config.type = type;
-
-            // Adjust styling based on chart type
-            if (type === 'line') {
-                donationsChart.data.datasets[0].backgroundColor = 'rgba(78, 115, 223, 0.1)';
-                donationsChart.data.datasets[0].borderWidth = 3;
-                donationsChart.data.datasets[0].pointRadius = 6;
-                donationsChart.data.datasets[0].pointHoverRadius = 8;
-            } else {
-                const ctx = donationsChart.ctx;
-                const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-                gradient.addColorStop(0, 'rgba(78, 115, 223, 0.8)');
-                gradient.addColorStop(1, 'rgba(78, 115, 223, 0.1)');
-                donationsChart.data.datasets[0].backgroundColor = gradient;
-                donationsChart.data.datasets[0].borderWidth = 2;
+        // Pie chart for donation breakdown
+        const pieCtx = document.getElementById('donationsPieChart').getContext('2d');
+        
+        // Get values for pie chart
+        const tithes = {{ $totalTithes ?? 0 }};
+        const offerings = {{ $totalOfferings ?? 0 }};
+        const missions = {{ $totalMissionFunds ?? 0 }};
+        
+        // Create pie chart
+        const pieChart = new Chart(pieCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Tithes', 'Offerings', 'Mission Funds'],
+                datasets: [{
+                    data: [tithes, offerings, missions],
+                    backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc'],
+                    hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf'],
+                    hoverBorderColor: "rgba(234, 236, 244, 1)",
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '70%',
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        backgroundColor: "rgb(255,255,255)",
+                        bodyColor: "#858796",
+                        borderColor: '#dddfeb',
+                        borderWidth: 1,
+                        xPadding: 15,
+                        yPadding: 15,
+                        displayColors: false,
+                        caretPadding: 10,
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = context.parsed || 0;
+                                const total = context.dataset.data.reduce((acc, data) => acc + data, 0);
+                                const percentage = Math.round((value / total) * 100);
+                                return `${label}: ₱${new Intl.NumberFormat().format(value)} (${percentage}%)`;
+                            }
+                        }
+                    }
+                },
+                elements: {
+                    arc: {
+                        borderWidth: 2
+                    }
+                }
             }
-
-            donationsChart.update();
-        }
-    }
+        });
+    });
 </script>
 @endpush
+
+
+
+
+
+
+
