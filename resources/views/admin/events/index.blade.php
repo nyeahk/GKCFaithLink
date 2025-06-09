@@ -83,15 +83,96 @@
     </div>
 
     <!-- Event Details Modal -->
-    <div class="modal" id="eventDetailsModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title" id="eventDetailsTitle">Event Details</h3>
-                <button class="modal-close">&times;</button>
-            </div>
-            <div class="modal-body">
-                <!-- Modal content here -->
+    <div class="modal fade" id="eventDetailsModal" tabindex="-1" aria-labelledby="eventDetailsModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white py-2">
+                    <h5 class="modal-title" id="eventDetailsModalLabel">Event Details</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-3">
+                    <div class="text-center mb-3">
+                        <img src="" alt="Event Image" class="event-image img-thumbnail mb-2" style="max-width: 120px; max-height: 120px; object-fit: cover;">
+                        <h5 class="event-title mb-1"></h5>
+                        <div class="event-category badge bg-secondary mb-2"></div>
+                    </div>
+                    <div class="event-description small text-muted mb-3"></div>
+                    <ul class="list-group list-group-flush mb-3">
+                        <li class="list-group-item px-0 py-1 d-flex justify-content-between align-items-center">
+                            <span class="fw-semibold">Date & Time:</span>
+                            <span class="event-date text-end"></span>
+                        </li>
+                        <li class="list-group-item px-0 py-1 d-flex justify-content-between align-items-center">
+                            <span class="fw-semibold">Location:</span>
+                            <span class="event-location text-end"></span>
+                        </li>
+                        <li class="list-group-item px-0 py-1 d-flex justify-content-between align-items-center">
+                            <span class="fw-semibold">Organizer:</span>
+                            <span class="event-organizer text-end"></span>
+                        </li>
+                        <li class="list-group-item px-0 py-1 d-flex justify-content-between align-items-center">
+                            <span class="fw-semibold">Attendees:</span>
+                            <span class="event-attendees text-end"></span>
+                        </li>
+                        <li class="list-group-item px-0 py-1 d-flex justify-content-between align-items-center">
+                            <span class="fw-semibold">Status:</span>
+                            <span class="event-status badge"></span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="modal-footer py-2">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                </div>
             </div>
         </div>
     </div>
+
+    <style>
+    .modal-content {
+        border-radius: 10px;
+        box-shadow: 0 0 16px rgba(0,0,0,0.08);
+        max-width: 400px;
+        margin: auto;
+    }
+    .event-title {
+        color: #2d3748;
+        font-weight: 600;
+        font-size: 1.2rem;
+    }
+    .event-description {
+        color: #4a5568;
+        line-height: 1.5;
+    }
+    .event-status.badge {
+        font-size: 0.9em;
+        padding: 0.4em 0.8em;
+    }
+    .badge.bg-secondary {
+        background: #6c757d !important;
+    }
+    .status-upcoming {
+        background-color: #ebf8ff !important;
+        color: #2b6cb0 !important;
+    }
+    .status-ongoing {
+        background-color: #f0fff4 !important;
+        color: #2f855a !important;
+    }
+    .status-completed {
+        background-color: #f7fafc !important;
+        color: #4a5568 !important;
+    }
+    .status-cancelled {
+        background-color: #fff5f5 !important;
+        color: #c53030 !important;
+    }
+    </style>
+
+    <script>
+    function fetchEventDetails(eventId) {
+        fetch(`/admin/events/${eventId}`)
+            .then(response => response.json())
+            .then(event => showEventDetails(event));
+    }
+    </script>
 @endsection
