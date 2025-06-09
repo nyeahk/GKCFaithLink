@@ -16,31 +16,40 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
+        // Debug the request parameters
+        \Log::info('User search parameters:', $request->all());
+        
         $query = User::query();
         
         // Search functionality
-        if ($request->has('search') && !empty($request->search)) {
-            $searchTerm = $request->search;
+        if ($request->filled('search')) {
+            $searchTerm = '%' . $request->search . '%';
             $query->where(function($q) use ($searchTerm) {
-                $q->where('username', 'like', "%{$searchTerm}%")
-                  ->orWhere('email', 'like', "%{$searchTerm}%")
-                  ->orWhere('name', 'like', "%{$searchTerm}%");
+                $q->where('username', 'like', $searchTerm)
+                  ->orWhere('email', 'like', $searchTerm)
+                  ->orWhere('name', 'like', $searchTerm);
             });
         }
         
         // Role filter
-        if ($request->has('role') && !empty($request->role)) {
+        if ($request->filled('role')) {
             $query->where('role', $request->role);
         }
         
         // Status filter
-        if ($request->has('status') && !empty($request->status)) {
+        if ($request->filled('status')) {
             $isActive = $request->status === 'active' ? 1 : 0;
             $query->where('is_active', $isActive);
         }
         
         // Get users with pagination
-        $users = $query->orderBy('created_at', 'desc')->paginate(10);
+        $users = $query->orderBy('created_at', 'desc')->paginate(10)->withQueryString();
+        
+        // Debug the SQL query
+        \Log::info('User search query:', [
+            'sql' => $query->toSql(),
+            'bindings' => $query->getBindings()
+        ]);
         
         return view('admin.users.index', compact('users'));
     }
@@ -68,4 +77,10 @@ class UserController extends Controller
         return view('admin.users.by-role', compact('users', 'roleName', 'role'));
     }
 }
+
+
+
+
+
+
 

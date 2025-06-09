@@ -13,13 +13,13 @@
     <!-- Search and Filters -->
     <div class="card mb-4">
         <div class="card-body">
-            <form action="{{ route('admin.users.index') }}" method="GET" class="row g-3">
+            <form action="{{ route('admin.users.index') }}" method="GET" id="userSearchForm" class="row g-3">
                 <!-- Search -->
                 <div class="col-md-4">
                     <div class="input-group">
                         <input type="text" class="form-control" placeholder="Search by name, email or username" 
-                               name="search" value="{{ request('search') }}">
-                        <button class="btn btn-outline-secondary" type="submit">
+                               name="search" id="searchInput" value="{{ request('search') }}">
+                        <button class="btn btn-outline-secondary" type="submit" id="searchButton">
                             <i class="bi bi-search"></i>
                         </button>
                     </div>
@@ -27,7 +27,7 @@
                 
                 <!-- Role Filter -->
                 <div class="col-md-3">
-                    <select name="role" class="form-select">
+                    <select name="role" id="roleFilter" class="form-select" onchange="document.getElementById('userSearchForm').submit();">
                         <option value="">All Roles</option>
                         <option value="1" {{ request('role') == '1' ? 'selected' : '' }}>Administrator</option>
                         <option value="2" {{ request('role') == '2' ? 'selected' : '' }}>Treasurer</option>
@@ -38,7 +38,7 @@
                 
                 <!-- Status Filter -->
                 <div class="col-md-3">
-                    <select name="status" class="form-select">
+                    <select name="status" id="statusFilter" class="form-select" onchange="document.getElementById('userSearchForm').submit();">
                         <option value="">All Status</option>
                         <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Active</option>
                         <option value="disabled" {{ request('status') == 'disabled' ? 'selected' : '' }}>Disabled</option>
@@ -48,7 +48,7 @@
                 <!-- Filter Button -->
                 <div class="col-md-2">
                     <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                        <button type="submit" class="btn btn-primary">
+                        <button type="submit" class="btn btn-primary" id="filterButton">
                             <i class="bi bi-filter"></i> Filter
                         </button>
                         @if(request()->anyFilled(['search', 'role', 'status']))
@@ -175,7 +175,7 @@
                     Showing {{ $users->firstItem() }} to {{ $users->lastItem() }} of {{ $users->total() }} users
                 </div>
                 <div>
-                    {{ $users->appends(request()->query())->links('pagination::bootstrap-5') }}
+                    {{ $users->links('pagination::bootstrap-5') }}
                 </div>
             </div>
             @endif
@@ -183,3 +183,41 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Handle search form submission
+        const searchForm = document.getElementById('userSearchForm');
+        const searchInput = document.getElementById('searchInput');
+        const searchButton = document.getElementById('searchButton');
+        
+        // Submit form when search button is clicked
+        searchButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            searchForm.submit();
+        });
+        
+        // Submit form when Enter key is pressed in search input
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                searchForm.submit();
+            }
+        });
+        
+        // Auto-submit form when select filters change
+        const roleFilter = document.getElementById('roleFilter');
+        const statusFilter = document.getElementById('statusFilter');
+        
+        roleFilter.addEventListener('change', function() {
+            searchForm.submit();
+        });
+        
+        statusFilter.addEventListener('change', function() {
+            searchForm.submit();
+        });
+    });
+</script>
+@endpush
+
