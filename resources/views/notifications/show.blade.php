@@ -76,7 +76,7 @@
                     </h3>
                     
                     <div class="notification-time">
-                        <i class="bi bi-clock me-1"></i> {{ $notification->created_at->format('F d, Y h:i A') }}
+                        <i class="bi bi-clock me-1"></i> {{ $notification->created_at->format('F d, Y g:i A') }}
                     </div>
                 </div>
                 
@@ -243,4 +243,6 @@
     @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css");
 </style>
 @endpush
+
+
 

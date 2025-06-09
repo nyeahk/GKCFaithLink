@@ -62,58 +62,88 @@
                         
                             <!-- Notifications List -->
                             <div class="notification-dropdown-list">
-                                @forelse(auth()->user()->notifications()->latest()->take(5)->get() as $notification)
-                                    <li class="notification-dropdown-item">
-                                        <a class="notification-link" href="{{ route('notifications.show', $notification->id) }}">
-                                            <div class="notification-item-content">
-                                                <div class="notification-icon-wrapper">
-                                                    @if($notification->type == 'App\Notifications\DonationApprovedNotification')
-                                                        <div class="notification-icon success">
-                                                            <i class="fas fa-check-circle"></i>
-                                                        </div>
-                                                    @elseif($notification->type == 'App\Notifications\DonationDeclinedNotification')
-                                                        <div class="notification-icon danger">
-                                                            <i class="fas fa-times-circle"></i>
-                                                        </div>
-                                                    @elseif($notification->type == 'App\Notifications\DonationStatusNotification')
-                                                        @if(isset($notification->data['status']) && $notification->data['status'] == 'declined')
-                                                            <div class="notification-icon danger">
-                                                                <i class="fas fa-times-circle"></i>
-                                                            </div>
-                                                        @else
+                                @php
+                                    $groupedDropdownNotifications = auth()->user()->notifications()->latest()->take(5)->get()->groupBy(function($notification) {
+                                        return $notification->created_at->format('Y-m-d');
+                                    });
+                                @endphp
+                                
+                                @forelse($groupedDropdownNotifications as $date => $notificationsForDate)
+                                    <li class="dropdown-date-separator">
+                                        <span>{{ \Carbon\Carbon::parse($date)->format('F d, Y') }}</span>
+                                    </li>
+                                    
+                                    @foreach($notificationsForDate as $notification)
+                                        <li class="notification-dropdown-item">
+                                            <a class="notification-link" href="{{ route('notifications.show', $notification->id) }}">
+                                                <div class="notification-item-content">
+                                                    <div class="notification-icon-wrapper">
+                                                        @if($notification->type == 'App\Notifications\DonationApprovedNotification')
                                                             <div class="notification-icon success">
                                                                 <i class="fas fa-check-circle"></i>
                                                             </div>
+                                                        @elseif($notification->type == 'App\Notifications\DonationDeclinedNotification')
+                                                            <div class="notification-icon danger">
+                                                                <i class="fas fa-times-circle"></i>
+                                                            </div>
+                                                        @elseif($notification->type == 'App\Notifications\DonationStatusNotification')
+                                                            @if(isset($notification->data['status']) && $notification->data['status'] == 'declined')
+                                                                <div class="notification-icon danger">
+                                                                    <i class="fas fa-times-circle"></i>
+                                                                </div>
+                                                            @else
+                                                                <div class="notification-icon success">
+                                                                    <i class="fas fa-check-circle"></i>
+                                                                </div>
+                                                            @endif
+                                                        @elseif($notification->type == 'App\Notifications\NewDonationNotification')
+                                                            <div class="notification-icon warning">
+                                                                <i class="fas fa-hand-holding-usd"></i>
+                                                            </div>
+                                                        @elseif($notification->type == 'App\Notifications\EventRegistrationNotification')
+                                                            <div class="notification-icon info">
+                                                                <i class="fas fa-calendar-check"></i>
+                                                            </div>
+                                                        @else
+                                                            <div class="notification-icon secondary">
+                                                                <i class="fas fa-bell"></i>
+                                                            </div>
                                                         @endif
-                                                    @elseif($notification->type == 'App\Notifications\NewDonationNotification')
-                                                        <div class="notification-icon warning">
-                                                            <i class="fas fa-hand-holding-usd"></i>
+                                                    </div>
+                                                    <div class="notification-text">
+                                                        <div class="notification-title {{ $notification->read_at ? '' : 'unread' }}">
+                                                            @if($notification->type == 'App\Notifications\DonationApprovedNotification')
+                                                                Donation Approved
+                                                            @elseif($notification->type == 'App\Notifications\DonationDeclinedNotification')
+                                                                Donation Declined
+                                                            @elseif($notification->type == 'App\Notifications\DonationStatusNotification')
+                                                                @if(isset($notification->data['status']) && $notification->data['status'] == 'declined')
+                                                                    Donation Declined
+                                                                @else
+                                                                    Donation Approved
+                                                                @endif
+                                                            @elseif($notification->type == 'App\Notifications\NewDonationNotification')
+                                                                New Donation
+                                                            @elseif($notification->type == 'App\Notifications\EventRegistrationNotification')
+                                                                Event Registration
+                                                            @elseif($notification->type == 'App\Notifications\EventVolunteerNotification')
+                                                                Event Volunteer
+                                                            @else
+                                                                Notification
+                                                            @endif
                                                         </div>
-                                                    @elseif($notification->type == 'App\Notifications\EventRegistrationNotification')
-                                                        <div class="notification-icon info">
-                                                            <i class="fas fa-calendar-check"></i>
+                                                        <div class="notification-time">
+                                                            <i class="fas fa-clock me-1"></i>
+                                                            {{ $notification->created_at->format('h:i A') }}
                                                         </div>
-                                                    @else
-                                                        <div class="notification-icon secondary">
-                                                            <i class="fas fa-bell"></i>
-                                                        </div>
+                                                    </div>
+                                                    @if(!$notification->read_at)
+                                                        <div class="unread-dot"></div>
                                                     @endif
                                                 </div>
-                                                <div class="notification-text">
-                                                    <div class="notification-message {{ $notification->read_at ? '' : 'unread' }}">
-                                                        {{ $notification->data['message'] ?? 'New notification' }}
-                                                    </div>
-                                                    <div class="notification-time">
-                                                        <i class="fas fa-clock me-1"></i>
-                                                        {{ $notification->created_at->diffForHumans() }}
-                                                    </div>
-                                                </div>
-                                                @if(!$notification->read_at)
-                                                    <div class="unread-dot"></div>
-                                                @endif
-                                            </div>
-                                        </a>
-                                    </li>
+                                            </a>
+                                        </li>
+                                    @endforeach
                                 @empty
                                     <li class="notification-empty">
                                         <div class="empty-state-mini">
@@ -155,12 +185,41 @@
         position: relative;
     }
 
+    /* Date separator in dropdown */
+    .dropdown-date-separator {
+        position: relative;
+        text-align: center;
+        padding: 8px 0;
+        margin: 0;
+        color: #6c757d;
+        font-weight: 500;
+        list-style: none;
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .dropdown-date-separator span {
+        font-size: 0.8rem;
+        padding: 0 10px;
+    }
+
     /* Mobile Notification Button */
     .notification-mobile-btn {
         position: relative;
         border-radius: 25px;
         padding: 0.5rem 1rem;
         transition: all 0.3s ease;
+    }
+    
+    /* Notification title in dropdown */
+    .notification-title {
+        font-size: 0.9rem;
+        margin-bottom: 2px;
+        color: #333;
+    }
+    
+    .notification-title.unread {
+        font-weight: 600;
     }
 
     .notification-mobile-btn:hover {
@@ -645,6 +704,8 @@ document.addEventListener('DOMContentLoaded', function() {
 }
 </style>
 @endpush
+
+
 
 
 

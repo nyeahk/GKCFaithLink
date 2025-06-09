@@ -18,16 +18,17 @@
     --background-light: #F6F8D5;
     --white: #ffffff;
     --text-dark: #333333;
+    --text-darker: #111111; /* Added darker text color */
     --text-light: #666666;
     --error: #dc3545;
     --success: #28a745;
     --warning: #ffc107;
-    /* Unified Hover Styles */
-    --hover-bg: var(--primary-light);
+    /* Updated hover styles with gradient background */
+    --hover-bg: #667eea;
     --hover-color: var(--white);
     --hover-transition: all 0.3s ease;
     --hover-scale: scale(1.02);
-    --hover-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    --hover-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
     /* Form Hover Styles */
     --form-hover-bg: var(--background-light);
     --form-hover-border: var(--primary);
@@ -99,12 +100,14 @@ body {
     gap: 0.5rem;
     padding: 0.5rem 1rem;
     border-radius: 4px;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    font-weight: 500;
 }
 
 .nav-menu a:hover,
 .nav-menu a.active {
-    background-color: var(--primary);
+    background-color: var(--primary-dark);
+    color: var(--white);
 }
 
 .nav-user {
@@ -208,20 +211,21 @@ body {
 }
 
 .menu-section a {
-    color: var(--text-dark);
+    color: var(--text-darker);
     text-decoration: none;
     display: flex;
     align-items: center;
     gap: 0.5rem;
     padding: 0.5rem;
     border-radius: 4px;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    font-weight: 500;
 }
 
 .menu-section a:hover,
 .menu-section a.active {
-    background-color: var(--background-light);
-    color: var(--primary-dark);
+    background-color: var(--primary-dark);
+    color: var(--white);
 }
 
 .sidebar-footer {
@@ -293,7 +297,7 @@ body {
     }
 }
 
-/* Unified Hover Effects */
+/* Unified Hover Effects - Modified for better readability with gradient background */
 a:hover,
 button:hover,
 .nav-menu a:hover,
@@ -311,17 +315,51 @@ button:hover,
 .close:hover,
 .submit-button:hover,
 .qr-button:hover {
-    color: var(--hover-color);
+    color: var(--white) !important;
+    background-color: var(--hover-bg) !important;
     transform: var(--hover-scale);
     box-shadow: var(--hover-shadow);
     transition: var(--hover-transition);
 }
 
-/* Table Row Hover */
+/* Table Row Hover - Updated with gradient background */
 tr:hover,
 .members-table tr:hover {
-    color: var(--hover-color);
-    transform: var(--hover-scale);
+    background-color: var(--hover-bg) !important;
+    color: var(--white) !important;
+    transition: var(--hover-transition);
+}
+
+/* Make sure table cell text changes color on hover */
+tr:hover td,
+.members-table tr:hover td {
+    color: var(--white) !important;
+}
+
+/* Ensure links inside table rows are visible when row is hovered */
+tr:hover a,
+.members-table tr:hover a {
+    color: var(--white) !important;
+}
+
+/* Preserve original text color for non-hovered elements */
+a, button, .nav-menu a, .menu-section a, .dropdown-menu a, 
+.dropdown-menu button, .btn, .btn-submit, .btn-cancel, 
+.nav-icons a, .nav-brand a, .user-button, .close, 
+.submit-button, .qr-button {
+    color: inherit;
+    transition: var(--hover-transition);
+}
+
+/* Preserve original table text color */
+tr td, .members-table tr td {
+    color: var(--text-dark);
+    transition: var(--hover-transition);
+}
+
+/* Preserve original link color in tables */
+tr a, .members-table tr a {
+    color: var(--primary);
     transition: var(--hover-transition);
 }
 
@@ -501,6 +539,27 @@ label:hover {
     padding: 2rem;
     text-align: center;
 }
+
+/* Calendar styles */
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background-color: var(--primary);
+    color: var(--white);
+}
+
+.calendar-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--white);
+}
+
+
+
+
+
 
 
 

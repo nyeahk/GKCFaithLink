@@ -2,6 +2,10 @@
 
 @section('title', 'Staff Dashboard')
 
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/staff-dashboard.css') }}">
+@endpush
+
 @section('content')
 <div class="dashboard-container">
     <!-- Quick Stats -->
@@ -46,21 +50,16 @@
                 <i class="fas fa-plus me-1"></i> Create Event
             </a>
         </div>
-        <div class="card-body">
+        <div class="card-body p-0">
             <div class="calendar-container">
                 <div class="calendar-header">
-                    <div class="calendar-title">
-                        {{ isset($currentDate) ? $currentDate->format('F Y') : now()->format('F Y') }}
-                    </div>
+                    <div class="calendar-title text-white">{{ $currentMonth }} {{ $currentYear }}</div>
                     <div class="calendar-nav">
-                        <a href="{{ route('staff.dashboard', ['timestamp' => $lastMonthTimestamp ?? now()->subMonth()->timestamp]) }}" class="calendar-nav-btn">
-                            <i class="fas fa-chevron-left"></i> Prev
+                        <a href="{{ route('staff.dashboard', ['timestamp' => $lastMonthTimestamp]) }}" class="calendar-nav-btn">
+                            <i class="bi bi-chevron-left"></i> Prev
                         </a>
-                        <a href="{{ route('staff.dashboard', ['timestamp' => $todayTimestamp ?? now()->timestamp]) }}" class="calendar-nav-btn">
-                            Today
-                        </a>
-                        <a href="{{ route('staff.dashboard', ['timestamp' => $nextMonthTimestamp ?? now()->addMonth()->timestamp]) }}" class="calendar-nav-btn">
-                            Next <i class="fas fa-chevron-right"></i>
+                        <a href="{{ route('staff.dashboard', ['timestamp' => $nextMonthTimestamp]) }}" class="calendar-nav-btn">
+                            Next <i class="bi bi-chevron-right"></i>
                         </a>
                     </div>
                 </div>
@@ -83,12 +82,13 @@
                                 @foreach ($week as $day)
                                     <td class="{{ !$day['isCurrentMonth'] ? 'other-month' : '' }} 
                                              {{ $day['isToday'] ? 'today' : '' }}
-                                             {{ isset($day['events']) && count($day['events']) > 0 ? 'has-events' : '' }}" 
+                                             {{ isset($day['events']) && count($day['events']) > 0 ? 'has-events' : '' }}"
+                                        data-date="{{ $day['date']->format('Y-m-d') }}"
                                         onclick="showEventsForDate('{{ $day['date']->format('Y-m-d') }}')">
                                         <div class="day-number">{{ $day['day'] }}</div>
                                         @if(isset($day['events']) && count($day['events']) > 0)
                                             <div class="event-indicator">
-                                                <i class="fas fa-calendar-event"></i>
+                                                <i class="bi bi-calendar-event"></i>
                                                 <span class="event-count">{{ count($day['events']) }}</span>
                                             </div>
                                         @endif
@@ -132,6 +132,55 @@
             </div>
         </div>
     </div>
+
+    <!-- Past Events Archive Section -->
+    @if(isset($pastEvents) && $pastEvents->count() > 0)
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0"><i class="fas fa-archive me-2"></i> Past Events Archive</h5>
+            <a href="{{ route('staff.events.index') }}?filter=past" class="btn btn-sm btn-light">
+                <i class="fas fa-history me-1"></i> View All
+            </a>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Event</th>
+                            <th>Date</th>
+                            <th>Location</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($pastEvents as $event)
+                        <tr>
+                            <td>{{ $event->title }}</td>
+                            <td>
+                                {{ $event->start_date->format('M d, Y') }}
+                                <small class="d-block text-muted">{{ $event->start_date->format('g:i A') }} - {{ $event->end_date->format('g:i A') }}</small>
+                            </td>
+                            <td>{{ $event->location }}</td>
+                            <td>
+                                <span class="badge bg-{{ $event->status == 'published' ? 'success' : ($event->status == 'cancelled' ? 'danger' : 'secondary') }}">
+                                    {{ ucfirst($event->status) }}
+                                </span>
+                            </td>
+                            <td>
+                                <a href="{{ route('staff.events.show', $event->id) }}" class="btn btn-sm btn-primary">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    @endif
 @endsection
 
 @push('styles')
@@ -409,3 +458,15 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 @endpush
+
+
+
+
+
+
+
+
+
+
+
+

@@ -43,30 +43,6 @@
                             </a>
                         </li>
                         <li class="nav-item mb-2">
-<<<<<<< HEAD
-                            <a class="nav-link treasurer-sidebar-link treasurer-sidebar-dropdown d-flex align-items-center {{ request()->routeIs('treasurer.reports*') ? 'active' : '' }}" href="#reportsSubmenu" data-bs-toggle="collapse" aria-expanded="{{ request()->routeIs('treasurer.reports*') ? 'true' : 'false' }}">
-                                <i class="bi bi-bar-chart-line me-3 treasurer-sidebar-icon"></i>
-                                <span class="treasurer-sidebar-text">Reports</span>
-                                <i class="bi bi-chevron-down ms-auto treasurer-dropdown-icon"></i>
-                            </a>
-                            <div class="collapse {{ request()->routeIs('treasurer.reports*') ? 'show' : '' }}" id="reportsSubmenu">
-                                <ul class="nav flex-column treasurer-submenu ms-3 mt-2">
-                                    <li class="nav-item mb-2">
-                                        <a class="nav-link treasurer-sidebar-link treasurer-submenu-link d-flex align-items-center {{ request()->routeIs('treasurer.reports.weekly') ? 'active' : '' }}" href="{{ route('treasurer.reports.weekly') }}">
-                                            <i class="bi bi-calendar-week me-3 treasurer-sidebar-icon"></i>
-                                            <span class="treasurer-sidebar-text">Weekly Report</span>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item mb-2">
-                                        <a class="nav-link treasurer-sidebar-link treasurer-submenu-link d-flex align-items-center {{ request()->routeIs('treasurer.reports.monthly') ? 'active' : '' }}" href="{{ route('treasurer.reports.monthly') }}">
-                                            <i class="bi bi-calendar-month me-3 treasurer-sidebar-icon"></i>
-                                            <span class="treasurer-sidebar-text">Monthly Report</span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li>
-=======
                     <a class="nav-link d-flex align-items-center" 
                        href="#reportsSubmenuMobile" 
                        data-bs-toggle="collapse" 
@@ -91,7 +67,6 @@
                         </ul>
                     </div>
                 </li>
->>>>>>> 70a61f8a1b2736bf77305a50653004188f6627e9
                         <li class="nav-item mb-2">
                             <a class="nav-link treasurer-sidebar-link d-flex align-items-center {{ request()->routeIs('treasurer.profile*') ? 'active' : '' }}" href="{{ route('treasurer.profile.index') }}">
                                 <i class="bi bi-person-circle me-3 treasurer-sidebar-icon"></i>
@@ -123,43 +98,6 @@
         <div class="offcanvas-body treasurer-offcanvas-body-enhanced p-0">
             <ul class="nav flex-column treasurer-sidebar-nav p-3">
                 <li class="nav-item mb-2">
-<<<<<<< HEAD
-                    <a class="nav-link treasurer-sidebar-link d-flex align-items-center {{ request()->routeIs('treasurer.dashboard') ? 'active' : '' }}" href="{{ route('treasurer.dashboard') }}">
-                        <i class="bi bi-house-door me-3 treasurer-sidebar-icon"></i>
-                        <span class="treasurer-sidebar-text">Dashboard</span>
-                    </a>
-                </li>
-                <li class="nav-item mb-2">
-                    <a class="nav-link treasurer-sidebar-link d-flex align-items-center {{ request()->routeIs('treasurer.donations.index') ? 'active' : '' }}" href="{{ route('treasurer.donations.index') }}">
-                        <i class="bi bi-cash-coin me-3 treasurer-sidebar-icon"></i>
-                        <span class="treasurer-sidebar-text">View Donations</span>
-                    </a>
-                </li>
-                <li class="nav-item mb-2">
-                    <a class="nav-link treasurer-sidebar-link d-flex align-items-center {{ request()->routeIs('treasurer.donations.create') ? 'active' : '' }}" href="{{ route('treasurer.donations.create') }}">
-                        <i class="bi bi-plus-circle me-3 treasurer-sidebar-icon"></i>
-                        <span class="treasurer-sidebar-text">Add Manual Donation</span>
-                    </a>
-                </li>
-                <li class="nav-item mb-2">
-                    <a class="nav-link treasurer-sidebar-link treasurer-sidebar-dropdown d-flex align-items-center {{ request()->routeIs('treasurer.reports*') ? 'active' : '' }}" href="#reportsSubmenuMobile" data-bs-toggle="collapse" aria-expanded="{{ request()->routeIs('treasurer.reports*') ? 'true' : 'false' }}">
-                        <i class="bi bi-bar-chart-line me-3 treasurer-sidebar-icon"></i>
-                        <span class="treasurer-sidebar-text">Reports</span>
-                        <i class="bi bi-chevron-down ms-auto treasurer-dropdown-icon"></i>
-                    </a>
-                    <div class="collapse {{ request()->routeIs('treasurer.reports*') ? 'show' : '' }}" id="reportsSubmenuMobile">
-                        <ul class="nav flex-column treasurer-submenu ms-3 mt-2">
-                            <li class="nav-item mb-2">
-                                <a class="nav-link treasurer-sidebar-link treasurer-submenu-link d-flex align-items-center {{ request()->routeIs('treasurer.reports.weekly') ? 'active' : '' }}" href="{{ route('treasurer.reports.weekly') }}">
-                                    <i class="bi bi-calendar-week me-3 treasurer-sidebar-icon"></i>
-                                    <span class="treasurer-sidebar-text">Weekly Report</span>
-                                </a>
-                            </li>
-                            <li class="nav-item mb-2">
-                                <a class="nav-link treasurer-sidebar-link treasurer-submenu-link d-flex align-items-center {{ request()->routeIs('treasurer.reports.monthly') ? 'active' : '' }}" href="{{ route('treasurer.reports.monthly') }}">
-                                    <i class="bi bi-calendar-month me-3 treasurer-sidebar-icon"></i>
-                                    <span class="treasurer-sidebar-text">Monthly Report</span>
-=======
                             <a class="nav-link d-flex align-items-center" href="{{ route('treasurer.dashboard') }}">
                                 <i class="bi bi-house-door me-2"></i> Dashboard
                             </a>
@@ -194,7 +132,6 @@
                                 <a class="nav-link d-flex align-items-center {{ request()->routeIs('reports.monthly') ? 'active' : '' }}" 
                                    href="{{ route('reports.monthly') }}">
                                     <i class="bi bi-calendar-month me-2"></i> Monthly Report
->>>>>>> 70a61f8a1b2736bf77305a50653004188f6627e9
                                 </a>
                             </li>
                         </ul>
@@ -212,18 +149,17 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     @stack('scripts')
-<<<<<<< HEAD
 
     <style>
         /* Enhanced Treasurer Dashboard Styling */
         :root {
-            --treasurer-primary-gradient: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            --treasurer-primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             --treasurer-secondary-gradient: linear-gradient(135deg, #0f7173 0%, #2d8f47 100%);
             --treasurer-accent-gradient: linear-gradient(135deg, #00b09b 0%, #96c93d 100%);
             --treasurer-success-gradient: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
             --treasurer-warning-gradient: linear-gradient(135deg, #f7971e 0%, #ffd200 100%);
             --treasurer-info-gradient: linear-gradient(135deg, #06beb6 0%, #48b1bf 100%);
-            --treasurer-sidebar-bg: linear-gradient(180deg, #11998e 0%, #38ef7d 100%);
+            --treasurer-sidebar-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             --treasurer-sidebar-hover: rgba(255, 255, 255, 0.12);
             --treasurer-sidebar-active: rgba(255, 255, 255, 0.2);
             --treasurer-text-light: #ffffff;
@@ -446,8 +382,8 @@
         }
 
         .card-header {
-            background: var(--treasurer-primary-gradient) !important;
-            color: var(--treasurer-text-light) !important;
+            background: var(--treasurer-primary-gradient);
+            color: var(--treasurer-text-light);
             border: none;
             font-weight: 600;
             padding: 1.25rem;
@@ -868,22 +804,6 @@
             margin-bottom: 1rem;
         }
     </style>
-=======
-    @push('scripts')
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Check if reports submenu should be expanded
-            if (window.location.href.includes('/reports')) {
-                document.getElementById('reportsSubmenu').classList.add('show');
-                
-                // For mobile
-                if (document.getElementById('reportsSubmenuMobile')) {
-                    document.getElementById('reportsSubmenuMobile').classList.add('show');
-                }
-            }
-        });
-    </script>
-    @endpush
->>>>>>> 70a61f8a1b2736bf77305a50653004188f6627e9
 </body>
 </html>
+

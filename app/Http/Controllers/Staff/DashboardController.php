@@ -18,24 +18,59 @@ class DashboardController extends Controller
      */
     public function index(Request $request)
     {
-        // Get timestamp from request or use current time
-        $timestamp = $request->input('timestamp', now()->timestamp);
-        $currentDate = Carbon::createFromTimestamp($timestamp);
+        // Set timezone
+        date_default_timezone_set('Asia/Manila');
         
-        // Get first day of the month
+        // Get current date
+        $today = Carbon::now();
+        $todayTimestamp = $today->timestamp;
+
+        // Determine current date based on timestamp from GET request
+        $currentTimestamp = $request->query('timestamp', $todayTimestamp);
+        $currentDate = Carbon::createFromTimestamp($currentTimestamp);
+
+        // Calculate previous and next month timestamps
+        $lastMonth = $currentDate->copy()->subMonth();
+        $nextMonth = $currentDate->copy()->addMonth();
+        
+        $lastMonthTimestamp = $lastMonth->timestamp;
+        $nextMonthTimestamp = $nextMonth->timestamp;
+
+        // Format current month and year for display
+        $currentMonth = $currentDate->format('F');
+        $currentYear = $currentDate->format('Y');
+        
+        // Format previous and next month/year for navigation
+        $prevMonth = $lastMonth->format('m');
+        $prevYear = $lastMonth->format('Y');
+        $nextMonthFormatted = $nextMonth->format('m'); // Renamed to avoid conflict
+        $nextYearFormatted = $nextMonth->format('Y');  // Renamed to avoid conflict
+        
+        // Generate calendar data
+        $calendar = $this->generateCalendarData($currentDate);
+        
+        // Get today's date for comparison
+        $today = Carbon::today();
+        
+        // Get only current and upcoming events for this month (exclude past events)
         $firstDayOfMonth = $currentDate->copy()->startOfMonth();
-        
-        // Get last day of the month
         $lastDayOfMonth = $currentDate->copy()->endOfMonth();
         
-        // Get all events for this month
-        $events = Event::whereBetween('start_date', [
+        $events = Event::where('end_date', '>=', $today)
+            ->whereBetween('start_date', [
                 $firstDayOfMonth->copy()->startOfDay(),
                 $lastDayOfMonth->copy()->endOfDay()
             ])
             ->get();
         
-        \Log::info('Found ' . $events->count() . ' events for month ' . $currentDate->format('F Y'));
+        \Log::info('Found ' . $events->count() . ' current/upcoming events for month ' . $currentDate->format('F Y'));
+        
+        // Get past events for archive section (limited to last 30 days for performance)
+        $pastEvents = Event::where('end_date', '<', $today)
+            ->where('start_date', '>=', $today->copy()->subDays(30))
+            ->orderBy('start_date', 'desc')
+            ->take(5)
+            ->get();
         
         // Generate calendar
         $calendar = [];
@@ -46,9 +81,6 @@ class DashboardController extends Controller
         // Get the last day of the calendar (might be in the next month)
         $calendarEnd = $lastDayOfMonth->copy()->endOfWeek(Carbon::SATURDAY);
         
-        // Current day for highlighting
-        $today = Carbon::today();
-        
         // Generate weeks
         $currentDay = $calendarStart->copy();
         while ($currentDay->lte($calendarEnd)) {
@@ -56,7 +88,7 @@ class DashboardController extends Controller
             
             // Generate days for this week
             for ($i = 0; $i < 7; $i++) {
-                // Get events for this day
+                // Get events for this day (only current/upcoming)
                 $dayEvents = $events->filter(function ($event) use ($currentDay) {
                     return $event->start_date->format('Y-m-d') === $currentDay->format('Y-m-d');
                 });
@@ -102,6 +134,12 @@ class DashboardController extends Controller
             ->get();
         
         return view('staff.dashboard', compact(
+            'currentMonth',
+            'currentYear',
+            'prevMonth',
+            'prevYear',
+            'nextMonthFormatted', // Use renamed variable
+            'nextYearFormatted',  // Use renamed variable
             'calendar',
             'currentDate',
             'lastMonthTimestamp',
@@ -111,7 +149,8 @@ class DashboardController extends Controller
             'eventsCount',
             'announcementsCount',
             'recentAnnouncements',
-            'upcomingEvents'
+            'upcomingEvents',
+            'pastEvents'
         ));
     }
     
@@ -236,7 +275,7 @@ class DashboardController extends Controller
                 return [
                     'id' => $event->id,
                     'title' => $event->title,
-                    'time' => $event->start_date->format('g:i A') . ' - ' . $event->end_date->format('g:i A'),
+                    'time' => $event->start_date->format('g:i A') . ' - ' . $event->end_date->format('g:i A'), // 12-hour format
                     'location' => $event->location ?? 'No location specified',
                     'status' => ucfirst($event->status ?? 'unknown'),
                     'url' => route('staff.events.show', $event->id)
@@ -257,6 +296,11 @@ class DashboardController extends Controller
         }
     }
 }
+
+
+
+
+
 
 
 

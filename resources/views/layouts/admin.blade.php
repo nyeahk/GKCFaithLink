@@ -37,25 +37,6 @@
                             </a>
                         </li>
                         <li class="nav-item mb-2">
-<<<<<<< HEAD
-                            <a class="nav-link admin-sidebar-link admin-sidebar-dropdown d-flex align-items-center {{ request()->routeIs('admin.reports*') ? 'active' : '' }}" href="#reportsSubmenu" data-bs-toggle="collapse" aria-expanded="{{ request()->routeIs('admin.reports*') ? 'true' : 'false' }}">
-                                <i class="bi bi-bar-chart-line me-3 admin-sidebar-icon"></i>
-                                <span class="admin-sidebar-text">Reports</span>
-                                <i class="bi bi-chevron-down ms-auto admin-dropdown-icon"></i>
-                            </a>
-                            <div class="collapse {{ request()->routeIs('admin.reports*') ? 'show' : '' }}" id="reportsSubmenu">
-                                <ul class="nav flex-column admin-submenu ms-3 mt-2">
-                                    <li class="nav-item mb-2">
-                                        <a class="nav-link admin-sidebar-link admin-submenu-link d-flex align-items-center {{ request()->routeIs('admin.reports.weekly') ? 'active' : '' }}" href="{{ route('admin.reports.weekly') }}">
-                                            <i class="bi bi-calendar-week me-3 admin-sidebar-icon"></i>
-                                            <span class="admin-sidebar-text">Weekly Report</span>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item mb-2">
-                                        <a class="nav-link admin-sidebar-link admin-submenu-link d-flex align-items-center {{ request()->routeIs('admin.reports.monthly') ? 'active' : '' }}" href="{{ route('admin.reports.monthly') }}">
-                                            <i class="bi bi-calendar-month me-3 admin-sidebar-icon"></i>
-                                            <span class="admin-sidebar-text">Monthly Report</span>
-=======
                             <a class="nav-link d-flex align-items-center" 
                                href="#reportsSubmenu" 
                                data-bs-toggle="collapse" 
@@ -75,7 +56,6 @@
                                         <a class="nav-link d-flex align-items-center {{ request()->routeIs('reports.monthly') ? 'active' : '' }}" 
                                            href="{{ route('reports.monthly') }}">
                                             <i class="bi bi-calendar-month me-2"></i> Monthly Report
->>>>>>> 70a61f8a1b2736bf77305a50653004188f6627e9
                                         </a>
                                     </li>
                                 </ul>
@@ -124,25 +104,6 @@
                     </a>
                 </li>
                 <li class="nav-item mb-2">
-<<<<<<< HEAD
-                    <a class="nav-link admin-sidebar-link admin-sidebar-dropdown d-flex align-items-center {{ request()->routeIs('admin.reports*') ? 'active' : '' }}" href="#reportsSubmenuMobile" data-bs-toggle="collapse" aria-expanded="{{ request()->routeIs('admin.reports*') ? 'true' : 'false' }}">
-                        <i class="bi bi-bar-chart-line me-3 admin-sidebar-icon"></i>
-                        <span class="admin-sidebar-text">Reports</span>
-                        <i class="bi bi-chevron-down ms-auto admin-dropdown-icon"></i>
-                    </a>
-                    <div class="collapse {{ request()->routeIs('admin.reports*') ? 'show' : '' }}" id="reportsSubmenuMobile">
-                        <ul class="nav flex-column admin-submenu ms-3 mt-2">
-                            <li class="nav-item mb-2">
-                                <a class="nav-link admin-sidebar-link admin-submenu-link d-flex align-items-center {{ request()->routeIs('admin.reports.weekly') ? 'active' : '' }}" href="{{ route('admin.reports.weekly') }}">
-                                    <i class="bi bi-calendar-week me-3 admin-sidebar-icon"></i>
-                                    <span class="admin-sidebar-text">Weekly Report</span>
-                                </a>
-                            </li>
-                            <li class="nav-item mb-2">
-                                <a class="nav-link admin-sidebar-link admin-submenu-link d-flex align-items-center {{ request()->routeIs('admin.reports.monthly') ? 'active' : '' }}" href="{{ route('admin.reports.monthly') }}">
-                                    <i class="bi bi-calendar-month me-3 admin-sidebar-icon"></i>
-                                    <span class="admin-sidebar-text">Monthly Report</span>
-=======
                     <a class="nav-link d-flex align-items-center" 
                        href="#reportsSubmenuMobile" 
                        data-bs-toggle="collapse" 
@@ -162,7 +123,6 @@
                                 <a class="nav-link d-flex align-items-center {{ request()->routeIs('reports.monthly') ? 'active' : '' }}" 
                                    href="{{ route('reports.monthly') }}">
                                     <i class="bi bi-calendar-month me-2"></i> Monthly Report
->>>>>>> 70a61f8a1b2736bf77305a50653004188f6627e9
                                 </a>
                             </li>
                         </ul>
@@ -180,7 +140,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     @stack('scripts')
-<<<<<<< HEAD
 
     <style>
         /* Enhanced Admin Dashboard Styling */
@@ -192,7 +151,7 @@
             --admin-warning-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
             --admin-info-gradient: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
             --admin-sidebar-bg: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
-            --admin-sidebar-hover: rgba(255, 255, 255, 0.12);
+            --admin-sidebar-hover: rgba(252, 253, 253, 0.12);
             --admin-sidebar-active: rgba(255, 255, 255, 0.2);
             --admin-text-light: #ffffff;
             --admin-text-muted: rgba(255, 255, 255, 0.85);
@@ -741,24 +700,5 @@
             z-index: 2;
         }
     </style>
-=======
-    @push('scripts')
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Check if reports submenu should be expanded
-            if (window.location.href.includes('/reports')) {
-                if (document.getElementById('reportsSubmenu')) {
-                    document.getElementById('reportsSubmenu').classList.add('show');
-                }
-                
-                // For mobile
-                if (document.getElementById('reportsSubmenuMobile')) {
-                    document.getElementById('reportsSubmenuMobile').classList.add('show');
-                }
-            }
-        });
-    </script>
-    @endpush
->>>>>>> 70a61f8a1b2736bf77305a50653004188f6627e9
 </body>
 </html>

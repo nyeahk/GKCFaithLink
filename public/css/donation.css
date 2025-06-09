@@ -4,13 +4,15 @@
     --secondary-mint: #98D2C0;
     --background-light: #F6F8D5;
     --white: #ffffff;
+    --text-dark: #333333;
+    --text-darker: #111111;
     --shadow: rgba(0, 0, 0, 0.1);
-    /* Unified Hover Styles */
-    --hover-bg: var(--secondary-mint);
+    /* Updated hover styles with gradient background */
+    --hover-bg: #667eea;
     --hover-color: var(--white);
     --hover-transition: all 0.3s ease;
     --hover-scale: scale(1.02);
-    --hover-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    --hover-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
     /* Form Hover Styles */
     --form-hover-bg: var(--background-light);
     --form-hover-border: var(--accent-teal);
@@ -129,20 +131,21 @@ body {
 } */
 
 .nav-menu ul li a {
-    color: var(--white);
+    color: var(--text-darker);
     text-decoration: none;
     font-size: 1rem;
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 0.5rem; /* Add consistent padding here */
-    border-radius: 8px; /* Keep border-radius consistent */
-    transition: background 0.3s ease;
+    padding: 0.5rem;
+    border-radius: 8px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    font-weight: 500;
 }
 
 .nav-menu ul li a:hover {
-    background-color: var(--hover-bg);
-    color: var(--hover-color);
+    background-color: var(--hover-bg) !important;
+    color: var(--white) !important;
     transform: var(--hover-scale);
     box-shadow: var(--hover-shadow);
     transition: var(--hover-transition);
@@ -288,12 +291,12 @@ select.is-valid:hover {
     border-radius: 4px;
     font-size: 0.7rem;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .submit-button:hover {
-    background-color: var(--hover-bg);
-    color: var(--hover-color);
+    background-color: var(--hover-bg) !important;
+    color: var(--white) !important;
     transform: var(--hover-scale);
     box-shadow: var(--hover-shadow);
     transition: var(--hover-transition);
@@ -312,13 +315,15 @@ p {
     background-color: #F6F8D5; /* Light background color */
     text-align: left;
     font: 0.5rem;
+    color: var(--text-dark);
     width: 100%; /* Full width to match other form elements */
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for consistency */
+    transition: var(--hover-transition);
 }
 
 .qr-button:hover {
-    background-color: var(--hover-bg);
-    color: var(--hover-color);
+    background-color: var(--hover-bg) !important;
+    color: var(--white) !important;
     transform: var(--hover-scale);
     box-shadow: var(--hover-shadow);
     transition: var(--hover-transition);
@@ -365,3 +370,5 @@ p {
     transform: var(--hover-scale);
     transition: var(--hover-transition);
 }
+
+

@@ -8,8 +8,19 @@ class NotificationController extends Controller
 {
     public function index()
     {
-        $notifications = Auth::user()->notifications()->latest()->paginate(10);
-        return view('notifications.index', compact('notifications'));
+        // Get the authenticated user
+        $user = auth()->user();
+        
+        // Get all notifications and paginate them
+        $notifications = $user->notifications()->paginate(10);
+        
+        // Group notifications by date
+        $groupedNotifications = $notifications->items();
+        $groupedNotifications = collect($groupedNotifications)->groupBy(function($notification) {
+            return $notification->created_at->format('Y-m-d');
+        });
+        
+        return view('notifications.index', compact('notifications', 'groupedNotifications'));
     }
 
     public function show($id)
@@ -42,4 +53,6 @@ class NotificationController extends Controller
         return response()->json(['count' => $count]);
     }
 }
+
+
 

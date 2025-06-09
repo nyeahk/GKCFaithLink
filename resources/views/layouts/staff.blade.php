@@ -118,12 +118,12 @@
     <style>
         /* Enhanced Staff Dashboard Styling */
         :root {
-            --staff-primary-gradient: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            --staff-primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             --staff-secondary-gradient: linear-gradient(135deg, #feca57 0%, #ff9ff3 100%);
             --staff-success-gradient: linear-gradient(135deg, #48dbfb 0%, #0abde3 100%);
             --staff-warning-gradient: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
             --staff-info-gradient: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
-            --staff-sidebar-bg: linear-gradient(180deg, #ff6b6b 0%, #ee5a24 100%);
+            --staff-sidebar-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             --staff-sidebar-hover: rgba(255, 255, 255, 0.15);
             --staff-sidebar-active: rgba(255, 255, 255, 0.25);
             --staff-text-light: #ffffff;
@@ -427,17 +427,18 @@
             font-size: 0.9rem;
         }
 
-        /* Calendar Enhancements for Staff */
+        /* Calendar Enhancements for Staff - Updated to match member calendar */
         .calendar-container {
             border-radius: var(--staff-border-radius);
             overflow: hidden;
             box-shadow: var(--staff-shadow-light);
+            border: 1px solid #e0e0e0;
         }
 
         .calendar-header {
             background: var(--staff-primary-gradient);
             color: var(--staff-text-light);
-            padding: 1.5rem;
+            padding: 1rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -449,6 +450,7 @@
             font-size: 1.5rem;
             font-weight: 700;
             margin: 0;
+            color: var(--staff-text-light);
         }
 
         .calendar-nav {
@@ -472,6 +474,123 @@
             background: rgba(255, 255, 255, 0.3);
             color: var(--staff-text-light);
             transform: translateY(-2px);
+        }
+
+        /* Calendar Table Styling - Updated to match member calendar */
+        .calendar-table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+
+        .calendar-table th, 
+        .calendar-table td {
+            text-align: center;
+            padding: 0;
+            position: relative;
+            border: 1px solid #e0e0e0;
+            height: 80px;
+            vertical-align: top;
+        }
+
+        .calendar-table th {
+            background-color: #f8f9fa;
+            padding: 10px 0;
+            font-weight: 500;
+            height: auto;
+            color: #495057;
+        }
+
+        .calendar-table td {
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .calendar-table td:hover {
+            background-color: #f0f0f0;
+        }
+
+        .day-number {
+            display: block;
+            padding: 5px;
+            font-weight: 500;
+            text-align: right;
+        }
+
+        .other-month {
+            color: #aaa;
+            background-color: #f9f9f9;
+        }
+
+        .today {
+            background-color: #e8f4ff;
+        }
+
+        .today .day-number {
+            color: #0d6efd;
+            font-weight: bold;
+        }
+
+        .has-events {
+            position: relative;
+            background-color: #e6fffa;
+        }
+
+        .event-indicator {
+            position: absolute;
+            bottom: 5px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 0.75rem;
+            color: #0d6efd;
+            background-color: rgba(13, 110, 253, 0.1);
+            border-radius: 4px;
+            margin: 0 5px;
+            padding: 2px 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        .event-indicator i {
+            font-size: 0.8rem;
+        }
+
+        .event-count {
+            font-weight: 500;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .calendar-table td {
+                height: 60px;
+            }
+            
+            .day-number {
+                font-size: 0.9rem;
+            }
+            
+            .event-indicator {
+                font-size: 0.7rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .calendar-table td {
+                height: 50px;
+            }
+            
+            .day-number {
+                font-size: 0.8rem;
+                padding: 3px;
+            }
+            
+            .event-indicator {
+                margin: 0 2px;
+                padding: 1px 2px;
+            }
         }
 
         /* Animation for page load */
@@ -563,3 +682,5 @@
     </style>
 </body>
 </html>
+
+

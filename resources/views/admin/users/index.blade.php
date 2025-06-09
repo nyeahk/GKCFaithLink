@@ -169,7 +169,7 @@
             </div>
             
             <!-- Enhanced Pagination -->
-            @if($users->hasPages())
+            @if(isset($users) && method_exists($users, 'hasPages') && $users->hasPages())
             <div class="d-flex justify-content-between align-items-center mt-4">
                 <div>
                     Showing {{ $users->firstItem() }} to {{ $users->lastItem() }} of {{ $users->total() }} users
@@ -183,3 +183,4 @@
     </div>
 </div>
 @endsection
+

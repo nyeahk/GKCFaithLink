@@ -51,7 +51,7 @@
                                             <td>
                                                 <div>
                                                     <div><i class="bi bi-calendar me-1"></i> {{ $event->start_date->format('M d, Y') }}</div>
-                                                    <div><i class="bi bi-clock me-1"></i> {{ $event->start_date->format('h:i A') }} - {{ $event->end_date->format('h:i A') }}</div>
+                                                    <div><i class="bi bi-clock me-1"></i> {{ $event->start_date->format('g:i A') }} - {{ $event->end_date->format('g:i A') }}</div>
                                                 </div>
                                             </td>
                                             <td>
@@ -84,3 +84,6 @@
     </div>
 </div>
 @endsection
+
+
+

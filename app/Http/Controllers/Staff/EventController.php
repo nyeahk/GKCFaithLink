@@ -10,10 +10,33 @@ use Carbon\Carbon;
 
 class EventController extends Controller
 {
-    public function index()
+    /**
+     * Display a listing of the events.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index(Request $request)
     {
-        $events = Event::latest()->paginate(10);
-        return view('staff.events.index', compact('events'));
+        $filter = $request->input('filter', 'upcoming');
+        
+        $query = Event::query();
+        
+        // Apply filters
+        if ($filter === 'past') {
+            $query->where('end_date', '<', now())
+                  ->orderBy('start_date', 'desc');
+        } else if ($filter === 'all') {
+            $query->orderBy('start_date', 'asc');
+        } else {
+            // Default: upcoming events
+            $query->where('end_date', '>=', now())
+                  ->orderBy('start_date', 'asc');
+        }
+        
+        // Paginate the results instead of getting all at once
+        $events = $query->paginate(10);
+        
+        return view('staff.events.index', compact('events', 'filter'));
     }
 
     public function create()
@@ -127,3 +150,5 @@ class EventController extends Controller
         };
     }
 }
+
+

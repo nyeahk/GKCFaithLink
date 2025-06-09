@@ -16,7 +16,7 @@ class DashboardController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         try {
             // Set timezone
@@ -24,7 +24,19 @@ class DashboardController extends Controller
             
             // Get current date
             $today = Carbon::now();
-            $currentMonth = $today->format('F Y');
+            
+            // Format current month for display
+            $currentMonth = $today->format('F');
+            $currentYear = $today->format('Y');
+            
+            // Calculate previous and next month
+            $lastMonth = $today->copy()->subMonth();
+            $nextMonth = $today->copy()->addMonth();
+            
+            $prevMonth = $lastMonth->format('m');
+            $prevYear = $lastMonth->format('Y');
+            $nextMonth = $nextMonth->format('m');
+            $nextYear = $nextMonth->format('Y');
             
             // Get donation statistics
             $totalDonations = Donation::count();
@@ -51,17 +63,22 @@ class DashboardController extends Controller
                 ->take(5)
                 ->get();
             
-            return view('treasurer.dashboard', [
-                'totalDonations' => $totalDonations,
-                'pendingDonations' => $pendingDonations,
-                'verifiedDonations' => $verifiedDonations,
-                'declinedDonations' => $declinedDonations,
-                'totalAmount' => $totalAmount,
-                'currentMonthAmount' => $currentMonthAmount,
-                'currentMonth' => $currentMonth,
-                'recentDonations' => $recentDonations,
-                'membersCount' => $membersCount
-            ]);
+            return view('treasurer.dashboard', compact(
+                'currentMonth',
+                'currentYear',
+                'prevMonth',
+                'prevYear',
+                'nextMonth',
+                'nextYear',
+                'totalDonations',
+                'pendingDonations',
+                'verifiedDonations',
+                'declinedDonations',
+                'totalAmount',
+                'currentMonthAmount',
+                'recentDonations',
+                'membersCount'
+            ));
         } catch (\Exception $e) {
             // Log the error
             \Log::error('Error in Treasurer Dashboard: ' . $e->getMessage());
@@ -81,3 +98,4 @@ class DashboardController extends Controller
         }
     }
 }
+

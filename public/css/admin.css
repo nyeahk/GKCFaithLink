@@ -7,6 +7,11 @@
     --info-color: #6cb2eb;
     --light-color: #f8f9fa;
     --dark-color: #343a40;
+    --text-darker: #111111;
+    --white: #ffffff;
+    /* Updated hover styles with gradient background */
+    --hover-bg: #667eea;
+    --hover-transition: all 0.3s ease;
 }
 
 body {
@@ -26,20 +31,20 @@ body {
     /* Height and margin-top are set inline to account for the navbar height */
 }
 
+/* Preserve original sidebar link color */
 .sidebar .nav-link {
-    color: #495057;
+    color: var(--text-darker);
     border-radius: 5px;
-    transition: all 0.3s;
+    transition: all 0.3s ease;
+    font-weight: 500;
 }
 
-.sidebar .nav-link:hover {
-    background-color: rgba(52, 144, 220, 0.1);
-    color: var(--primary-color);
-}
-
+/* Change to white text on hover with gradient background */
+.sidebar .nav-link:hover,
 .sidebar .nav-link.active {
-    background-color: var(--primary-color);
-    color: white;
+    background-color: var(--hover-bg) !important;
+    color: var(--white) !important;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
 }
 
 /* Calendar styles */
@@ -56,12 +61,13 @@ body {
     align-items: center;
     padding: 15px 20px;
     background-color: var(--primary-color);
-    color: white;
+    color: var(--white);
 }
 
 .calendar-title {
-    font-size: 1.5rem;
-    font-weight: bold;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--white);
 }
 
 .calendar-nav {
@@ -122,6 +128,8 @@ body {
 
 .calendar-table .has-events {
     position: relative;
+    color: var(--light-color);
+    background-color: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
 }
 
 .day-number {
@@ -195,3 +203,6 @@ body {
 body {
             padding-top: 84px; 
     }
+
+
+
