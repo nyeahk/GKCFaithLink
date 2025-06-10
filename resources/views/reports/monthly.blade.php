@@ -29,25 +29,23 @@
     <div class="card mb-4">
         <div class="card-header">
             <h5 class="card-title mb-0">
-                <i class="bi bi-funnel me-2"></i>Filters
+                <i class="bi bi-funnel me-2"></i>Filter Report
             </h5>
         </div>
         <div class="card-body">
             <form method="GET" action="{{ route('reports.monthly') }}" class="row g-3">
-                <div class="col-md-4">
-                    <label for="dateFilter" class="form-label">Filter by Month</label>
-                    <input type="month" name="date" id="dateFilter" class="form-control"
-                           value="{{ request('date', $startDate->format('Y-m')) }}">
+                <div class="col-md-6">
+                    <label for="date" class="form-label">Select Month</label>
+                    <input type="month" class="form-control" id="date" name="date" 
+                           value="{{ request('date', now()->format('Y-m')) }}">
                 </div>
-                <div class="col-md-4 d-flex align-items-end">
-                    <div class="btn-group w-100">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="bi bi-search me-1"></i>Apply Filters
-                        </button>
-                        <a href="{{ route('reports.monthly') }}" class="btn btn-outline-secondary">
-                            <i class="bi bi-arrow-clockwise me-1"></i>Reset
-                        </a>
-                    </div>
+                <div class="col-md-6 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary me-2">
+                        <i class="bi bi-filter me-1"></i>Apply Filter
+                    </button>
+                    <a href="{{ route('reports.monthly') }}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-counterclockwise me-1"></i>Reset
+                    </a>
                 </div>
             </form>
         </div>
@@ -466,6 +464,7 @@
     });
 </script>
 @endpush
+
 
 
 

@@ -270,4 +270,16 @@ Route::middleware(['auth', 'verified', CheckUserActive::class, RoleMiddleware::c
     Route::get('/reports/monthly/download', [App\Http\Controllers\Treasurer\ReportsController::class, 'downloadMonthlyReport'])->name('reports.monthly.download');
 });
 
+// Admin User Routes
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
+    // Users management
+    Route::get('/users', [App\Http\Controllers\Admin\UserController::class, 'index'])->name('users.index');
+    Route::get('/users/create', [App\Http\Controllers\Admin\UserController::class, 'create'])->name('users.create');
+    Route::post('/users', [App\Http\Controllers\Admin\UserController::class, 'store'])->name('users.store');
+    Route::get('/users/{user}/edit', [App\Http\Controllers\Admin\UserController::class, 'edit'])->name('users.edit');
+    Route::put('/users/{user}', [App\Http\Controllers\Admin\UserController::class, 'update'])->name('users.update');
+    Route::delete('/users/{user}', [App\Http\Controllers\Admin\UserController::class, 'destroy'])->name('users.destroy');
+    Route::get('/users/role/{role}', [App\Http\Controllers\Admin\UserController::class, 'byRole'])->name('users.by-role');
+});
+
 

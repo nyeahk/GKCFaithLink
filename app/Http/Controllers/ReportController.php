@@ -65,8 +65,8 @@ class ReportController extends Controller
         date_default_timezone_set('Asia/Manila');
         
         // Get the start date from request or default to current week
-        $startDate = $request->input('date') 
-            ? Carbon::parse($request->input('date'))
+        $startDate = $request->has('date') && !empty($request->date)
+            ? Carbon::parse($request->date)->startOfWeek()
             : Carbon::now()->startOfWeek();
 
         // Calculate end date (end of week)
@@ -167,8 +167,8 @@ class ReportController extends Controller
         date_default_timezone_set('Asia/Manila');
         
         // Get the start date from request or default to current month
-        $startDate = $request->input('date') 
-            ? Carbon::parse($request->input('date'))
+        $startDate = $request->has('date') && !empty($request->date)
+            ? Carbon::parse($request->date)->startOfMonth()
             : Carbon::now()->startOfMonth();
 
         // Calculate end date (end of month)
@@ -390,6 +390,8 @@ class ReportController extends Controller
         return $pdf->download($filename);
     }
 }
+
+
 
 
 
