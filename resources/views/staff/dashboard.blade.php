@@ -83,8 +83,8 @@
                                     <td class="{{ !$day['isCurrentMonth'] ? 'other-month' : '' }} 
                                              {{ $day['isToday'] ? 'today' : '' }}
                                              {{ isset($day['events']) && count($day['events']) > 0 ? 'has-events' : '' }}"
-                                        data-date="{{ $day['date']->format('Y-m-d') }}"
-                                        onclick="showEventsForDate('{{ $day['date']->format('Y-m-d') }}')">
+                                        data-date="{{ $day['date'] }}"
+                                        onclick="showEventsForDate('{{ $day['date'] }}')">
                                         <div class="day-number">{{ $day['day'] }}</div>
                                         @if(isset($day['events']) && count($day['events']) > 0)
                                             <div class="event-indicator">
@@ -345,10 +345,6 @@
 
 @push('scripts')
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize Bootstrap modal
-    window.eventsModal = new bootstrap.Modal(document.getElementById('eventsModal'));
-    
     // Function to show events for a selected date
     window.showEventsForDate = function(date) {
         const modalDate = document.getElementById('modalDate');
@@ -449,15 +445,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             });
     }
-    
-    // Highlight today's date if available
-    const today = document.querySelector('.calendar-table td.today');
-    if (today) {
-        today.click();
-    }
-});
 </script>
 @endpush
+
+
+
+
+
+
+
+
+
+
 
 
 

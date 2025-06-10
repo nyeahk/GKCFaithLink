@@ -31,12 +31,12 @@ class DashboardController extends Controller
             
             // Calculate previous and next month
             $lastMonth = $today->copy()->subMonth();
-            $nextMonth = $today->copy()->addMonth();
+            $nextMonthDate = $today->copy()->addMonth();
             
             $prevMonth = $lastMonth->format('m');
             $prevYear = $lastMonth->format('Y');
-            $nextMonth = $nextMonth->format('m');
-            $nextYear = $nextMonth->format('Y');
+            $nextMonth = $nextMonthDate->format('m');
+            $nextYear = $nextMonthDate->format('Y');
             
             // Get donation statistics
             $totalDonations = Donation::count();
@@ -98,4 +98,5 @@ class DashboardController extends Controller
         }
     }
 }
+
 

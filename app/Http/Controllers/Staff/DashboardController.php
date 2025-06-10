@@ -18,144 +18,39 @@ class DashboardController extends Controller
      */
     public function index(Request $request)
     {
-        // Set timezone
-        date_default_timezone_set('Asia/Manila');
+        // Get the timestamp from the request, or use current time
+        $timestamp = $request->input('timestamp', now()->timestamp);
         
-        // Get current date
-        $today = Carbon::now();
-        $todayTimestamp = $today->timestamp;
-
-        // Determine current date based on timestamp from GET request
-        $currentTimestamp = $request->query('timestamp', $todayTimestamp);
-        $currentDate = Carbon::createFromTimestamp($currentTimestamp);
-
-        // Calculate previous and next month timestamps
+        // Create a Carbon instance from the timestamp
+        $currentDate = Carbon::createFromTimestamp($timestamp);
+        
+        // Get previous and next month timestamps for navigation
         $lastMonth = $currentDate->copy()->subMonth();
         $nextMonth = $currentDate->copy()->addMonth();
         
+        // Format timestamps for URLs
         $lastMonthTimestamp = $lastMonth->timestamp;
         $nextMonthTimestamp = $nextMonth->timestamp;
-
+        
         // Format current month and year for display
         $currentMonth = $currentDate->format('F');
         $currentYear = $currentDate->format('Y');
         
-        // Format previous and next month/year for navigation
-        $prevMonth = $lastMonth->format('m');
-        $prevYear = $lastMonth->format('Y');
-        $nextMonthFormatted = $nextMonth->format('m'); // Renamed to avoid conflict
-        $nextYearFormatted = $nextMonth->format('Y');  // Renamed to avoid conflict
-        
         // Generate calendar data
         $calendar = $this->generateCalendarData($currentDate);
         
-        // Get today's date for comparison
-        $today = Carbon::today();
-        
-        // Get only current and upcoming events for this month (exclude past events)
-        $firstDayOfMonth = $currentDate->copy()->startOfMonth();
-        $lastDayOfMonth = $currentDate->copy()->endOfMonth();
-        
-        $events = Event::where('end_date', '>=', $today)
-            ->whereBetween('start_date', [
-                $firstDayOfMonth->copy()->startOfDay(),
-                $lastDayOfMonth->copy()->endOfDay()
-            ])
-            ->get();
-        
-        \Log::info('Found ' . $events->count() . ' current/upcoming events for month ' . $currentDate->format('F Y'));
-        
-        // Get past events for archive section (limited to last 30 days for performance)
-        $pastEvents = Event::where('end_date', '<', $today)
-            ->where('start_date', '>=', $today->copy()->subDays(30))
-            ->orderBy('start_date', 'desc')
-            ->take(5)
-            ->get();
-        
-        // Generate calendar
-        $calendar = [];
-        
-        // Get the first day of the calendar (might be in the previous month)
-        $calendarStart = $firstDayOfMonth->copy()->startOfWeek(Carbon::SUNDAY);
-        
-        // Get the last day of the calendar (might be in the next month)
-        $calendarEnd = $lastDayOfMonth->copy()->endOfWeek(Carbon::SATURDAY);
-        
-        // Generate weeks
-        $currentDay = $calendarStart->copy();
-        while ($currentDay->lte($calendarEnd)) {
-            $week = [];
-            
-            // Generate days for this week
-            for ($i = 0; $i < 7; $i++) {
-                // Get events for this day (only current/upcoming)
-                $dayEvents = $events->filter(function ($event) use ($currentDay) {
-                    return $event->start_date->format('Y-m-d') === $currentDay->format('Y-m-d');
-                });
-                
-                // Add day to week
-                $week[] = [
-                    'day' => $currentDay->day,
-                    'date' => $currentDay->copy(),
-                    'isCurrentMonth' => $currentDay->month === $currentDate->month,
-                    'isToday' => $currentDay->isSameDay($today),
-                    'events' => $dayEvents->count() > 0 ? $dayEvents : null
-                ];
-                
-                // Move to next day
-                $currentDay->addDay();
-            }
-            
-            // Add week to calendar
-            $calendar[] = $week;
-        }
-        
-        // Calculate timestamps for navigation
-        $lastMonthTimestamp = $currentDate->copy()->subMonth()->timestamp;
-        $nextMonthTimestamp = $currentDate->copy()->addMonth()->timestamp;
-        $todayTimestamp = now()->timestamp;
-        
-        // Get counts for dashboard stats - Fix: use 'role' instead of 'role_id'
-        $membersCount = User::where('role', 3)->count();
-        $eventsCount = Event::count();
-        $announcementsCount = Announcement::count();
-        
-        // Get recent announcements
-        $recentAnnouncements = Announcement::where('status', 'published')
-            ->orderBy('posted_at', 'desc')
-            ->take(5)
-            ->get();
-        
-        // Get upcoming events
-        $upcomingEvents = Event::where('start_date', '>=', now())
-            ->where('status', 'published')
-            ->orderBy('start_date', 'asc')
-            ->take(5)
-            ->get();
-        
+        // Return view with data
         return view('staff.dashboard', compact(
+            'calendar',
             'currentMonth',
             'currentYear',
-            'prevMonth',
-            'prevYear',
-            'nextMonthFormatted', // Use renamed variable
-            'nextYearFormatted',  // Use renamed variable
-            'calendar',
-            'currentDate',
             'lastMonthTimestamp',
-            'nextMonthTimestamp',
-            'todayTimestamp',
-            'membersCount',
-            'eventsCount',
-            'announcementsCount',
-            'recentAnnouncements',
-            'upcomingEvents',
-            'pastEvents'
+            'nextMonthTimestamp'
         ));
     }
     
     /**
-     * Generate calendar data for the given month.
+     * Generate calendar data for the given month
      *
      * @param  \Carbon\Carbon  $date
      * @return array
@@ -212,7 +107,7 @@ class DashboardController extends Controller
             for ($i = 0; $i < 7; $i++) {
                 $dayData = [
                     'day' => $currentDay->day,
-                    'date' => $currentDay->copy(),
+                    'date' => $currentDay->format('Y-m-d'), // Store as string instead of Carbon object
                     'isCurrentMonth' => $currentDay->month === $date->month,
                     'isToday' => $currentDay->isSameDay($today)
                 ];
@@ -296,6 +191,8 @@ class DashboardController extends Controller
         }
     }
 }
+
+
 
 
 

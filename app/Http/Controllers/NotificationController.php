@@ -2,57 +2,79 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class NotificationController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         // Get the authenticated user
         $user = auth()->user();
         
+        // Filter by type if provided
+        $query = $user->notifications();
+        
+        if ($request->has('type')) {
+            $type = $request->input('type');
+            if ($type === 'donation') {
+                $query->where(function($q) {
+                    $q->where('type', 'like', '%Donation%');
+                });
+            } elseif ($type === 'event') {
+                $query->where(function($q) {
+                    $q->where('type', 'like', '%Event%');
+                });
+            }
+        }
+        
         // Get all notifications and paginate them
-        $notifications = $user->notifications()->paginate(10);
+        $notifications = $query->latest()->paginate(10);
         
         // Group notifications by date
-        $groupedNotifications = $notifications->items();
-        $groupedNotifications = collect($groupedNotifications)->groupBy(function($notification) {
+        $groupedNotifications = collect($notifications->items())->groupBy(function($notification) {
             return $notification->created_at->format('Y-m-d');
         });
         
         return view('notifications.index', compact('notifications', 'groupedNotifications'));
     }
-
+    
     public function show($id)
     {
-        $notification = Auth::user()->notifications()->findOrFail($id);
-
-        // Mark as read
-        if ($notification->read_at === null) {
+        $notification = auth()->user()->notifications()->findOrFail($id);
+        
+        // Mark as read if unread
+        if (!$notification->read_at) {
             $notification->markAsRead();
         }
-
-        // Handle different notification types
-        if (isset($notification->data['url'])) {
-            return redirect($notification->data['url']);
-        }
-
-        return redirect()->route('notifications.index')
-            ->with('success', 'Notification marked as read.');
+        
+        return view('notifications.show', compact('notification'));
     }
-
+    
     public function markAllAsRead()
     {
-        Auth::user()->unreadNotifications->markAsRead();
+        auth()->user()->unreadNotifications->markAsRead();
+        
         return redirect()->back()->with('success', 'All notifications marked as read.');
     }
-
-    public function getUnreadCount()
+    
+    public function markAsRead($id)
     {
-        $count = Auth::user()->unreadNotifications->count();
+        $notification = auth()->user()->notifications()->findOrFail($id);
+        $notification->markAsRead();
+        
+        if (request()->ajax()) {
+            return response()->json(['success' => true]);
+        }
+        
+        return redirect()->back()->with('success', 'Notification marked as read.');
+    }
+    
+    public function getCount()
+    {
+        $count = auth()->user()->unreadNotifications->count();
+        
         return response()->json(['count' => $count]);
     }
 }
-
-
 

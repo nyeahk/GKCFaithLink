@@ -61,6 +61,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/notifications', [App\Http\Controllers\NotificationController::class, 'index'])->name('notifications.index');
     Route::get('/notifications/{id}', [App\Http\Controllers\NotificationController::class, 'show'])->name('notifications.show');
     Route::post('/notifications/mark-all-read', [App\Http\Controllers\NotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-read');
+    Route::post('/notifications/{id}/mark-as-read', [App\Http\Controllers\NotificationController::class, 'markAsRead'])->name('notifications.mark-as-read');
     Route::get('/notifications/count', [App\Http\Controllers\NotificationController::class, 'getUnreadCount'])->name('notifications.count');
 
 
@@ -269,5 +270,10 @@ Route::middleware(['auth', 'verified', CheckUserActive::class, RoleMiddleware::c
     Route::get('/reports/weekly/download', [App\Http\Controllers\Treasurer\ReportsController::class, 'downloadWeeklyReport'])->name('reports.weekly.download');
     Route::get('/reports/monthly/download', [App\Http\Controllers\Treasurer\ReportsController::class, 'downloadMonthlyReport'])->name('reports.monthly.download');
 });
+
+
+
+
+
 
 

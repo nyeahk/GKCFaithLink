@@ -26,143 +26,127 @@
                                 <span class="badge bg-danger rounded-pill notification-badge">{{ auth()->user()->unreadNotifications->count() }}</span>
                             @endif
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end notification-dropdown-modern" aria-labelledby="navbarDropdownNotifications">
-                            <!-- Header with Quick Actions -->
-                            <li class="dropdown-header-modern">
-                                <div class="notification-header-content">
-                                    <div class="header-left">
-                                        <h6 class="notification-dropdown-title">
-                                            <i class="fas fa-bell me-2"></i>Notifications
-                                        </h6>
-                                        <span class="notification-count-text">
-                                            @if(auth()->user()->unreadNotifications->count() > 0)
-                                                {{ auth()->user()->unreadNotifications->count() }} unread
-                                            @else
-                                                All caught up!
-                                            @endif
-                                        </span>
-                                    </div>
-                                    <div class="header-actions">
-                                        @if(auth()->user()->unreadNotifications->count() > 0)
-                                            <button class="btn btn-sm btn-outline-primary mark-all-btn"
-                                                    onclick="event.preventDefault(); document.getElementById('mark-all-read-form').submit();"
-                                                    title="Mark all as read">
-                                                <i class="fas fa-check-double"></i>
+                        <div class="dropdown-menu dropdown-menu-end notification-dropdown shadow-lg p-0" aria-labelledby="navbarDropdownNotifications">
+                            <!-- Header with title and actions -->
+                            <div class="dropdown-header d-flex justify-content-between align-items-center p-3 border-bottom">
+                                <h6 class="mb-0 fw-bold">Notifications</h6>
+                                <div class="dropdown-actions">
+                                    @if(auth()->user()->unreadNotifications->count() > 0)
+                                        <form action="{{ route('notifications.mark-all-read') }}" method="POST" class="d-inline">
+                                            @csrf
+                                            <button type="submit" class="btn btn-sm btn-link text-decoration-none p-0 mark-all-read-btn">
+                                                Mark all as read
                                             </button>
-                                            <form id="mark-all-read-form" action="{{ route('notifications.mark-all-read') }}" method="POST" class="d-none">
-                                                @csrf
-                                            </form>
-                                        @endif
-                                        <a href="{{ route('notifications.index') }}" class="btn btn-sm btn-primary view-all-btn" title="View all notifications">
-                                            <i class="fas fa-external-link-alt"></i>
-                                        </a>
-                                    </div>
+                                        </form>
+                                    @endif
                                 </div>
-                            </li>
-                        
-                            <!-- Notifications List -->
-                            <div class="notification-dropdown-list">
+                            </div>
+                            
+                            <!-- Notification counter -->
+                            <div class="notification-counter p-2 bg-light border-bottom">
+                                <small class="text-muted">
+                                    <i class="fas fa-circle {{ auth()->user()->unreadNotifications->count() > 0 ? 'text-primary' : 'text-secondary' }} me-1" style="font-size: 8px;"></i>
+                                    <span>{{ auth()->user()->unreadNotifications->count() }} unread notifications</span>
+                                </small>
+                            </div>
+                            
+                            <!-- Notifications list -->
+                            <div class="notification-list" style="max-height: 350px; overflow-y: auto;">
                                 @php
-                                    $groupedDropdownNotifications = auth()->user()->notifications()->latest()->take(5)->get()->groupBy(function($notification) {
-                                        return $notification->created_at->format('Y-m-d');
-                                    });
+                                    $recentNotifications = auth()->user()->notifications()->latest()->take(5)->get();
                                 @endphp
                                 
-                                @forelse($groupedDropdownNotifications as $date => $notificationsForDate)
-                                    <li class="dropdown-date-separator">
-                                        <span>{{ \Carbon\Carbon::parse($date)->format('F d, Y') }}</span>
-                                    </li>
-                                    
-                                    @foreach($notificationsForDate as $notification)
-                                        <li class="notification-dropdown-item">
-                                            <a class="notification-link" href="{{ route('notifications.show', $notification->id) }}">
-                                                <div class="notification-item-content">
-                                                    <div class="notification-icon-wrapper">
+                                @forelse($recentNotifications as $notification)
+                                    <a href="{{ route('notifications.show', $notification->id) }}" class="dropdown-item notification-item p-0 {{ !$notification->read_at ? 'unread' : '' }}">
+                                        <div class="d-flex align-items-center p-3 border-bottom">
+                                            <div class="notification-icon me-3">
+                                                @if($notification->type == 'App\Notifications\DonationApprovedNotification')
+                                                    <div class="icon-circle bg-success">
+                                                        <i class="fas fa-check-circle text-white"></i>
+                                                    </div>
+                                                @elseif($notification->type == 'App\Notifications\DonationDeclinedNotification')
+                                                    <div class="icon-circle bg-danger">
+                                                        <i class="fas fa-times-circle text-white"></i>
+                                                    </div>
+                                                @elseif($notification->type == 'App\Notifications\DonationStatusNotification')
+                                                    @if(isset($notification->data['status']) && $notification->data['status'] == 'declined')
+                                                        <div class="icon-circle bg-danger">
+                                                            <i class="fas fa-times-circle text-white"></i>
+                                                        </div>
+                                                    @else
+                                                        <div class="icon-circle bg-success">
+                                                            <i class="fas fa-check-circle text-white"></i>
+                                                        </div>
+                                                    @endif
+                                                @elseif($notification->type == 'App\Notifications\NewDonationNotification')
+                                                    <div class="icon-circle bg-warning">
+                                                        <i class="fas fa-donate text-white"></i>
+                                                    </div>
+                                                @elseif($notification->type == 'App\Notifications\EventRegistrationNotification')
+                                                    <div class="icon-circle bg-info">
+                                                        <i class="fas fa-calendar-check text-white"></i>
+                                                    </div>
+                                                @elseif($notification->type == 'App\Notifications\EventVolunteerNotification')
+                                                    <div class="icon-circle bg-primary">
+                                                        <i class="fas fa-hands-helping text-white"></i>
+                                                    </div>
+                                                @else
+                                                    <div class="icon-circle bg-secondary">
+                                                        <i class="fas fa-bell text-white"></i>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                            <div class="notification-content flex-grow-1">
+                                                <div class="d-flex justify-content-between">
+                                                    <h6 class="notification-title mb-1 {{ !$notification->read_at ? 'fw-bold' : '' }}">
                                                         @if($notification->type == 'App\Notifications\DonationApprovedNotification')
-                                                            <div class="notification-icon success">
-                                                                <i class="fas fa-check-circle"></i>
-                                                            </div>
+                                                            Donation Approved
                                                         @elseif($notification->type == 'App\Notifications\DonationDeclinedNotification')
-                                                            <div class="notification-icon danger">
-                                                                <i class="fas fa-times-circle"></i>
-                                                            </div>
+                                                            Donation Declined
                                                         @elseif($notification->type == 'App\Notifications\DonationStatusNotification')
                                                             @if(isset($notification->data['status']) && $notification->data['status'] == 'declined')
-                                                                <div class="notification-icon danger">
-                                                                    <i class="fas fa-times-circle"></i>
-                                                                </div>
+                                                                Donation Declined
                                                             @else
-                                                                <div class="notification-icon success">
-                                                                    <i class="fas fa-check-circle"></i>
-                                                                </div>
+                                                                Donation Approved
                                                             @endif
                                                         @elseif($notification->type == 'App\Notifications\NewDonationNotification')
-                                                            <div class="notification-icon warning">
-                                                                <i class="fas fa-hand-holding-usd"></i>
-                                                            </div>
+                                                            New Donation
                                                         @elseif($notification->type == 'App\Notifications\EventRegistrationNotification')
-                                                            <div class="notification-icon info">
-                                                                <i class="fas fa-calendar-check"></i>
-                                                            </div>
+                                                            Event Registration
+                                                        @elseif($notification->type == 'App\Notifications\EventVolunteerNotification')
+                                                            Event Volunteer
                                                         @else
-                                                            <div class="notification-icon secondary">
-                                                                <i class="fas fa-bell"></i>
-                                                            </div>
+                                                            Notification
                                                         @endif
-                                                    </div>
-                                                    <div class="notification-text">
-                                                        <div class="notification-title {{ $notification->read_at ? '' : 'unread' }}">
-                                                            @if($notification->type == 'App\Notifications\DonationApprovedNotification')
-                                                                Donation Approved
-                                                            @elseif($notification->type == 'App\Notifications\DonationDeclinedNotification')
-                                                                Donation Declined
-                                                            @elseif($notification->type == 'App\Notifications\DonationStatusNotification')
-                                                                @if(isset($notification->data['status']) && $notification->data['status'] == 'declined')
-                                                                    Donation Declined
-                                                                @else
-                                                                    Donation Approved
-                                                                @endif
-                                                            @elseif($notification->type == 'App\Notifications\NewDonationNotification')
-                                                                New Donation
-                                                            @elseif($notification->type == 'App\Notifications\EventRegistrationNotification')
-                                                                Event Registration
-                                                            @elseif($notification->type == 'App\Notifications\EventVolunteerNotification')
-                                                                Event Volunteer
-                                                            @else
-                                                                Notification
-                                                            @endif
-                                                        </div>
-                                                        <div class="notification-time">
-                                                            <i class="fas fa-clock me-1"></i>
-                                                            {{ $notification->created_at->format('h:i A') }}
-                                                        </div>
-                                                    </div>
+                                                    </h6>
                                                     @if(!$notification->read_at)
-                                                        <div class="unread-dot"></div>
+                                                        <span class="unread-indicator"></span>
                                                     @endif
                                                 </div>
-                                            </a>
-                                        </li>
-                                    @endforeach
-                                @empty
-                                    <li class="notification-empty">
-                                        <div class="empty-state-mini">
-                                            <i class="fas fa-bell-slash"></i>
-                                            <span>No notifications</span>
+                                                <p class="notification-text mb-0 text-muted small">
+                                                    {{ Str::limit($notification->data['message'] ?? 'You have a new notification', 60) }}
+                                                </p>
+                                                <small class="notification-time text-muted">
+                                                    {{ $notification->created_at->diffForHumans() }}
+                                                </small>
+                                            </div>
                                         </div>
-                                    </li>
+                                    </a>
+                                @empty
+                                    <div class="dropdown-item text-center py-4">
+                                        <i class="fas fa-bell-slash text-muted mb-2" style="font-size: 1.5rem;"></i>
+                                        <p class="mb-0 text-muted">No notifications yet</p>
+                                    </div>
                                 @endforelse
                             </div>
-
-                            <!-- Footer with View All Button -->
-                            <li class="notification-dropdown-footer">
-                                <a href="{{ route('notifications.index') }}" class="view-all-notifications-btn">
-                                    <i class="fas fa-list me-2"></i>
-                                    View All Notifications
-                                    <i class="fas fa-arrow-right ms-2"></i>
+                            
+                            <!-- Footer with view all link -->
+                            <div class="dropdown-footer text-center p-2 border-top">
+                                <a href="{{ route('notifications.index') }}" class="btn btn-link text-decoration-none w-100">
+                                    View all notifications <i class="fas fa-arrow-right ms-1"></i>
                                 </a>
-                            </li>
-                        </ul>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 
@@ -573,100 +557,92 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Enhanced notification functionality
-    const notificationBell = document.getElementById('navbarDropdownNotifications');
-    const notificationDropdown = document.querySelector('.notification-dropdown-modern');
-
-    // Add double-click to go to notifications page
-    if (notificationBell) {
-        let clickCount = 0;
-        let clickTimer = null;
-
-        notificationBell.addEventListener('click', function(e) {
-            clickCount++;
-
-            if (clickCount === 1) {
-                clickTimer = setTimeout(function() {
-                    clickCount = 0;
-                    // Single click - show dropdown (default behavior)
-                }, 300);
-            } else if (clickCount === 2) {
-                clearTimeout(clickTimer);
-                clickCount = 0;
-                // Double click - go to notifications page
-                e.preventDefault();
-                e.stopPropagation();
-                window.location.href = '{{ route("notifications.index") }}';
-            }
+    // Mark all as read button functionality
+    const markAllReadBtn = document.querySelector('.mark-all-read-btn');
+    if (markAllReadBtn) {
+        markAllReadBtn.addEventListener('click', function() {
+            // Add loading state
+            this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Marking...';
+            this.disabled = true;
         });
     }
-
+    
     // Auto-refresh notification count every 30 seconds
     function refreshNotificationCount() {
         fetch('{{ route("notifications.count") }}')
             .then(response => response.json())
             .then(data => {
-                const badges = document.querySelectorAll('.notification-badge');
-                const countTexts = document.querySelectorAll('.notification-count-text');
-                const tabCounts = document.querySelectorAll('.tab-count');
-
-                badges.forEach(badge => {
-                    if (data.count > 0) {
+                const badge = document.querySelector('.notification-badge');
+                const counter = document.querySelector('.notification-counter small span');
+                const counterIcon = document.querySelector('.notification-counter small i');
+                
+                if (data.count > 0) {
+                    // Update badge
+                    if (badge) {
                         badge.textContent = data.count;
                         badge.style.display = 'flex';
-                    } else {
+                    }
+                    
+                    // Update counter
+                    if (counter) {
+                        counter.textContent = data.count + ' unread notifications';
+                    }
+                    
+                    // Update counter icon
+                    if (counterIcon) {
+                        counterIcon.classList.remove('text-secondary');
+                        counterIcon.classList.add('text-primary');
+                    }
+                } else {
+                    // Hide badge
+                    if (badge) {
                         badge.style.display = 'none';
                     }
-                });
-
-                countTexts.forEach(text => {
-                    text.textContent = data.count > 0 ? `${data.count} unread` : 'All caught up!';
-                });
-
-                // Update filter tab counts if on notifications page
-                if (window.location.pathname.includes('/notifications')) {
-                    tabCounts.forEach(count => {
-                        if (count.closest('[data-filter="unread"]')) {
-                            count.textContent = data.count;
-                        }
-                    });
+                    
+                    // Update counter
+                    if (counter) {
+                        counter.textContent = 'No unread notifications';
+                    }
+                    
+                    // Update counter icon
+                    if (counterIcon) {
+                        counterIcon.classList.remove('text-primary');
+                        counterIcon.classList.add('text-secondary');
+                    }
                 }
             })
             .catch(error => {
-                console.log('Error refreshing notification count:', error);
+                console.error('Error refreshing notification count:', error);
             });
     }
-
+    
     // Refresh every 30 seconds
     setInterval(refreshNotificationCount, 30000);
-
+    
     // Mark notification as read when clicked
-    document.querySelectorAll('.notification-link').forEach(link => {
-        link.addEventListener('click', function() {
-            const unreadDot = this.querySelector('.unread-dot');
-            if (unreadDot) {
-                unreadDot.style.display = 'none';
+    document.querySelectorAll('.notification-item').forEach(item => {
+        item.addEventListener('click', function() {
+            const unreadIndicator = this.querySelector('.unread-indicator');
+            if (unreadIndicator) {
+                unreadIndicator.style.display = 'none';
+                this.classList.remove('unread');
+                
                 // Update count immediately
                 setTimeout(refreshNotificationCount, 500);
             }
         });
     });
-
-    // Add loading state to mark all as read button
-    const markAllBtn = document.querySelector('.mark-all-btn');
-    if (markAllBtn) {
-        markAllBtn.addEventListener('click', function() {
-            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-            this.disabled = true;
+    
+    // Close dropdown when clicking "View all"
+    const viewAllLink = document.querySelector('.dropdown-footer a');
+    if (viewAllLink) {
+        viewAllLink.addEventListener('click', function() {
+            const dropdown = bootstrap.Dropdown.getInstance(document.getElementById('navbarDropdownNotifications'));
+            if (dropdown) {
+                dropdown.hide();
+            }
         });
     }
-
-    // Add smooth animations
-    const notificationItems = document.querySelectorAll('.notification-dropdown-item');
-    notificationItems.forEach((item, index) => {
-        item.style.animationDelay = `${index * 0.05}s`;
-        item.classList.add('fade-in-up');
-    });
 });
 </script>
 
@@ -704,6 +680,9 @@ document.addEventListener('DOMContentLoaded', function() {
 }
 </style>
 @endpush
+
+
+
 
 
 

@@ -13,200 +13,398 @@
                 </button>
             </div>
             
-            <!-- Header -->
+            <!-- Header with actions -->
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h3 class="fw-bold">
-                    <i class="bi bi-bell-fill text-primary me-2"></i> My Notifications
-                </h3>
+                <div class="d-flex align-items-center">
+                    <div class="notification-header-icon me-3">
+                        <i class="bi bi-bell-fill text-primary"></i>
+                    </div>
+                    <div>
+                        <h3 class="fw-bold mb-0">My Notifications</h3>
+                        <p class="text-muted mb-0">Stay updated with your latest activities</p>
+                    </div>
+                </div>
+                
+                <div class="notification-actions">
+                    @if(auth()->user()->unreadNotifications->count() > 0)
+                        <form action="{{ route('notifications.mark-all-read') }}" method="POST" class="d-inline">
+                            @csrf
+                            <button type="submit" class="btn btn-primary btn-sm">
+                                <i class="bi bi-check-all me-1"></i> Mark all as read
+                            </button>
+                        </form>
+                    @endif
+                </div>
             </div>
             
-            <!-- Mark all as read button -->
-            @if(auth()->user()->unreadNotifications->count() > 0)
-                <div class="d-flex justify-content-end mb-3">
-                    <form action="{{ route('notifications.mark-all-read') }}" method="POST">
-                        @csrf
-                        <button type="submit" class="btn btn-primary">
-                            <i class="bi bi-check-all me-1"></i> Mark all as read
+            <!-- Filter tabs -->
+            <div class="notification-tabs mb-4">
+                <ul class="nav nav-tabs" id="notificationTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="all-tab" data-bs-toggle="tab" data-bs-target="#all-notifications" type="button" role="tab" aria-controls="all-notifications" aria-selected="true">
+                            All
                         </button>
-                    </form>
-                </div>
-            @endif
-
-            <!-- Success message -->
-            @if(session('success'))
-                <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
-                    <i class="bi bi-check-circle-fill me-2"></i> {{ session('success') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            @endif
-
-            <!-- Organized Notifications by Date -->
-            <div class="notifications-container">
-                @forelse($groupedNotifications as $date => $notificationsForDate)
-                    <div class="date-separator">
-                        <span>{{ \Carbon\Carbon::parse($date)->format('F d, Y') }}</span>
-                    </div>
-                    
-                    @foreach($notificationsForDate as $notification)
-                        <div class="notification-card {{ $notification->read_at ? '' : 'unread' }}">
-                            <a href="{{ route('notifications.show', $notification->id) }}" class="notification-link">
-                                <div class="notification-content">
-                                    <div class="notification-icon">
-                                        @if($notification->type == 'App\Notifications\DonationApprovedNotification')
-                                            <div class="icon-circle bg-success">
-                                                <i class="bi bi-check-circle-fill text-white"></i>
-                                            </div>
-                                        @elseif($notification->type == 'App\Notifications\DonationDeclinedNotification')
-                                            <div class="icon-circle bg-danger">
-                                                <i class="bi bi-x-circle-fill text-white"></i>
-                                            </div>
-                                        @elseif($notification->type == 'App\Notifications\DonationStatusNotification')
-                                            @if(isset($notification->data['status']) && $notification->data['status'] == 'declined')
-                                                <div class="icon-circle bg-danger">
-                                                    <i class="bi bi-x-circle-fill text-white"></i>
-                                                </div>
-                                            @else
-                                                <div class="icon-circle bg-success">
-                                                    <i class="bi bi-check-circle-fill text-white"></i>
-                                                </div>
-                                            @endif
-                                        @elseif($notification->type == 'App\Notifications\NewDonationNotification')
-                                            <div class="icon-circle bg-warning">
-                                                <i class="bi bi-cash-coin text-white"></i>
-                                            </div>
-                                        @elseif($notification->type == 'App\Notifications\EventRegistrationNotification')
-                                            <div class="icon-circle bg-info">
-                                                <i class="bi bi-calendar-event-fill text-white"></i>
-                                            </div>
-                                        @elseif($notification->type == 'App\Notifications\EventVolunteerNotification')
-                                            <div class="icon-circle bg-primary">
-                                                <i class="bi bi-people-fill text-white"></i>
-                                            </div>
-                                        @else
-                                            <div class="icon-circle bg-secondary">
-                                                <i class="bi bi-bell-fill text-white"></i>
-                                            </div>
-                                        @endif
-                                    </div>
-                                    
-                                    <div class="notification-details">
-                                        <div class="notification-header">
-                                            <h5 class="notification-title {{ $notification->read_at ? '' : 'fw-bold' }}">
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="unread-tab" data-bs-toggle="tab" data-bs-target="#unread-notifications" type="button" role="tab" aria-controls="unread-notifications" aria-selected="false">
+                            Unread
+                            @if(auth()->user()->unreadNotifications->count() > 0)
+                                <span class="badge bg-primary rounded-pill ms-1">{{ auth()->user()->unreadNotifications->count() }}</span>
+                            @endif
+                        </button>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <button class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                            Filter by type
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ route('notifications.index', ['type' => 'donation']) }}">Donations</a></li>
+                            <li><a class="dropdown-item" href="{{ route('notifications.index', ['type' => 'event']) }}">Events</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ route('notifications.index') }}">All types</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- Notifications content -->
+            <div class="tab-content" id="notificationTabsContent">
+                <!-- All notifications tab -->
+                <div class="tab-pane fade show active" id="all-notifications" role="tabpanel" aria-labelledby="all-tab">
+                    <!-- Organized Notifications by Date -->
+                    <div class="notifications-container">
+                        @forelse($groupedNotifications as $date => $notificationsForDate)
+                            <div class="date-separator">
+                                <span>{{ \Carbon\Carbon::parse($date)->format('F d, Y') }}</span>
+                            </div>
+                            
+                            @foreach($notificationsForDate as $notification)
+                                <div class="notification-card {{ $notification->read_at ? '' : 'unread' }}">
+                                    <a href="{{ route('notifications.show', $notification->id) }}" class="notification-link">
+                                        <div class="notification-content">
+                                            <div class="notification-icon">
                                                 @if($notification->type == 'App\Notifications\DonationApprovedNotification')
-                                                    Donation Approved
+                                                    <div class="icon-circle bg-success">
+                                                        <i class="bi bi-check-circle-fill text-white"></i>
+                                                    </div>
                                                 @elseif($notification->type == 'App\Notifications\DonationDeclinedNotification')
-                                                    Donation Declined
+                                                    <div class="icon-circle bg-danger">
+                                                        <i class="bi bi-x-circle-fill text-white"></i>
+                                                    </div>
                                                 @elseif($notification->type == 'App\Notifications\DonationStatusNotification')
                                                     @if(isset($notification->data['status']) && $notification->data['status'] == 'declined')
-                                                        Donation Declined
+                                                        <div class="icon-circle bg-danger">
+                                                            <i class="bi bi-x-circle-fill text-white"></i>
+                                                        </div>
                                                     @else
-                                                        Donation Approved
+                                                        <div class="icon-circle bg-success">
+                                                            <i class="bi bi-check-circle-fill text-white"></i>
+                                                        </div>
                                                     @endif
                                                 @elseif($notification->type == 'App\Notifications\NewDonationNotification')
-                                                    New Donation
+                                                    <div class="icon-circle bg-warning">
+                                                        <i class="bi bi-cash-coin text-white"></i>
+                                                    </div>
                                                 @elseif($notification->type == 'App\Notifications\EventRegistrationNotification')
-                                                    Event Registration
+                                                    <div class="icon-circle bg-info">
+                                                        <i class="bi bi-calendar-event-fill text-white"></i>
+                                                    </div>
                                                 @elseif($notification->type == 'App\Notifications\EventVolunteerNotification')
-                                                    Event Volunteer
+                                                    <div class="icon-circle bg-primary">
+                                                        <i class="bi bi-people-fill text-white"></i>
+                                                    </div>
                                                 @else
-                                                    Notification
+                                                    <div class="icon-circle bg-secondary">
+                                                        <i class="bi bi-bell-fill text-white"></i>
+                                                    </div>
                                                 @endif
-                                            </h5>
-                                            <span class="notification-time">{{ $notification->created_at->format('h:i A') }}</span>
+                                            </div>
+                                            
+                                            <div class="notification-details">
+                                                <div class="notification-header">
+                                                    <h5 class="notification-title {{ $notification->read_at ? '' : 'fw-bold' }}">
+                                                        @if($notification->type == 'App\Notifications\DonationApprovedNotification')
+                                                            Donation Approved
+                                                        @elseif($notification->type == 'App\Notifications\DonationDeclinedNotification')
+                                                            Donation Declined
+                                                        @elseif($notification->type == 'App\Notifications\DonationStatusNotification')
+                                                            @if(isset($notification->data['status']) && $notification->data['status'] == 'declined')
+                                                                Donation Declined
+                                                            @else
+                                                                Donation Approved
+                                                            @endif
+                                                        @elseif($notification->type == 'App\Notifications\NewDonationNotification')
+                                                            New Donation
+                                                        @elseif($notification->type == 'App\Notifications\EventRegistrationNotification')
+                                                            Event Registration
+                                                        @elseif($notification->type == 'App\Notifications\EventVolunteerNotification')
+                                                            Event Volunteer
+                                                        @else
+                                                            Notification
+                                                        @endif
+                                                    </h5>
+                                                    <span class="notification-time">{{ $notification->created_at->format('h:i A') }}</span>
+                                                </div>
+                                                
+                                                <p class="notification-message">
+                                                    {{ $notification->data['message'] ?? 'No message provided.' }}
+                                                </p>
+                                                
+                                                <div class="notification-footer">
+                                                    <div class="notification-meta">
+                                                        @if(isset($notification->data['amount']))
+                                                            <span class="notification-amount">₱{{ number_format($notification->data['amount'], 2) }}</span>
+                                                        @endif
+                                                        
+                                                        @if(!$notification->read_at)
+                                                            <span class="notification-badge">New</span>
+                                                        @endif
+                                                    </div>
+                                                    
+                                                    <div class="notification-actions">
+                                                        <a href="{{ route('notifications.show', $notification->id) }}" class="btn btn-sm btn-outline-primary">
+                                                            <i class="bi bi-eye me-1"></i> View
+                                                        </a>
+                                                        
+                                                        @if(!$notification->read_at)
+                                                            <form action="{{ route('notifications.mark-as-read', $notification->id) }}" method="POST" class="d-inline">
+                                                                @csrf
+                                                                <button type="submit" class="btn btn-sm btn-outline-secondary">
+                                                                    <i class="bi bi-check me-1"></i> Mark as read
+                                                                </button>
+                                                            </form>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
-                                        
-                                        @if(!$notification->read_at)
-                                            <span class="notification-badge">New</span>
-                                        @endif
-                                    </div>
+                                    </a>
                                 </div>
-                            </a>
-                        </div>
-                    @endforeach
-                @empty
-                    <div class="empty-state">
-                        <div class="empty-icon">
-                            <i class="bi bi-bell-slash"></i>
-                        </div>
-                        <h4>No Notifications</h4>
-                        <p>You don't have any notifications at the moment.</p>
+                            @endforeach
+                        @empty
+                            <div class="empty-state">
+                                <div class="empty-icon">
+                                    <i class="bi bi-bell-slash"></i>
+                                </div>
+                                <h4>No Notifications</h4>
+                                <p>You don't have any notifications at the moment.</p>
+                            </div>
+                        @endforelse
                     </div>
-                @endforelse
+                    
+                    <!-- Pagination -->
+                    <div class="d-flex justify-content-center mt-4">
+                        {{ $notifications->links() }}
+                    </div>
+                </div>
+                
+                <!-- Unread notifications tab -->
+                <div class="tab-pane fade" id="unread-notifications" role="tabpanel" aria-labelledby="unread-tab">
+                    <div class="notifications-container">
+                        @php
+                            $unreadNotifications = auth()->user()->unreadNotifications()->latest()->paginate(10);
+                            $groupedUnread = collect($unreadNotifications->items())->groupBy(function($notification) {
+                                return $notification->created_at->format('Y-m-d');
+                            });
+                        @endphp
+                        
+                        @forelse($groupedUnread as $date => $notificationsForDate)
+                            <div class="date-separator">
+                                <span>{{ \Carbon\Carbon::parse($date)->format('F d, Y') }}</span>
+                            </div>
+                            
+                            @foreach($notificationsForDate as $notification)
+                                <div class="notification-card unread">
+                                    <a href="{{ route('notifications.show', $notification->id) }}" class="notification-link">
+                                        <div class="notification-content">
+                                            <div class="notification-icon">
+                                                @if($notification->type == 'App\Notifications\DonationApprovedNotification')
+                                                    <div class="icon-circle bg-success">
+                                                        <i class="bi bi-check-circle-fill text-white"></i>
+                                                    </div>
+                                                @elseif($notification->type == 'App\Notifications\DonationDeclinedNotification')
+                                                    <div class="icon-circle bg-danger">
+                                                        <i class="bi bi-x-circle-fill text-white"></i>
+                                                    </div>
+                                                @elseif($notification->type == 'App\Notifications\DonationStatusNotification')
+                                                    @if(isset($notification->data['status']) && $notification->data['status'] == 'declined')
+                                                        <div class="icon-circle bg-danger">
+                                                            <i class="bi bi-x-circle-fill text-white"></i>
+                                                        </div>
+                                                    @else
+                                                        <div class="icon-circle bg-success">
+                                                            <i class="bi bi-check-circle-fill text-white"></i>
+                                                        </div>
+                                                    @endif
+                                                @elseif($notification->type == 'App\Notifications\NewDonationNotification')
+                                                    <div class="icon-circle bg-warning">
+                                                        <i class="bi bi-cash-coin text-white"></i>
+                                                    </div>
+                                                @elseif($notification->type == 'App\Notifications\EventRegistrationNotification')
+                                                    <div class="icon-circle bg-info">
+                                                        <i class="bi bi-calendar-event-fill text-white"></i>
+                                                    </div>
+                                                @elseif($notification->type == 'App\Notifications\EventVolunteerNotification')
+                                                    <div class="icon-circle bg-primary">
+                                                        <i class="bi bi-people-fill text-white"></i>
+                                                    </div>
+                                                @else
+                                                    <div class="icon-circle bg-secondary">
+                                                        <i class="bi bi-bell-fill text-white"></i>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                            
+                                            <div class="notification-details">
+                                                <div class="notification-header">
+                                                    <h5 class="notification-title fw-bold">
+                                                        @if($notification->type == 'App\Notifications\DonationApprovedNotification')
+                                                            Donation Approved
+                                                        @elseif($notification->type == 'App\Notifications\DonationDeclinedNotification')
+                                                            Donation Declined
+                                                        @elseif($notification->type == 'App\Notifications\DonationStatusNotification')
+                                                            @if(isset($notification->data['status']) && $notification->data['status'] == 'declined')
+                                                                Donation Declined
+                                                            @else
+                                                                Donation Approved
+                                                            @endif
+                                                        @elseif($notification->type == 'App\Notifications\NewDonationNotification')
+                                                            New Donation
+                                                        @elseif($notification->type == 'App\Notifications\EventRegistrationNotification')
+                                                            Event Registration
+                                                        @elseif($notification->type == 'App\Notifications\EventVolunteerNotification')
+                                                            Event Volunteer
+                                                        @else
+                                                            Notification
+                                                        @endif
+                                                    </h5>
+                                                    <span class="notification-time">{{ $notification->created_at->format('h:i A') }}</span>
+                                                </div>
+                                                
+                                                <p class="notification-message">
+                                                    {{ $notification->data['message'] ?? 'No message provided.' }}
+                                                </p>
+                                                
+                                                <div class="notification-footer">
+                                                    <div class="notification-meta">
+                                                        @if(isset($notification->data['amount']))
+                                                            <span class="notification-amount">₱{{ number_format($notification->data['amount'], 2) }}</span>
+                                                        @endif
+                                                        
+                                                        <span class="notification-badge">New</span>
+                                                    </div>
+                                                    
+                                                    <div class="notification-actions">
+                                                        <a href="{{ route('notifications.show', $notification->id) }}" class="btn btn-sm btn-outline-primary">
+                                                            <i class="bi bi-eye me-1"></i> View
+                                                        </a>
+                                                        
+                                                        <form action="{{ route('notifications.mark-as-read', $notification->id) }}" method="POST" class="d-inline">
+                                                            @csrf
+                                                            <button type="submit" class="btn btn-sm btn-outline-secondary">
+                                                                <i class="bi bi-check me-1"></i> Mark as read
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            @endforeach
+                        @empty
+                            <div class="empty-state">
+                                <div class="empty-icon">
+                                    <i class="bi bi-check-circle"></i>
+                                </div>
+                                <h4>All Caught Up!</h4>
+                                <p>You have no unread notifications.</p>
+                            </div>
+                        @endforelse
+                    </div>
+                    
+                    <!-- Pagination for unread notifications -->
+                    <div class="d-flex justify-content-center mt-4">
+                        {{ $unreadNotifications->links() }}
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
+@endsection
 
-@push('styles')
+@section('styles')
 <style>
-    /* Custom back button styling */
-    .back-btn {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
+    /* Header styling */
+    .notification-header-icon {
+        font-size: 2rem;
+        color: var(--primary);
+    }
+    
+    /* Tabs styling */
+    .notification-tabs .nav-tabs {
+        border-bottom: 1px solid #dee2e6;
+    }
+    
+    .notification-tabs .nav-link {
+        color: var(--text-light);
         border: none;
-        padding: 0.5rem 1.25rem;
-        border-radius: 5px;
-        transition: all 0.3s ease;
-    }
-    
-    .back-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-        color: white;
-    }
-    
-    /* Date separator styling */
-    .date-separator {
-        position: relative;
-        text-align: center;
-        margin: 20px 0;
-        color: #6c757d;
+        padding: 0.75rem 1rem;
         font-weight: 500;
+        position: relative;
     }
     
-    .date-separator:before {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 0;
-        right: 0;
-        height: 1px;
-        background-color: #dee2e6;
-        z-index: -1;
+    .notification-tabs .nav-link.active {
+        color: var(--primary);
+        background-color: transparent;
+        border-bottom: 2px solid var(--primary);
+    }
+    
+    .notification-tabs .nav-link:hover {
+        color: var(--primary-dark);
+    }
+    
+    /* Date separator */
+    .date-separator {
+        display: flex;
+        align-items: center;
+        margin: 1.5rem 0 1rem;
+        color: var(--text-light);
     }
     
     .date-separator span {
-        background-color: #f8f9fa;
-        padding: 0 15px;
-        border-radius: 20px;
-        font-size: 0.9rem;
-        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        background-color: var(--background-light);
+        border-radius: 1rem;
+        font-size: 0.85rem;
+        font-weight: 500;
     }
     
     /* Notification card styling */
     .notification-card {
-        background-color: #fff;
+        background-color: var(--white);
         border-radius: 10px;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
         margin-bottom: 15px;
-        transition: all 0.3s ease;
+        transition: var(--hover-transition);
     }
     
     .notification-card.unread {
-        border-left: 4px solid #0d6efd;
+        border-left: 4px solid var(--primary);
     }
     
     /* Enhanced hover effect for better readability */
     .notification-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-        background-color: #f8f9fa;
+        transform: var(--hover-scale);
+        box-shadow: var(--hover-shadow);
+        background-color: var(--background-light);
     }
     
     /* Ensure text remains dark and readable on hover */
     .notification-card:hover .notification-title,
     .notification-card:hover .notification-time {
-        color: #212529;
+        color: var(--text-darker);
         font-weight: 500;
     }
     
@@ -225,7 +423,7 @@
     
     .notification-content {
         display: flex;
-        align-items: center;
+        align-items: flex-start;
     }
     
     .notification-icon {
@@ -256,62 +454,208 @@
     .notification-title {
         margin: 0;
         font-size: 1rem;
-        color: #333;
+        color: var(--text-dark);
     }
     
     .notification-time {
         font-size: 0.8rem;
-        color: #6c757d;
+        color: var(--text-light);
+    }
+    
+    .notification-message {
+        margin: 0.5rem 0;
+        color: var(--text-light);
+        font-size: 0.9rem;
+        line-height: 1.4;
+    }
+    
+    .notification-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 10px;
+    }
+    
+    .notification-meta {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .notification-amount {
+        font-weight: 600;
+        color: var(--success);
     }
     
     .notification-badge {
         display: inline-block;
-        background-color: #0d6efd;
-        color: white;
+        background-color: var(--primary);
+        color: var(--white);
         font-size: 0.7rem;
         padding: 2px 8px;
         border-radius: 10px;
-        margin-top: 5px;
+    }
+    
+    .notification-actions {
+        display: flex;
+        gap: 5px;
     }
     
     /* Add contrast to the notification badge on hover */
     .notification-card:hover .notification-badge {
-        background-color: #0b5ed7;
+        background-color: var(--primary-dark);
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
+    
+    /* Empty state styling */
+    .empty-state {
+        text-align: center;
+        padding: 3rem 1rem;
+        background-color: var(--background-light);
+        border-radius: 10px;
+        margin: 1rem 0;
+    }
+    
+    .empty-icon {
+        font-size: 3rem;
+        color: var(--text-light);
+        margin-bottom: 1rem;
+    }
+    
+    .empty-state h4 {
+        color: var(--text-dark);
+        margin-bottom: 0.5rem;
+    }
+    
+    .empty-state p {
+        color: var(--text-light);
+    }
+    
+    /* Back button styling */
+    .back-btn {
+        color: var(--text-light);
+        background-color: transparent;
+        border: none;
+        padding: 0.5rem 0;
+        font-weight: 500;
+        transition: all 0.2s ease;
+    }
+    
+    .back-btn:hover {
+        color: var(--primary);
+        transform: translateX(-3px);
+    }
+    
+    /* Button styling to match dashboard */
+    .btn-primary {
+        background-color: var(--primary);
+        border-color: var(--primary);
+    }
+    
+    .btn-primary:hover {
+        background-color: var(--primary-dark);
+        border-color: var(--primary-dark);
+    }
+    
+    .btn-outline-primary {
+        color: var(--primary);
+        border-color: var(--primary);
+    }
+    
+    .btn-outline-primary:hover {
+        background-color: var(--primary);
+        border-color: var(--primary);
+        color: var(--white);
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .notification-content {
+            flex-direction: column;
+        }
+        
+        .notification-icon {
+            margin-right: 0;
+            margin-bottom: 15px;
+        }
+        
+        .notification-footer {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        
+        .notification-actions {
+            width: 100%;
+            justify-content: space-between;
+        }
+    }
 </style>
-@endpush
+@endsection
 
 @push('scripts')
 <script>
-// Smart back navigation function
-function goBack() {
-    // Check if user came from within the same site
-    const referrer = document.referrer;
-    const currentDomain = window.location.origin;
-
-    if (referrer && referrer.startsWith(currentDomain)) {
-        // If there's a valid referrer from the same domain, go back
+    function goBack() {
         window.history.back();
-    } else {
-        // Otherwise, go to appropriate dashboard
-        const dashboardUrl = '{{ auth()->user()->role == 1 ? route("admin.dashboard") : (auth()->user()->role == 2 ? route("treasurer.dashboard") : (auth()->user()->role == 3 ? route("member.dashboard") : (auth()->user()->role == 4 ? route("staff.dashboard") : "/"))) }}';
-        window.location.href = dashboardUrl;
     }
-}
+    
+    // Initialize tabs
+    document.addEventListener('DOMContentLoaded', function() {
+        const tabTriggerList = [].slice.call(document.querySelectorAll('#notificationTabs button'));
+        tabTriggerList.forEach(function(tabTriggerEl) {
+            tabTriggerEl.addEventListener('click', function(event) {
+                event.preventDefault();
+                const tab = new bootstrap.Tab(tabTriggerEl);
+                tab.show();
+            });
+        });
+        
+        // Mark as read functionality
+        const markAsReadButtons = document.querySelectorAll('form[action*="mark-as-read"] button');
+        markAsReadButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const form = this.closest('form');
+                const notificationCard = this.closest('.notification-card');
+                
+                fetch(form.action, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({})
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Update UI
+                        notificationCard.classList.remove('unread');
+                        const badge = notificationCard.querySelector('.notification-badge');
+                        if (badge) badge.remove();
+                        
+                        // Update unread count in tab
+                        const unreadCount = document.querySelector('#unread-tab .badge');
+                        if (unreadCount) {
+                            const currentCount = parseInt(unreadCount.textContent);
+                            if (currentCount > 1) {
+                                unreadCount.textContent = currentCount - 1;
+                            } else {
+                                unreadCount.remove();
+                            }
+                        }
+                        
+                        // Remove the button
+                        this.closest('.notification-actions').removeChild(form);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error marking notification as read:', error);
+                });
+            });
+        });
+    });
 </script>
 @endpush
-@endsection
 
-<!-- Pagination -->
-@if(isset($notifications) && method_exists($notifications, 'hasPages') && $notifications->hasPages())
-<div class="d-flex justify-content-between align-items-center mt-4">
-    <div>
-        Showing {{ $notifications->firstItem() }} to {{ $notifications->lastItem() }} of {{ $notifications->total() }} notifications
-    </div>
-    <div>
-        {{ $notifications->appends(request()->query())->links('pagination::bootstrap-5') }}
-    </div>
-</div>
-@endif
 
