@@ -94,7 +94,7 @@ class Kernel extends HttpKernel
         'user.active' => \App\Http\Middleware\CheckUserActive::class,
         'role' => \App\Http\Middleware\RoleMiddleware::class,
     ];
-}
+};
 
 
 
