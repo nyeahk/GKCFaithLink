@@ -1,0 +1,374 @@
+:root {
+    --primary-dark: #205781;
+    --accent-teal: #4F959D;
+    --secondary-mint: #98D2C0;
+    --background-light: #F6F8D5;
+    --white: #ffffff;
+    --text-dark: #333333;
+    --text-darker: #111111;
+    --shadow: rgba(0, 0, 0, 0.1);
+    /* Updated hover styles with gradient background */
+    --hover-bg: #667eea;
+    --hover-color: var(--white);
+    --hover-transition: all 0.3s ease;
+    --hover-scale: scale(1.02);
+    --hover-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+    /* Form Hover Styles */
+    --form-hover-bg: var(--background-light);
+    --form-hover-border: var(--accent-teal);
+    --form-hover-shadow: 0 0 0 3px rgba(79, 149, 157, 0.1);
+    --form-hover-transition: all 0.2s ease;
+}
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--background-light);
+    color: var(--primary-dark);
+}
+
+.navigation .container {
+    width: 100%;
+    margin: 0 auto;
+   
+}
+
+.top-nav {
+    width: 100%;
+    height: 84px;
+    background-color: var(--primary-dark);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    color: var(--white);
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-radius: 50%;
+}
+
+.logo img {
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
+}
+
+.nav-icons a {
+    color: var(--white);
+    font-size: 1.2rem;
+    margin-left: 1rem;
+    transition: color 0.3s ease;
+}
+
+.nav-icons a:hover {
+    color: var(--hover-color);
+    transform: var(--hover-scale);
+    transition: var(--hover-transition);
+}
+
+.sidebar {
+    width: 250px;
+    height: 100%;
+    background-color: var(--accent-teal);
+    padding: 1rem;
+    color: var(--white);
+    position: fixed;
+}
+
+.profile {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 2rem;
+    gap: 10px;
+}
+
+.profile img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 3px solid var(--secondary-mint);
+}
+
+.name {
+    display: block;
+    margin-top: 0.5rem;
+    font-weight: bold;
+}
+
+.nav-menu ul {
+    list-style: none;
+    padding: 0;
+}
+
+.nav-menu ul li {
+    margin: 1rem 0;
+}
+
+/* .nav-menu ul li a {
+    color: var(--white);
+    text-decoration: none;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: background 0.3s ease;
+}
+
+.nav-menu ul li a:hover {
+    display: block; 
+    background-color: var(--secondary-mint);
+    padding: 0.5rem;
+    border-radius: 8px;
+} */
+
+.nav-menu ul li a {
+    color: var(--text-darker);
+    text-decoration: none;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0.5rem;
+    border-radius: 8px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    font-weight: 500;
+}
+
+.nav-menu ul li a:hover {
+    background-color: var(--hover-bg) !important;
+    color: var(--white) !important;
+    transform: var(--hover-scale);
+    box-shadow: var(--hover-shadow);
+    transition: var(--hover-transition);
+}
+
+.dropdown {
+    display: none;
+    margin-left: 1.5rem;
+    margin-top: 0.5rem;
+}
+
+.nav-menu li:hover .dropdown {
+    display: block; 
+}
+.main-content {
+    margin-left: 280px;
+   text-align: center;
+   
+}
+
+.main-content h1 {
+    font-size: 1rem; /* Slightly smaller heading */
+    margin-bottom: 0.2rem; /* Space below the heading */
+    color: var(--primary-dark); /* Primary dark color */
+}
+
+.main-content p {
+    font-size: 0.9rem; /* Smaller font size for text */
+    line-height: 1rem; /* Better line spacing */
+    margin-bottom: 0.2rem; /* Space between paragraphs */
+    color: var(--primary-dark); /* Primary dark color */
+}
+
+.main-content p:last-child {
+    font-weight: bold; /* Highlight the Bible verse */
+    font-style: italic; /* Italicize the Bible verse */
+    margin-top: 0.2rem; /* Space above the Bible verse */
+   
+}
+
+.donation-container {
+    width: 600px;
+    height: 440px;
+    padding: 0.5rem;
+    position: absolute;
+    top: 28%;
+    right: 200px;
+    background-color: #98D2C0; /* Light teal background */
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    text-align: center;
+    color: #205781; /* Primary blue */
+    margin-bottom: 1rem;
+    font-size: 1rem;
+}
+
+/* Form Styles */
+.form-group {
+    margin-bottom: 1.5rem;
+    transition: var(--hover-transition);
+}
+
+.form-group:hover {
+    transform: var(--hover-scale);
+}
+
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--primary-dark);
+    font-weight: 500;
+    transition: var(--hover-transition);
+}
+
+label:hover {
+    color: var(--accent-teal);
+}
+
+input,
+select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--accent-teal);
+    border-radius: 0.375rem;
+    background-color: var(--white);
+    color: var(--primary-dark);
+    transition: var(--form-hover-transition);
+}
+
+input:hover,
+select:hover {
+    border-color: var(--form-hover-border);
+    box-shadow: var(--form-hover-shadow);
+}
+
+input:focus,
+select:focus {
+    border-color: var(--form-hover-border);
+    box-shadow: var(--form-hover-shadow);
+    outline: none;
+}
+
+/* Form Validation States */
+input.is-invalid,
+select.is-invalid {
+    border-color: var(--error);
+}
+
+input.is-invalid:hover,
+select.is-invalid:hover {
+    border-color: var(--error);
+    box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+}
+
+input.is-valid,
+select.is-valid {
+    border-color: var(--success);
+}
+
+input.is-valid:hover,
+select.is-valid:hover {
+    border-color: var(--success);
+    box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1);
+}
+
+.qr-code {
+    display: block;
+    margin: 0.8 auto;
+    max-width: 150px;
+    border: 1px solid #4F959D; /* Teal border */
+    border-radius: 4px;
+}
+
+.submit-button {
+    width: 100%;
+    padding: 0.3rem;
+    background-color: #4F959D; /* Teal button */
+    color: #F6F8D5; /* Light text */
+    border: none;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.submit-button:hover {
+    background-color: var(--hover-bg) !important;
+    color: var(--white) !important;
+    transform: var(--hover-scale);
+    box-shadow: var(--hover-shadow);
+    transition: var(--hover-transition);
+}
+
+p {
+    color: #205781; /* Primary blue */
+    font-size: 0.7rem;
+    margin-top: 0.3rem;
+}
+
+.qr-button {
+    border: 1px solid #4F959D; /* Consistent border color */
+    padding: 0.3rem;
+    border-radius: 4px; /* Rounded corners */
+    background-color: #F6F8D5; /* Light background color */
+    text-align: left;
+    font: 0.5rem;
+    color: var(--text-dark);
+    width: 100%; /* Full width to match other form elements */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for consistency */
+    transition: var(--hover-transition);
+}
+
+.qr-button:hover {
+    background-color: var(--hover-bg) !important;
+    color: var(--white) !important;
+    transform: var(--hover-scale);
+    box-shadow: var(--hover-shadow);
+    transition: var(--hover-transition);
+}
+
+/* QR Code Popup Styles */
+.qr-popup {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Black background with opacity */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.qr-popup-content {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.qr-popup-content img {
+    max-width: 200px;
+    margin-top: 1rem;
+}
+
+.close-qr {
+    color: #205781;
+    float: right;
+    font-size: 1.5rem;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close-qr:hover {
+    color: var(--hover-bg);
+    transform: var(--hover-scale);
+    transition: var(--hover-transition);
+}
+
+

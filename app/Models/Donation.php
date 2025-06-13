@@ -9,52 +9,58 @@ class Donation extends Model
 {
     use HasFactory;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
         'user_id',
         'donor_name',
-        'donation_type',
         'amount',
+        'purpose',
         'reference_number',
-        'receipt_path',
-        'message',
+        'screenshot',
+        'payment_method',
         'status',
+        'admin_response',
+        'admin_id',
+        'transaction_date',
+        'check_number',
+        'bank_name',
+        'check_date',
+        'receipt_number',
+        'verified_by',
+        'verification_date',
+        'verification_notes'
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
     protected $casts = [
         'amount' => 'decimal:2',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
+        'status' => 'string',
+        'transaction_date' => 'datetime',
+        'check_date' => 'date',
+        'verification_date' => 'datetime'
     ];
 
-    /**
-     * Get the user that owns the donation.
-     */
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * Get the receipt URL.
-     *
-     * @return string|null
-     */
-    public function getReceiptUrlAttribute()
+    public function admin()
     {
-        if ($this->receipt_path) {
-            return asset('storage/' . $this->receipt_path);
-        }
-        
-        return null;
+        return $this->belongsTo(User::class, 'admin_id');
+    }
+
+    public function scopePending($query)
+    {
+        return $query->where('status', 'pending');
+    }
+
+    public function scopeApproved($query)
+    {
+        return $query->where('status', 'approved');
+    }
+
+    public function scopeDeclined($query)
+    {
+        return $query->where('status', 'declined');
     }
 } 
+

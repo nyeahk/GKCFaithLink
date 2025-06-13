@@ -1,0 +1,158 @@
++/* Calendar Styles */
+.calendar-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.calendar-table th, 
+.calendar-table td {
+    text-align: center;
+    padding: 0;
+    position: relative;
+    border: 1px solid #e0e0e0;
+    height: 80px; /* Fixed height for all cells */
+    vertical-align: top;
+}
+
+.calendar-table th {
+    background-color: #f8f9fa;
+    padding: 10px 0;
+    font-weight: 500;
+    height: auto;
+}
+
+.calendar-table td {
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.calendar-table td:hover {
+    background-color: #f0f0f0;
+}
+
+.day-number {
+    display: block;
+    padding: 5px;
+    font-weight: 500;
+    text-align: right;
+}
+
+.other-month {
+    color: #aaa;
+    background-color: #f9f9f9;
+}
+
+.today {
+    background-color: #e8f4ff;
+}
+
+.today .day-number {
+    color: #0d6efd;
+    font-weight: bold;
+}
+
+.has-events {
+    position: relative;
+}
+
+.event-indicator {
+    position: absolute;
+    bottom: 5px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 0.75rem;
+    color: #0d6efd;
+    background-color: rgba(13, 110, 253, 0.1);
+    border-radius: 4px;
+    margin: 0 5px;
+    padding: 2px 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+}
+
+.event-indicator i {
+    font-size: 0.8rem;
+}
+
+.event-count {
+    font-weight: 500;
+}
+
+/* Calendar Header Styles */
+.calendar-container {
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    background-color: var(--primary);
+    border-bottom: 1px solid #e0e0e0;
+    color: var(--white);
+}
+
+.calendar-title {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: var(--white);
+}
+
+.calendar-nav {
+    display: flex;
+    gap: 10px;
+}
+
+.calendar-nav-btn {
+    padding: 5px 10px;
+    border-radius: 4px;
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    color: #212529;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+}
+
+.calendar-nav-btn:hover {
+    background-color: #f0f0f0;
+    color: #0d6efd;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .calendar-table td {
+        height: 60px;
+    }
+    
+    .day-number {
+        font-size: 0.9rem;
+    }
+    
+    .event-indicator {
+        font-size: 0.7rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .calendar-table td {
+        height: 50px;
+    }
+    
+    .day-number {
+        font-size: 0.8rem;
+        padding: 3px;
+    }
+    
+    .event-indicator {
+        margin: 0 2px;
+        padding: 1px 2px;
+    }
+}

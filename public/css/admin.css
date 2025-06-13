@@ -1,0 +1,208 @@
+:root {
+    --primary-color: #3490dc;
+    --secondary-color: #6c757d;
+    --success-color: #38c172;
+    --danger-color: #e3342f;
+    --warning-color: #ffed4a;
+    --info-color: #6cb2eb;
+    --light-color: #f8f9fa;
+    --dark-color: #343a40;
+    --text-darker: #111111;
+    --white: #ffffff;
+    /* Updated hover styles with gradient background */
+    --hover-bg: #667eea;
+    --hover-transition: all 0.3s ease;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f8fa;
+    overflow-x: hidden;
+    padding-top: 0; /* Remove any padding as the navbar is already accounted for */
+}
+
+/* Sidebar styles */
+.sidebar {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    z-index: 1020;
+    transition: all 0.3s;
+    /* Height and margin-top are set inline to account for the navbar height */
+}
+
+/* Preserve original sidebar link color */
+.sidebar .nav-link {
+    color: var(--text-darker);
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+/* Change to white text on hover with gradient background */
+.sidebar .nav-link:hover,
+.sidebar .nav-link.active {
+    background-color: var(--hover-bg) !important;
+    color: var(--white) !important;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+/* Calendar styles */
+.calendar-container {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background-color: var(--primary-color);
+    color: var(--white);
+}
+
+.calendar-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--white);
+}
+
+.calendar-nav {
+    display: flex;
+    gap: 10px;
+}
+
+.calendar-nav-btn {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: none;
+    padding: 5px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.calendar-nav-btn:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+    color: white;
+}
+
+.calendar-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.calendar-table th {
+    padding: 10px;
+    text-align: center;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.calendar-table td {
+    height: 100px;
+    vertical-align: top;
+    padding: 10px;
+    border: 1px solid #dee2e6;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.calendar-table td:hover {
+    background-color: #f8f9fa;
+}
+
+.calendar-table .other-month {
+    color: #adb5bd;
+    background-color: #f8f9fa;
+}
+
+.calendar-table .today {
+    background-color: rgba(52, 144, 220, 0.1);
+    font-weight: bold;
+}
+
+.calendar-table .has-events {
+    position: relative;
+    color: var(--light-color);
+    background-color: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+}
+
+.day-number {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.event-indicator {
+    font-size: 0.8rem;
+    color: var(--primary-color);
+    background-color: rgba(52, 144, 220, 0.1);
+    padding: 2px 5px;
+    border-radius: 3px;
+    display: inline-block;
+}
+
+/* Event card styles */
+.event-card {
+    border-left: 4px solid var(--primary-color);
+    transition: transform 0.3s;
+}
+
+.event-card:hover {
+    transform: translateY(-2px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+    .sidebar {
+        display: none;
+    }
+    
+    .calendar-table td {
+        height: 80px;
+    }
+}
+
+@media (max-width: 768px) {
+    .calendar-table th, .calendar-table td {
+        padding: 5px;
+    }
+    
+    .calendar-table td {
+        height: 60px;
+    }
+    
+    .day-number {
+        font-size: 0.9rem;
+    }
+    
+    .event-indicator {
+        font-size: 0.7rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .calendar-title {
+        font-size: 1.2rem;
+    }
+    
+    .calendar-nav-btn {
+        padding: 3px 10px;
+        font-size: 0.8rem;
+    }
+    
+    .calendar-table td {
+        height: 50px;
+    }
+}
+
+body {
+            padding-top: 84px; 
+    }
+
+
+

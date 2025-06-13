@@ -4,46 +4,92 @@ namespace App\Http\Controllers\Member;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Password;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class ProfileController extends Controller
 {
+    public function index()
+    {
+        return view('profile.index');
+    }
+
+    public function edit()
+    {
+        return view('profile.edit');
+    }
+
+    public function password()
+    {
+        return view('profile.password');
+    }
+
     public function update(Request $request)
     {
         $user = auth()->user();
 
-        $validated = $request->validate([
+        $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', Rule::unique('users')->ignore($user->id)],
-            'contact_number' => ['nullable', 'string', 'max:20'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
+            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
+            'contact_number' => ['nullable', 'digits_between:10,11', 'regex:/^[0-9]+$/'],
             'address' => ['nullable', 'string', 'max:255'],
-            'profile_picture' => ['nullable', 'image', 'max:2048'], // max 2MB
-            'current_password' => ['required_with:new_password', 'current_password'],
-            'new_password' => ['nullable', 'min:8', 'confirmed'],
         ]);
 
-        // Handle profile picture upload
-        if ($request->hasFile('profile_picture')) {
-            // Delete old profile picture if exists
-            if ($user->image_path) {
-                Storage::disk('public')->delete($user->image_path);
+        try {
+            // Update basic info
+            $user->name = $request->input('name');
+            $user->email = $request->input('email');
+            $user->contact_number = $request->input('contact_number');
+            $user->address = $request->input('address');
+
+            // Handle image upload
+            if ($request->hasFile('image')) {
+                // Delete old image if exists
+                if ($user->image_path) {
+                    Storage::disk('public')->delete($user->image_path);
+                }
+                
+                // Store new image
+                $path = $request->file('image')->store('profile-photos', 'public');
+                
+                // Update user with new image path
+                $user->image_path = $path;
             }
 
-            // Store new profile picture
-            $path = $request->file('profile_picture')->store('profile-pictures', 'public');
-            $validated['image_path'] = $path;
+            $user->save();
+            
+            return redirect()->route('member.profile.index')->with('success', 'Profile updated successfully.');
+        } catch (\Exception $e) {
+            Log::error('Profile update error: ' . $e->getMessage());
+            return back()->withErrors(['error' => 'Error: ' . $e->getMessage()]);
         }
-
-        // Update password if provided
-        if ($request->filled('new_password')) {
-            $validated['password'] = Hash::make($request->new_password);
-        }
-
-        // Update user
-        $user->update($validated);
-
-        return redirect()->route('member.profile')->with('success', 'Profile updated successfully');
     }
-} 
+
+    public function updatePassword(Request $request)
+    {
+        $user = auth()->user();
+
+        $request->validate([
+            'current_password' => ['required', function ($attribute, $value, $fail) use ($user) {
+                if (!Hash::check($value, $user->password)) {
+                    $fail('The current password is incorrect.');
+                }
+            }],
+            'new_password' => ['required', 'confirmed', Password::defaults()],
+        ]);
+
+        try {
+            $user->password = Hash::make($request->new_password);
+            $user->save();
+            
+            return redirect()->route('member.profile.password')->with('success', 'Password updated successfully.');
+        } catch (\Exception $e) {
+            Log::error('Password update error: ' . $e->getMessage());
+            return back()->withErrors(['error' => 'An error occurred while updating your password.']);
+        }
+    }
+}
+

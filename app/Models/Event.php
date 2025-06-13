@@ -2,34 +2,54 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
 
 class Event extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'title',
         'description',
-        'event_date',
-        'start_time',
-        'end_time',
         'location',
+        'start_date',
+        'end_date',
+        'status',
+        'image_path',
         'created_by'
     ];
 
-    protected $dates = [
-        'event_date',
-        'created_at',
-        'updated_at'
+    protected $casts = [
+        'start_date' => 'datetime',
+        'end_date' => 'datetime',
     ];
 
-    /**
-     * Get the formatted event date
-     *
-     * @return string
-     */
-    public function getFormattedDateAttribute()
+    // Relationship with User (creator)
+    public function creator()
     {
-        return $this->event_date->format('Y-m-d');
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    // Relationship with EventRegistrations
+    public function registrations()
+    {
+        return $this->hasMany(EventRegistration::class);
+    }
+
+    // Add this method to check if a user is registered
+    public function isUserRegistered($userId)
+    {
+        return $this->registrations()->where('user_id', $userId)->exists();
+    }
+
+    // Add this method to get a user's registration
+    public function getUserRegistration($userId)
+    {
+        return $this->registrations()->where('user_id', $userId)->first();
     }
 }
+
+
+

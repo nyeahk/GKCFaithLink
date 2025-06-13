@@ -2,36 +2,37 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use App\Traits\HasRoles;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles;
 
     /**
      * The attributes that are mass assignable.
      *
-     * @var list<string>
+     * @var array<int, string>
      */
     protected $fillable = [
         'username',
         'email',
         'password',
-        'position',
-        'name',
-        'contact_number',
-        'address',
-        'image_path'
+        'role',
+        'is_active',
+        'username',
     ];
 
     /**
      * The attributes that should be hidden for serialization.
      *
-     * @var list<string>
+     * @var array<int, string>
      */
     protected $hidden = [
         'password',
@@ -39,37 +40,66 @@ class User extends Authenticatable
     ];
 
     /**
-     * Get the attributes that should be cast.
+     * The attributes that should be cast.
      *
-     * @return array<string, string>
+     * @var array<string, string>
      */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
-    }
-    
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+    ];
+
     /**
-     * Get the validation rules for user registration.
+     * Get the dashboard route based on user role
      *
-     * @return array<string, mixed>
+     * @return string
      */
-    public static function getValidationRules(): array
+    public function getRoleDashboardRoute()
     {
-        return [
-            'username' => [
-                'required', 
-                'string', 
-                'min:3', 
-                'max:20', 
-                'unique:users', 
-                'regex:/^[a-zA-Z0-9][a-zA-Z0-9._]{1,18}[a-zA-Z0-9]$/',
-            ],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'position' => ['required', 'string', 'in:Pastor,Staff,Treasurer,Member'],
-        ];
+        switch ($this->role) {
+            case 1:
+                return 'admin.dashboard';
+            case 2:
+                return 'treasurer.dashboard';
+            case 3:
+                return 'member.dashboard';
+            case 4:
+                return 'staff.dashboard';
+            default:
+                return 'login';
+        }
+    }
+
+    public function roles(): BelongsToMany
+    {
+        return $this->belongsToMany(Role::class);
+    }
+
+    public function hasRole($role): bool
+    {
+        return $this->roles()->where('slug', $role)->exists();
+    }
+
+    public function hasAnyRole($roles): bool
+    {
+        return $this->roles()->whereIn('slug', (array) $roles)->exists();
+    }
+
+    public function hasPermission($permission): bool
+    {
+        return $this->roles()
+            ->whereHas('permissions', function ($query) use ($permission) {
+                $query->where('slug', $permission);
+            })
+            ->exists();
     }
 }
+
+
+
+
+
+
+
+
+

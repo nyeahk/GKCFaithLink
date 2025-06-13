@@ -1,0 +1,106 @@
+/* Enhanced Notification Dropdown Styling */
+.notification-bell {
+    position: relative;
+}
+
+.notification-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    font-size: 0.65rem;
+    padding: 0.25rem 0.4rem;
+    background-color: var(--error);
+}
+
+.notification-dropdown {
+    width: 350px;
+    padding: 0;
+    border-radius: 0.5rem;
+    border: none;
+    overflow: hidden;
+}
+
+.dropdown-header {
+    background-color: var(--background-light);
+}
+
+.notification-item {
+    transition: var(--hover-transition);
+    border-left: 3px solid transparent;
+}
+
+.notification-item:hover {
+    background-color: rgba(79, 149, 157, 0.05);
+    transform: var(--hover-scale);
+}
+
+.notification-item.unread {
+    border-left: 3px solid var(--primary);
+    background-color: rgba(79, 149, 157, 0.05);
+}
+
+.icon-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.notification-title {
+    font-size: 0.9rem;
+    color: var(--text-dark);
+}
+
+.notification-text {
+    font-size: 0.8rem;
+    color: var(--text-light);
+}
+
+.notification-time {
+    font-size: 0.75rem;
+    color: var(--text-light);
+}
+
+.unread-indicator {
+    width: 8px;
+    height: 8px;
+    background-color: var(--primary);
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.mark-all-read-btn {
+    color: var(--text-light);
+    font-size: 0.8rem;
+}
+
+.mark-all-read-btn:hover {
+    color: var(--primary);
+}
+
+.dropdown-footer {
+    background-color: var(--background-light);
+}
+
+.dropdown-footer a {
+    color: var(--primary);
+    font-size: 0.85rem;
+}
+
+.dropdown-footer a:hover {
+    color: var(--primary-dark);
+}
+
+/* Animation for new notifications */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.notification-badge:not(:empty) {
+    animation: pulse 2s infinite;
+}
