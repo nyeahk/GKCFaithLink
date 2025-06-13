@@ -211,25 +211,16 @@ class ReportController extends Controller
             ->take(10)
             ->get();
 
-        // Prepare data for the donations chart by week - REMOVE status filter
-        $donationWeeks = [];
+        // Prepare data for the donations chart by day (not week)
+        $donationDays = [];
         $donationAmounts = [];
-        
-        // Get donations for each week of the month
-        $currentWeek = $startDate->copy();
-        while ($currentWeek <= $endDate) {
-            $weekEnd = $currentWeek->copy()->endOfWeek();
-            if ($weekEnd > $endDate) {
-                $weekEnd = $endDate;
-            }
-            
-            $weekTotal = Donation::whereBetween('created_at', [$currentWeek, $weekEnd])
+        $currentDay = $startDate->copy();
+        while ($currentDay <= $endDate) {
+            $dayTotal = Donation::whereDate('created_at', $currentDay)
                 ->sum('amount');
-            
-            $donationWeeks[] = 'Week ' . ceil($currentWeek->day / 7);
-            $donationAmounts[] = $weekTotal;
-            
-            $currentWeek->addWeek();
+            $donationDays[] = $currentDay->format('M d');
+            $donationAmounts[] = $dayTotal;
+            $currentDay->addDay();
         }
 
         // Get total amount
@@ -249,7 +240,7 @@ class ReportController extends Controller
             'totalAmount' => $totalAmount,
             'newMembers' => 0, // Temporarily set to 0
             'recentDonations' => $recentDonations,
-            'donationWeeks' => $donationWeeks,
+            'donationDays' => $donationDays,
             'donationAmounts' => $donationAmounts,
             'donations' => $donations,
             'layout' => $this->getLayout()

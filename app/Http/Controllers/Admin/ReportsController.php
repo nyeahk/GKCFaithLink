@@ -139,25 +139,16 @@ class ReportsController extends Controller
             ->take(5)
             ->get();
 
-        // Prepare data for the donations chart by week
-        $donationWeeks = [];
+        // Prepare data for the donations chart by day (not week)
+        $donationDays = [];
         $donationAmounts = [];
-        
-        // Get donations for each week of the month
-        $currentWeek = $startDate->copy();
-        while ($currentWeek <= $endDate) {
-            $weekEnd = $currentWeek->copy()->endOfWeek();
-            if ($weekEnd > $endDate) {
-                $weekEnd = $endDate;
-            }
-            
-            $weekTotal = Donation::whereBetween('created_at', [$currentWeek, $weekEnd])
+        $currentDay = $startDate->copy();
+        while ($currentDay <= $endDate) {
+            $dayTotal = Donation::whereDate('created_at', $currentDay)
                 ->sum('amount');
-            
-            $donationWeeks[] = 'Week ' . ceil($currentWeek->day / 7);
-            $donationAmounts[] = $weekTotal;
-            
-            $currentWeek->addWeek();
+            $donationDays[] = $currentDay->format('M d');
+            $donationAmounts[] = $dayTotal;
+            $currentDay->addDay();
         }
 
         return view('admin.reports.monthly', compact(
@@ -167,7 +158,7 @@ class ReportsController extends Controller
             'totalOfferings',
             'totalMissionFunds',
             'recentDonations',
-            'donationWeeks',
+            'donationDays',
             'donationAmounts'
         ));
     }
@@ -267,7 +258,7 @@ class ReportsController extends Controller
 
         return $pdf->download('monthly_donations_report_' . $startDate->format('Y-m') . '.pdf');
     }
-} 
+}
 
 
 

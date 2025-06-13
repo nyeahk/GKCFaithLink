@@ -145,7 +145,7 @@
             <div class="card shadow mb-4">
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                     <h6 class="m-0 fw-bold text-primary">
-                        <i class="bi bi-bar-chart me-2"></i>Donations by Week
+                        <i class="bi bi-bar-chart me-2"></i>Donations by Month
                     </h6>
                 </div>
                 <div class="card-body">
@@ -295,7 +295,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Bar chart for weekly donations
+        // Bar chart for daily donations
         const ctx = document.getElementById('donationsChart').getContext('2d');
         
         // Create gradient for chart
@@ -305,9 +305,9 @@
 
         // Chart data
         const chartData = {
-            labels: {!! json_encode($donationWeeks ?? []) !!},
+            labels: {!! json_encode($donationDays ?? []) !!},
             datasets: [{
-                label: 'Weekly Donations (₱)',
+                label: 'Daily Donations (₱)',
                 data: {!! json_encode($donationAmounts ?? []) !!},
                 backgroundColor: gradient,
                 borderColor: '#4e73df',
