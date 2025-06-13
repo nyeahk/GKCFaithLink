@@ -136,6 +136,69 @@
 
 @push('styles')
 <style>
+    /* Comprehensive override for all buttons and links */
+    .btn,
+    .btn-primary,
+    .btn-lg,
+    .notification-action a,
+    .notification-action .btn,
+    a.btn,
+    button.btn,
+    .action-btn,
+    .view-details,
+    .btn-view-details,
+    .btn-action {
+        background-color: var(--primary) !important;
+        border-color: var(--primary) !important;
+        color: white !important;
+        transition: all 0.3s ease !important;
+    }
+    
+    /* Hover states for all buttons */
+    .btn:hover,
+    .btn-primary:hover,
+    .btn-lg:hover,
+    .notification-action a:hover,
+    .notification-action .btn:hover,
+    a.btn:hover,
+    button.btn:hover,
+    .action-btn:hover,
+    .view-details:hover,
+    .btn-view-details:hover,
+    .btn-action:hover {
+        background-color: var(--primary-dark) !important;
+        border-color: var(--primary-dark) !important;
+        color: white !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 4px 8px rgba(79, 149, 157, 0.3) !important;
+        background-image: none !important;
+    }
+    
+    /* Target the specific action button in notification detail */
+    .notification-action .btn-primary,
+    .notification-action .btn-lg,
+    .notification-body .btn-primary,
+    .notification-body .btn-lg {
+        background-color: var(--primary) !important;
+        border-color: var(--primary) !important;
+    }
+    
+    .notification-action .btn-primary:hover,
+    .notification-action .btn-lg:hover,
+    .notification-body .btn-primary:hover,
+    .notification-body .btn-lg:hover {
+        background-color: var(--primary-dark) !important;
+        border-color: var(--primary-dark) !important;
+    }
+    
+    /* Override any Bootstrap or custom styles that might be causing purple */
+    a:hover,
+    button:hover {
+        background-color: var(--primary-dark) !important;
+        background-image: none !important;
+        border-color: var(--primary-dark) !important;
+    }
+    
     /* Card styles */
     .notification-detail-card {
         background-color: var(--white);
@@ -292,6 +355,7 @@
     }
 </style>
 @endpush
+
 
 
 

@@ -45,7 +45,7 @@
                                              {{ $day['isToday'] ? 'today' : '' }}
                                              {{ isset($day['events']) && count($day['events']) > 0 ? 'has-events' : '' }}" 
                                         data-date="{{ $day['date']->format('Y-m-d') }}"
-                                        onclick="showEventsForDate('{{ $day['date']->format('Y-m-d') }}')">
+                                        onclick="showEventsForDate('{{ $day['date']->format('Y-m-d') }}')"
                                         <div class="day-number">{{ $day['day'] }}</div>
                                         @if(isset($day['events']) && count($day['events']) > 0)
                                             <div class="event-indicator">
@@ -262,6 +262,9 @@
     }
 </script>
 @endpush
+
+
+
 
 
 

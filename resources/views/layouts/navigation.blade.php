@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm fixed-top">
+<nav class="navbar navbar-expand-lg navbar-light shadow-sm fixed-top" style="background-color: #4F959D;">
     <div class="container-fluid">
         <a class="navbar-brand d-flex align-items-center" href="{{ Auth::check() ? route(Auth::user()->getRoleDashboardRoute()) : route('login') }}">
             <img src="{{ asset('images/gkc logo new.jpeg') }}" alt="GKC FaithLink Logo" class="logo me-2" style="width: 40px; height: 40px; border-radius: 50%;">
@@ -164,6 +164,30 @@
 
 @push('styles')
 <style>
+    /* Update admin navigation header color to #4F959D */
+    .navbar {
+        background-color: #4F959D !important;
+    }
+    
+    /* Ensure text is visible against the new background */
+    .navbar-brand, 
+    .navbar-brand strong,
+    .navbar .nav-link,
+    .navbar .dropdown-toggle,
+    .navbar-text,
+    .navbar .welcome-text,
+    .navbar .user-greeting {
+        color: #ffffff !important;
+    }
+    
+    /* Change logout button background and text color to white */
+    .navbar .dropdown-item[href$="logout"],
+    form[action$="logout"] button {
+        color: #ffffff !important;
+        background-color: #ffffff !important;
+        color: #4F959D !important; /* Text color changed to match navbar for contrast */
+    }
+
     /* Enhanced Notification Dropdown Styles */
     .notification-section {
         position: relative;
@@ -680,6 +704,9 @@ document.addEventListener('DOMContentLoaded', function() {
 }
 </style>
 @endpush
+
+
+
 
 
 

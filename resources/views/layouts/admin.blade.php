@@ -142,7 +142,7 @@
     @stack('scripts')
 
     <style>
-        /* Enhanced Admin Dashboard Styling */
+        /* Update admin color palette to match member panel */
         :root {
             --admin-primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             --admin-secondary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -702,3 +702,9 @@
     </style>
 </body>
 </html>
+
+
+
+
+
+

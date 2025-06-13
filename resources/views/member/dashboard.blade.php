@@ -293,8 +293,9 @@
         box-shadow: var(--hover-shadow);
     }
     
+    /* Change card headers from blue to #4F959D */
     .card-header {
-        background-color: var(--primary);
+        background-color: #4F959D !important;
         color: var(--white);
     }
     
@@ -309,6 +310,7 @@
     }
 </style>
 @endpush
+
 
 
 

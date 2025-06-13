@@ -17,9 +17,9 @@
 
     <div class="container-fluid">
         <div class="row">
-            <!-- Desktop Sidebar (visible on lg screens and up) -->
-            <div class="col-lg-3 col-xl-2 d-none d-lg-block p-0">
-                <nav id="sidebar" class="sidebar sidebar-enhanced p-3" style="min-height: calc(100vh - 84px); position: sticky; top: 84px;">
+            <!-- Fixed Sidebar (visible on lg screens and up) -->
+            <div class="col-lg-3 col-xl-2 d-none d-lg-block p-0 sidebar-column">
+                <nav id="sidebar" class="sidebar sidebar-enhanced p-3">
                     <div class="sidebar-header mb-4">
                         <h4 class="sidebar-title"><i class="bi bi-speedometer2 me-2"></i>Member Panel</h4>
                     </div>
@@ -58,8 +58,8 @@
                 </nav>
             </div>
 
-            <!-- Main Content Area -->
-            <div class="col-12 col-lg-9 col-xl-10 p-4">
+            <!-- Scrollable Main Content Area -->
+            <div class="col-12 col-lg-9 col-xl-10 p-4 main-content-column">
                 <!-- Mobile sidebar toggle button -->
                 <button class="btn btn-primary d-lg-none mb-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas" aria-controls="sidebarOffcanvas">
                     <i class="bi bi-list"></i> Menu
@@ -116,387 +116,414 @@
     @stack('scripts')
 
     <style>
+        /* Global color override for member panel */
+        :root {
+            /* Previous color variables remain unchanged */
+            --primary: #4F959D;
+            --primary-dark: #3d7a80;
+            --primary-light: #98D2C0;
+            --background-light: #F6F8D5;
+            --white: #ffffff;
+            --text-dark: #333333;
+            --text-darker: #111111;
+            --text-light: #666666;
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --info: #17a2b8;
+            --secondary: #6c757d;
+            --navbar-bg: #4F959D;
+        }
+        
+        /* Override Bootstrap's primary color throughout the member panel */
+        .bg-primary {
+            background-color: #4F959D !important;
+        }
+        
+        .btn-primary {
+            background-color: #4F959D !important;
+            border-color: #4F959D !important;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-dark) !important;
+            border-color: var(--primary-dark) !important;
+        }
+        
+        .btn-outline-primary {
+            color: #4F959D !important;
+            border-color: #4F959D !important;
+        }
+        
+        .btn-outline-primary:hover {
+            background-color: #4F959D !important;
+            color: var(--white) !important;
+        }
+        
+        .text-primary {
+            color: #4F959D !important;
+        }
+        
+        .border-primary {
+            border-color: #4F959D !important;
+        }
+        
+        /* Override any blue backgrounds in cards, alerts, badges, etc. */
+        .card-header.bg-primary, 
+        .card-header.bg-info, 
+        .card-header.bg-blue,
+        .alert-primary,
+        .badge-primary {
+            background-color: #4F959D !important;
+            border-color: #4F959D !important;
+        }
+        
+        /* Override any blue progress bars */
+        .progress-bar.bg-primary {
+            background-color: #4F959D !important;
+        }
+        
+        /* Override any blue links */
+        a.text-primary:hover, 
+        a.text-primary:focus {
+            color: var(--primary-dark) !important;
+        }
+        
+        /* Override any blue borders */
+        .border-primary {
+            border-color: #4F959D !important;
+        }
+        
+        /* Override any blue focus states */
+        .form-control:focus {
+            border-color: #4F959D !important;
+            box-shadow: 0 0 0 0.2rem rgba(79, 149, 157, 0.25) !important;
+        }
+        
         /* Enhanced Member Dashboard Styling */
         :root {
-            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            --warning-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-            --info-gradient: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-            --sidebar-bg: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
-            --sidebar-hover: rgba(255, 255, 255, 0.1);
-            --sidebar-active: rgba(255, 255, 255, 0.2);
-            --text-light: #ffffff;
-            --text-muted: rgba(255, 255, 255, 0.8);
-            --shadow-light: 0 2px 10px rgba(0, 0, 0, 0.1);
-            --shadow-medium: 0 4px 20px rgba(0, 0, 0, 0.15);
-            --shadow-heavy: 0 8px 30px rgba(0, 0, 0, 0.2);
+            /* Updated to match notification page colors */
+            --primary: #4F959D;
+            --primary-dark: #205781;
+            --primary-light: #98D2C0;
+            --background-light: #F6F8D5;
+            --white: #ffffff;
+            --text-dark: #333333;
+            --text-darker: #111111;
+            --text-light: #666666;
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --info: #17a2b8;
+            --secondary: #6c757d;
+            --border-light: #e9ecef;
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
             --border-radius: 12px;
+            --border-radius-sm: 8px;
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            
+            /* Updated navbar color to #367588 as requested */
+            --navbar-bg: #367588;
+            
+            /* Sidebar and hover colors */
+            --sidebar-bg: #4F959D;
+            --sidebar-hover: #4F959D;
+            --sidebar-active: #3d7a80;
+            --hover-shadow: 0 4px 15px rgba(79, 149, 157, 0.4);
         }
-
-        /* Enhanced Sidebar Styling */
-        .sidebar-enhanced {
+        
+        /* Update the navbar background color */
+        .navbar {
+            background-color: var(--navbar-bg) !important;
+            height: 64px;
+        }
+        
+        /* Ensure ALL navbar text is white, including any welcome messages */
+        .navbar,
+        .navbar *,
+        .navbar-brand, 
+        .navbar-brand strong,
+        .navbar .nav-link,
+        .navbar .dropdown-toggle,
+        .navbar-text,
+        .navbar span,
+        .navbar div,
+        .navbar p,
+        .navbar .dropdown-item,
+        .navbar .welcome-text,
+        .navbar .user-greeting {
+            color: var(--white) !important;
+        }
+        
+        /* Target specific welcome message classes that might be used */
+        .welcome-message,
+        .user-welcome,
+        .greeting-text,
+        .user-name,
+        .navbar .text-dark {
+            color: var(--white) !important;
+        }
+        
+        /* Ensure dropdown menus maintain proper text color */
+        .navbar .dropdown-menu {
+            background-color: var(--navbar-bg);
+        }
+        
+        .navbar .dropdown-menu .dropdown-item {
+            color: var(--white) !important;
+        }
+        
+        .navbar .dropdown-menu .dropdown-item:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+        
+        /* Update navbar button hover states */
+        .navbar .btn:hover,
+        .navbar .nav-link:hover,
+        .navbar .dropdown-toggle:hover {
+            background-color: rgba(255, 255, 255, 0.15) !important;
+            color: var(--white) !important;
+        }
+        
+        /* Override Bootstrap's navbar-light class if it's being used */
+        .navbar.navbar-light {
+            background-color: var(--navbar-bg) !important;
+        }
+        
+        .navbar.navbar-light .navbar-brand,
+        .navbar.navbar-light .nav-link {
+            color: var(--white) !important;
+        }
+        
+        /* Update sidebar positioning to remove gap */
+        .sidebar {
             background: var(--sidebar-bg);
-            border-radius: 0 var(--border-radius) var(--border-radius) 0;
-            box-shadow: var(--shadow-medium);
-            border: none;
-            overflow: hidden;
+            margin-top: 0 !important;
+            border-top: none;
+            border-radius: 0;
         }
-
+        
+        /* Adjust the sidebar's top position to align with navbar */
+        #sidebar {
+            min-height: calc(100vh - 64px) !important; 
+            position: sticky !important;
+            top: 64px !important; /* Match navbar height exactly */
+            padding-top: 1rem !important;
+        }
+        
+        /* Adjust the main container to align with the top of the sidebar */
+        .main-container {
+            margin-top: 64px;
+        }
+        
+        /* Change text color to white */
         .sidebar-title {
-            color: var(--text-light);
-            font-weight: 700;
-            font-size: 1.3rem;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-            margin: 0;
+            color: var(--white);
         }
-
-        .sidebar-nav {
-            padding: 0;
+        
+        .sidebar .nav-link {
+            color: var(--white);
         }
-
-        .sidebar-link {
-            color: var(--text-muted);
-            padding: 1rem 1.25rem;
-            border-radius: var(--border-radius);
-            margin: 0.25rem 0;
-            transition: var(--transition);
-            text-decoration: none;
-            font-weight: 500;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .sidebar-link::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-            transition: left 0.5s;
-        }
-
-        .sidebar-link:hover::before {
-            left: 100%;
-        }
-
-        .sidebar-link:hover {
-            color: var(--text-light);
-            background: var(--sidebar-hover);
-            transform: translateX(5px);
-            box-shadow: var(--shadow-light);
-        }
-
-        .sidebar-link.active {
-            color: var(--text-light);
-            background: var(--sidebar-active);
-            box-shadow: var(--shadow-light);
-            font-weight: 600;
-        }
-
-        .sidebar-link.active::after {
-            content: '';
-            position: absolute;
-            right: 0;
-            top: 0;
-            height: 100%;
-            width: 4px;
-            background: var(--text-light);
-            border-radius: 2px 0 0 2px;
-        }
-
+        
         .sidebar-icon {
-            font-size: 1.1rem;
-            width: 20px;
-            text-align: center;
-            transition: var(--transition);
+            color: var(--white);
         }
-
-        .sidebar-link:hover .sidebar-icon {
-            transform: scale(1.1);
-        }
-
+        
         .sidebar-text {
-            transition: var(--transition);
+            color: var(--white);
         }
-
-        /* Mobile Offcanvas Enhanced Styling */
+        
+        /* Updated hover styles with green theme */
+        .sidebar .nav-link:hover {
+            background-color: var(--sidebar-hover);
+            color: var(--white);
+            transform: translateX(3px);
+            box-shadow: var(--hover-shadow);
+        }
+        
+        .sidebar .nav-link.active {
+            background-color: var(--sidebar-active);
+            color: var(--white);
+            font-weight: 600;
+            box-shadow: var(--hover-shadow);
+        }
+        
+        /* Update offcanvas sidebar for mobile as well */
         .offcanvas-enhanced {
             background: var(--sidebar-bg);
-            border: none;
         }
-
+        
         .offcanvas-header-enhanced {
-            background: rgba(255, 255, 255, 0.1);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
-
-        .offcanvas-body-enhanced {
-            background: transparent;
+        
+        .offcanvas-body-enhanced .nav-link {
+            color: var(--white);
         }
-
-        /* Enhanced Card Styling */
+        
+        /* Updated hover styles for offcanvas */
+        .offcanvas-body-enhanced .nav-link:hover {
+            background-color: var(--sidebar-hover);
+            color: var(--white);
+            transform: translateX(3px);
+            box-shadow: var(--hover-shadow);
+        }
+        
+        .offcanvas-body-enhanced .nav-link.active {
+            background-color: var(--sidebar-active);
+            color: var(--white);
+            font-weight: 600;
+            box-shadow: var(--hover-shadow);
+        }
+        
+        /* Update card styling */
         .card {
-            border: none;
             border-radius: var(--border-radius);
-            box-shadow: var(--shadow-light);
+            box-shadow: var(--shadow-sm);
             transition: var(--transition);
-            overflow: hidden;
         }
-
+        
         .card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-medium);
+            box-shadow: var(--shadow-md);
         }
-
+        
         .card-header {
-            background: var(--primary-gradient) !important;
-            color: var(--text-light) !important;
-            border: none;
-            font-weight: 600;
-            padding: 1.25rem;
+            background-color: var(--background-light);
+            border-bottom: 1px solid var(--border-light);
         }
-
-        .card-header h5 {
-            margin: 0;
-            font-weight: 700;
-        }
-
-        .card-body {
-            padding: 1.5rem;
-        }
-
-        /* Enhanced Button Styling */
+        
+        /* Update button styling */
         .btn-primary {
-            background: var(--primary-gradient);
-            border: none;
-            border-radius: 25px;
-            padding: 0.75rem 1.5rem;
-            font-weight: 600;
-            transition: var(--transition);
-            box-shadow: var(--shadow-light);
+            background-color: var(--primary);
+            border-color: var(--primary);
         }
-
+        
         .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-medium);
-            background: var(--primary-gradient);
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
         }
-
-        .btn-outline-primary {
-            border: 2px solid #667eea;
-            color: #667eea;
-            border-radius: 25px;
-            padding: 0.5rem 1.25rem;
-            font-weight: 600;
-            transition: var(--transition);
-        }
-
-        .btn-outline-primary:hover {
-            background: var(--primary-gradient);
-            border-color: transparent;
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-light);
-        }
-
-        /* Mobile Menu Button Enhancement */
-        .btn.d-lg-none {
-            background: var(--primary-gradient);
-            border: none;
-            border-radius: var(--border-radius);
-            padding: 0.75rem 1.5rem;
-            font-weight: 600;
-            box-shadow: var(--shadow-light);
-            transition: var(--transition);
-        }
-
-        .btn.d-lg-none:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-medium);
-        }
-
-        /* Calendar Enhancements */
-        .calendar-container {
-            border-radius: var(--border-radius);
-            overflow: hidden;
-            box-shadow: var(--shadow-light);
-        }
-
-        .calendar-header {
-            background: var(--primary-gradient);
-            color: var(--text-light);
-            padding: 1.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-
-        .calendar-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin: 0;
-        }
-
-        .calendar-nav {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .calendar-nav-btn {
-            background: rgba(255, 255, 255, 0.2);
-            color: var(--text-light);
-            border: none;
-            border-radius: 20px;
-            padding: 0.5rem 1rem;
-            text-decoration: none;
-            font-weight: 500;
-            transition: var(--transition);
-            backdrop-filter: blur(10px);
-        }
-
-        .calendar-nav-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-            color: var(--text-light);
-            transform: translateY(-2px);
-        }
-
-        .calendar-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .calendar-table th {
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            color: #495057;
-            padding: 1rem;
-            text-align: center;
-            font-weight: 600;
-            border: none;
-        }
-
-        .calendar-table td {
-            padding: 1rem;
-            text-align: center;
-            border: 1px solid #f1f3f4;
-            cursor: pointer;
-            transition: var(--transition);
-            position: relative;
-            height: 80px;
-            vertical-align: top;
-        }
-
-        .calendar-table td:hover {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: var(--text-light);
-            transform: scale(1.02);
-        }
-
-        .calendar-table td.today {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            color: var(--text-light);
-            font-weight: 700;
-        }
-
-        .calendar-table td.has-events {
-            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-            color: var(--text-light);
-        }
-
-        .day-number {
-            font-weight: 600;
-            font-size: 1.1rem;
-        }
-
-        .event-indicator {
-            position: absolute;
-            bottom: 5px;
-            right: 5px;
-            background: rgba(255, 255, 255, 0.9);
-            color: #333;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.7rem;
-            font-weight: 600;
-        }
-
-        /* List Group Enhancements */
-        .list-group-item {
-            border: none;
-            border-radius: var(--border-radius);
-            margin-bottom: 0.5rem;
-            transition: var(--transition);
-            box-shadow: var(--shadow-light);
-        }
-
-        .list-group-item:hover {
+        
+        /* Override any Bootstrap or global hover styles that might be causing purple */
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active,
+        .offcanvas-body-enhanced .nav-link:hover,
+        .offcanvas-body-enhanced .nav-link.active {
+            background-color: var(--sidebar-hover) !important;
+            color: var(--white) !important;
             transform: translateX(5px);
-            box-shadow: var(--shadow-medium);
+            box-shadow: var(--hover-shadow);
+            transition: all 0.3s ease;
+            font-weight: 600;
+            border-radius: 8px;
+            /* Add a subtle border for distinction since hover color matches sidebar */
+            border-left: 4px solid var(--white);
         }
-
-        /* Responsive Design */
-        @media (max-width: 991.98px) {
-            .calendar-header {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .calendar-nav {
-                justify-content: center;
-            }
-
-            .calendar-table td {
-                padding: 0.5rem;
-                height: 60px;
-            }
+        
+        /* Active state with slightly darker shade */
+        .sidebar .nav-link.active,
+        .offcanvas-body-enhanced .nav-link.active {
+            background-color: var(--sidebar-active) !important;
+            font-weight: 700;
         }
-
-        /* Animation for page load */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        
+        /* Ensure no purple gradient is applied from global styles */
+        .sidebar a:hover,
+        .sidebar button:hover,
+        .sidebar .nav-menu a:hover,
+        .sidebar .nav-menu a.active,
+        .sidebar .menu-section a:hover,
+        .sidebar .menu-section a.active,
+        .sidebar .dropdown-menu a:hover,
+        .sidebar .dropdown-menu button:hover,
+        .sidebar .btn:hover,
+        .sidebar .btn-submit:hover,
+        .sidebar .btn-cancel:hover,
+        .sidebar .nav-icons a:hover,
+        .sidebar .nav-brand a:hover,
+        .sidebar .user-button:hover,
+        .sidebar .close:hover,
+        .sidebar .submit-button:hover,
+        .sidebar .qr-button:hover {
+            background-color: var(--sidebar-hover) !important;
+            color: var(--white) !important;
         }
-
-        .card {
-            animation: fadeInUp 0.6s ease-out;
+        
+        /* Specifically target sidebar links with the new teal color */
+        .sidebar-link:hover,
+        .sidebar-link.active {
+            background-color: var(--sidebar-hover) !important;
+            color: var(--white) !important;
+            border-left: 4px solid var(--white);
         }
-
-        .sidebar-link {
-            animation: fadeInUp 0.4s ease-out;
+        
+        /* Standardize sidebar link boxes */
+        .sidebar .nav-item {
+            margin-bottom: 10px !important; /* Consistent spacing between items */
         }
-
-        /* Custom scrollbar for sidebar */
-        .sidebar-enhanced::-webkit-scrollbar {
-            width: 6px;
+        
+        .sidebar .nav-link,
+        .offcanvas-body-enhanced .nav-link {
+            padding: 12px 15px !important; /* Equal padding for all links */
+            border-radius: 8px !important; /* Consistent rounded corners */
+            display: flex !important;
+            align-items: center !important;
+            height: 48px !important; /* Fixed height for all links */
+            transition: all 0.3s ease !important;
         }
-
-        .sidebar-enhanced::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.1);
+        
+        /* Make icons consistent size and spacing */
+        .sidebar-icon {
+            font-size: 18px !important; /* Consistent icon size */
+            width: 24px !important; /* Fixed width for icon container */
+            margin-right: 12px !important; /* Consistent spacing after icon */
+            text-align: center !important;
         }
-
-        .sidebar-enhanced::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 3px;
+        
+        /* Make text consistent */
+        .sidebar-text {
+            font-size: 14px !important; /* Consistent text size */
+            font-weight: 500 !important; /* Medium weight by default */
+            flex: 1 !important; /* Take up remaining space */
         }
-
-        .sidebar-enhanced::-webkit-scrollbar-thumb:hover {
-            background: rgba(255, 255, 255, 0.5);
+        
+        /* Active state styling */
+        .sidebar .nav-link.active,
+        .offcanvas-body-enhanced .nav-link.active {
+            font-weight: 600 !important; /* Slightly bolder when active */
+            border-left: 4px solid var(--white) !important;
+            padding-left: 11px !important; /* Adjust padding to account for border */
+        }
+        
+        /* Apply the same styles to both desktop and mobile sidebars */
+        #sidebar .nav-link,
+        #sidebarOffcanvas .nav-link {
+            height: 48px !important;
+            padding: 12px 15px !important;
         }
     </style>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
