@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class RoleMiddleware
 {
+
     /**
      * Handle an incoming request.
      *
@@ -18,6 +19,9 @@ class RoleMiddleware
      */
     public function handle(Request $request, Closure $next, ...$roles)
     {
+        // Ensure roles are treated as an array even if passed as a single string
+        $roles = is_array($roles[0]) ? $roles[0] : $roles;
+
         if (!$request->user() || !in_array($request->user()->role, $roles)) {
             abort(403, 'Unauthorized action.');
         }
@@ -25,6 +29,7 @@ class RoleMiddleware
         return $next($request);
     }
 }
+
 
 
 

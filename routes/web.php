@@ -65,7 +65,7 @@ Route::middleware(['auth'])->group(function () {
 
 
     // Admin routes - only accessible by users with role 1 (admin)
-    Route::prefix('admin')->name('admin.')->middleware([CheckUserActive::class, RoleMiddleware::class.':1'])->group(function () {
+    Route::prefix('admin')->name('admin.')->middleware(['auth', RoleMiddleware::class . ':1'])->group(function () {
         // Dashboard
         Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
         Route::get('events/date/{date}', [DashboardController::class, 'getEventsForDate'])->name('events.date');
@@ -203,6 +203,9 @@ Route::middleware(['auth'])->group(function () {
         Route::put('profile', [App\Http\Controllers\Staff\ProfileController::class, 'update'])->name('profile.update');
         Route::get('profile/password', [App\Http\Controllers\Staff\ProfileController::class, 'password'])->name('profile.password');
         Route::put('profile/password', [App\Http\Controllers\Staff\ProfileController::class, 'updatePassword'])->name('profile.password.update');
+
+        // Add this if you have a RegistrationController for staff
+        Route::get('registrations', [App\Http\Controllers\Staff\RegistrationController::class, 'index'])->name('registrations.index');
     });
 
     // Staff dashboard events endpoint
@@ -271,7 +274,7 @@ Route::middleware(['auth', 'verified', CheckUserActive::class, RoleMiddleware::c
 });
 
 // Admin User Routes
-Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
+Route::prefix('admin')->name('admin.')->middleware(['auth', RoleMiddleware::class . ':1'])->group(function () {
     // Users management
     Route::get('/users', [App\Http\Controllers\Admin\UserController::class, 'index'])->name('users.index');
     Route::get('/users/create', [App\Http\Controllers\Admin\UserController::class, 'create'])->name('users.create');

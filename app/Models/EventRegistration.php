@@ -24,15 +24,14 @@ class EventRegistration extends Model
         'is_volunteer' => 'boolean',
     ];
 
-    // Relationship with Event
-    public function event()
-    {
-        return $this->belongsTo(Event::class);
-    }
-
     // Relationship with User
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+    // Relationship with Event
+    public function event()
+    {
+        return $this->belongsTo(Event::class);
     }
 }

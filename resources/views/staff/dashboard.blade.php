@@ -331,14 +331,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 return response.json();
             })
             .then(data => {
-                console.log('Response data:', data); // Debug log
-                
                 modalDate.textContent = data.date || 'Unknown Date';
-                
-                // Check if events property exists and is an array
                 if (data.events && Array.isArray(data.events) && data.events.length > 0) {
                     let eventsHtml = '';
-                    
                     data.events.forEach(event => {
                         eventsHtml += `
                             <div class="card event-card mb-3">
@@ -372,7 +367,6 @@ document.addEventListener('DOMContentLoaded', function() {
                             </div>
                         `;
                     });
-                    
                     eventsContainer.innerHTML = eventsHtml;
                 } else {
                     eventsContainer.innerHTML = `
@@ -384,15 +378,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             })
             .catch(error => {
-                console.error('Error fetching events:', error);
                 eventsContainer.innerHTML = `
                     <div class="text-center py-4 text-danger">
                         <p>Error loading events. Please try again.</p>
                         <p class="text-sm">${error.message}</p>
                     </div>
                 `;
-                
-                // Still show the create event button even if there's an error
                 modalDate.textContent = 'Events for ' + new Date(date).toLocaleDateString('en-US', {
                     year: 'numeric',
                     month: 'long',
@@ -400,12 +391,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             });
     }
-    
-    // Highlight today's date if available
-    const today = document.querySelector('.calendar-table td.today');
-    if (today) {
-        today.click();
-    }
+    // Always show today's event modal on dashboard load
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    const todayStr = `${yyyy}-${mm}-${dd}`;
+    window.showEventsForDate(todayStr);
 });
 </script>
 @endpush

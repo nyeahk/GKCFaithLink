@@ -1,3 +1,5 @@
+
+{{-- filepath: resources/views/member/events/registrations.blade.php --}}
 @extends('layouts.member')
 
 @section('title', 'My Event Registrations')
@@ -57,4 +59,40 @@
                                                         <i class="bi bi-hand-thumbs-up me-1"></i> Volunteer
                                                     </span>
                                                     <div class="small text-muted mt-1">
-                                                        {{ $
+                                                        {{ $registration->volunteerRole->name }}
+                                                    </div>
+                                                @else
+                                                    <span class="badge bg-success">
+                                                        <i class="bi bi-person-check me-1"></i> Attendee
+                                                    </span>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if($registration->status == 'active')
+                                                    <span class="badge bg-success">
+                                                        <i class="bi bi-check-circle me-1"></i> Active
+                                                    </span>
+                                                @else
+                                                    <span class="badge bg-danger">
+                                                        <i class="bi bi-x-circle me-1"></i> Cancelled
+                                                    </span>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                <a href="{{ route('member.events.cancel', $registration) }}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to cancel your registration?')">
+                                                    <i class="bi bi-x-circle me-1"></i> Cancel
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                        {{ $registrations->links() }}
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection

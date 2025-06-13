@@ -43,7 +43,13 @@
                     <tbody>
                         @foreach($users as $user)
                         <tr>
-                            <td>{{ $user->username }}</td>
+                            <td>
+                                <img src="{{ $user->profile_photo_url ?? asset('images/default-avatar.png') }}"
+                                     alt="{{ $user->username }}"
+                                     class="rounded-circle me-2"
+                                     style="width: 36px; height: 36px; object-fit: cover;">
+                                {{ $user->username }}
+                            </td>
                             <td>{{ $user->email }}</td>
                             <td>
                                 @switch($user->role)
@@ -82,9 +88,7 @@
                 </table>
             </div>
             
-            <div class="mt-4">
-                {{ $users->links() }}
-            </div>
+          
         </div>
     </div>
 </div>

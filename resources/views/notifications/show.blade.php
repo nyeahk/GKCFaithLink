@@ -89,7 +89,7 @@
                         </div>
                     </div>
                     
-                    <!-- Additional information -->
+                    <!-- Additional information (for all roles) -->
                     @if(isset($notification->data['description']) && !empty($notification->data['description']))
                     <div class="notification-section">
                         <h5 class="section-title">Additional Information</h5>
@@ -98,8 +98,8 @@
                         </div>
                     </div>
                     @endif
-                    
-                    <!-- Notes -->
+
+                    <!-- Notes (for all roles) -->
                     @if(isset($notification->data['notes']) && !empty($notification->data['notes']))
                     <div class="notification-section">
                         <h5 class="section-title">Notes</h5>
@@ -108,18 +108,32 @@
                         </div>
                     </div>
                     @endif
-                    
-                    <!-- Amount -->
-                    @if(isset($notification->data['amount']))
-                    <div class="notification-section">
-                        <h5 class="section-title">Amount</h5>
-                        <div class="section-content amount">
-                            ₱{{ number_format($notification->data['amount'], 2) }}
+
+                    <!-- Amount (for treasurer and admin only) -->
+                    @canany(['isTreasurer', 'isAdmin'])
+                        @if(isset($notification->data['amount']))
+                        <div class="notification-section">
+                            <h5 class="section-title">Amount</h5>
+                            <div class="section-content amount">
+                                ₱{{ number_format($notification->data['amount'], 2) }}
+                            </div>
                         </div>
-                    </div>
-                    @endif
-                    
-                    <!-- Action button -->
+                        @endif
+                    @endcanany
+
+                    <!-- Event details (for staff and member only) -->
+                    @canany(['isStaff', 'isMember'])
+                        @if(isset($notification->data['event']))
+                        <div class="notification-section">
+                            <h5 class="section-title">Event Details</h5>
+                            <div class="section-content">
+                                {{ $notification->data['event'] }}
+                            </div>
+                        </div>
+                        @endif
+                    @endcanany
+
+                    <!-- Action button (for all roles, if url exists) -->
                     @if(isset($notification->data['url']))
                     <div class="notification-action">
                         <a href="{{ $notification->data['url'] }}" class="btn btn-primary btn-lg">
@@ -136,111 +150,115 @@
 
 @push('styles')
 <style>
-    /* Card styles */
+    body {
+        background: #C1E8FF !important;
+    }
     .notification-detail-card {
         background-color: #fff;
-        border-radius: 16px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        border-radius: 18px;
+        box-shadow: 0 4px 24px rgba(5, 38, 89, 0.10);
         overflow: hidden;
         margin-bottom: 30px;
+        border: 1.5px solid #7DA0CA;
     }
-    
-    /* Header styles */
     .notification-header {
-        background-color: #f8f9fa;
-        padding: 30px;
+        background: linear-gradient(90deg, #5483B3 0%, #7DA0CA 100%);
+        padding: 36px 30px 24px 30px;
         text-align: center;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        border-bottom: 1px solid #e3f0fa;
     }
-    
     .notification-icon-large {
-        margin-bottom: 20px;
+        margin-bottom: 18px;
     }
-    
     .notification-icon-large .icon-circle {
-        width: 80px;
-        height: 80px;
+        width: 90px;
+        height: 90px;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
         margin: 0 auto;
+        box-shadow: 0 2px 8px rgba(84, 131, 179, 0.15);
+        border: 4px solid #fff;
     }
-    
     .notification-icon-large i {
-        font-size: 2.5rem;
+        font-size: 2.8rem;
     }
-    
     .notification-title {
-        margin-bottom: 10px;
-        font-weight: 600;
-        color: #212529;
+        margin-bottom: 8px;
+        font-weight: 700;
+        color: #fff;
+        font-size: 1.6rem;
+        letter-spacing: 0.5px;
+        text-shadow: 0 2px 8px rgba(5, 38, 89, 0.10);
     }
-    
     .notification-time {
-        color: #6c757d;
-        font-size: 0.9rem;
+        color: #e3f0fa;
+        font-size: 1rem;
+        margin-bottom: 0;
     }
-    
-    /* Body styles */
     .notification-body {
-        padding: 30px;
+        padding: 32px 30px 30px 30px;
     }
-    
     .notification-section {
-        margin-bottom: 25px;
-        padding-bottom: 25px;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        margin-bottom: 22px;
+        padding-bottom: 18px;
+        border-bottom: 1px solid #e3f0fa;
     }
-    
     .notification-section:last-child {
         margin-bottom: 0;
         padding-bottom: 0;
         border-bottom: none;
     }
-    
     .section-title {
-        font-size: 1rem;
+        font-size: 1.05rem;
         font-weight: 600;
-        color: #495057;
-        margin-bottom: 12px;
+        color: #052659;
+        margin-bottom: 10px;
     }
-    
     .section-content {
         background-color: #f8f9fa;
-        padding: 20px;
+        padding: 18px;
         border-radius: 10px;
-        font-size: 1.05rem;
+        font-size: 1.08rem;
         line-height: 1.6;
-        color: #212529;
+        color: #343a40;
     }
-    
     .section-content.amount {
         font-size: 1.5rem;
-        font-weight: 600;
+        font-weight: 700;
         color: #0d6efd;
+        background: #e3f0fa;
     }
-    
-    /* Action styles */
     .notification-action {
         text-align: center;
-        margin-top: 30px;
+        margin-top: 28px;
     }
-    
-    /* Button styles */
     .btn-outline-primary {
-        border-color: #0d6efd;
-        color: #0d6efd;
-        padding: 8px 16px;
+        border-color: #7DA0CA;
+        color: #7DA0CA;
+        padding: 8px 18px;
+        font-weight: 600;
+        border-radius: 6px;
+        transition: background 0.2s, color 0.2s;
     }
-    
     .btn-outline-primary:hover {
-        background-color: #0d6efd;
+        background-color: #7DA0CA;
         color: #fff;
+        border-color: #7DA0CA;
     }
-    
-    /* Make sure Bootstrap Icons are loaded */
-    @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css");
+    .btn-primary, .btn-primary:focus, .btn-primary:active, .btn-primary:hover {
+        background: #7DA0CA !important;
+        border-color: #7DA0CA !important;
+        color: #fff !important;
+        box-shadow: none !important;
+    }
+    /* Responsive adjustments */
+    @media (max-width: 575.98px) {
+        .notification-header, .notification-body {
+            padding: 18px 8px;
+        }
+    }
 </style>
 @endpush
 

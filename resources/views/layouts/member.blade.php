@@ -10,96 +10,97 @@
     @stack('styles')
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --navbar-height: 56px;
+            --sidebar-width: 250px;
+        }
+        .navbar {
+            height: var(--navbar-height);
+            min-height: var(--navbar-height);
+            z-index: 1040;
+        }
+        #sidebar {
+            position: fixed;
+            top: var(--navbar-height);
+            left: 0;
+            width: var(--sidebar-width);
+            height: calc(100vh - var(--navbar-height));
+            background: #5483B3;
+            color: #fff;
+            z-index: 1030;
+            overflow: hidden;
+            padding: 1.5rem 1rem 1rem 1rem;
+        }
+        #sidebar .nav-link,
+        #sidebar .sidebar-header,
+        #sidebar .bi,
+        #sidebar .fa {
+            color: #fff !important;
+        }
+        #sidebar .nav-link.active,
+        #sidebar .nav-link:focus,
+        #sidebar .nav-link:hover {
+            background: #052659 !important;
+            color: #fff !important;
+        }
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding-top: var(--navbar-height);
+        }
+        @media (max-width: 991.98px) {
+            #sidebar {
+                position: static;
+                width: 100%;
+                height: auto;
+                padding: 1rem;
+            }
+            .main-content {
+                margin-left: 0;
+                padding-top: var(--navbar-height);
+            }
+        }
+    </style>
 </head>
 <body>
-    <!-- Include navigation at the top -->
     @include('layouts.navigation')
 
-    <div class="container-fluid">
-        <div class="row">
-            <!-- Desktop Sidebar (visible on lg screens and up) -->
-            <div class="col-lg-3 col-xl-2 d-none d-lg-block p-0">
-                <nav id="sidebar" class="sidebar bg-light p-3" style="min-height: calc(100vh - 84px); position: sticky; top: 84px;">
-                    <div class="sidebar-header mb-4">
-                        <h4 class="text-primary"><i class="bi bi-speedometer2"></i>Member Panel</h4>
-                    </div>
-                    <ul class="nav flex-column">
-                        <li class="nav-item mb-2">
-                            <a class="nav-link d-flex align-items-center" href="{{ route('member.dashboard') }}">
-                                <i class="bi bi-house-door me-2"></i> Dashboard
-                            </a>
-                        </li>
-                        <li class="nav-item mb-2">
-                            <a class="nav-link d-flex align-items-center" href="{{ route('member.events') }}">
-                                <i class="bi bi-calendar-event me-2"></i> Events
-                            </a>
-                        </li>
-                        <li class="nav-item mb-2">
-                            <a class="nav-link d-flex align-items-center" href="{{ route('member.donations.index') }}">
-                                <i class="bi bi-cash-coin me-2"></i> My Donations
-                            </a>
-                        </li>
-                        <li class="nav-item mb-2">
-                            <a class="nav-link d-flex align-items-center" href="{{ route('member.announcements') }}">
-                                <i class="bi bi-megaphone me-2"></i> Announcements
-                            </a>
-                        </li>
-                        <li class="nav-item mb-2">
-                            <a class="nav-link d-flex align-items-center" href="{{ route('member.profile.index') }}">
-                                <i class="bi bi-people me-2"></i> My Profile
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
+    <!-- Sidebar -->
+    <nav id="sidebar">
+        <div class="sidebar-header mb-4">
+<h4 style="color: white;"><i class="bi bi-speedometer2"></i> Member Panel</h4>        </div>
+        <ul class="nav flex-column">
+            <li class="nav-item mb-2">
+                <a class="nav-link d-flex align-items-center" href="{{ route('member.dashboard') }}">
+                    <i class="bi bi-house-door me-2"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item mb-2">
+                <a class="nav-link d-flex align-items-center" href="{{ route('member.events') }}">
+                    <i class="bi bi-calendar-event me-2"></i> Events
+                </a>
+            </li>
+            <li class="nav-item mb-2">
+                <a class="nav-link d-flex align-items-center" href="{{ route('member.donations.index') }}">
+                    <i class="bi bi-cash-coin me-2"></i> My Donations
+                </a>
+            </li>
+            <li class="nav-item mb-2">
+                <a class="nav-link d-flex align-items-center" href="{{ route('member.announcements') }}">
+                    <i class="bi bi-megaphone me-2"></i> Announcements
+                </a>
+            </li>
+            <li class="nav-item mb-2">
+                <a class="nav-link d-flex align-items-center" href="{{ route('member.profile.index') }}">
+                    <i class="bi bi-people me-2"></i> My Profile
+                </a>
+            </li>
+        </ul>
+    </nav>
 
-            <!-- Main Content Area -->
-            <div class="col-12 col-lg-9 col-xl-10 p-4">
-                <!-- Mobile sidebar toggle button -->
-                <button class="btn btn-primary d-lg-none mb-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas" aria-controls="sidebarOffcanvas">
-                    <i class="bi bi-list"></i> Menu
-                </button>
-                
-                @yield('content')
-            </div>
-        </div>
-    </div>
-
-    <!-- Offcanvas Sidebar for mobile -->
-    <div class="offcanvas offcanvas-start d-lg-none" tabindex="-1" id="sidebarOffcanvas" aria-labelledby="sidebarOffcanvasLabel">
-        <div class="offcanvas-header">
-            <h5 class="offcanvas-title text-primary" id="sidebarOffcanvasLabel"><i class="bi bi-speedometer2"></i> Member Panel</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-        </div>
-        <div class="offcanvas-body p-0">
-            <ul class="nav flex-column p-3">
-                <li class="nav-item mb-2">
-                    <a class="nav-link d-flex align-items-center" href="{{ route('member.dashboard') }}">
-                        <i class="bi bi-house-door me-2"></i> Dashboard
-                    </a>
-                </li>
-                <li class="nav-item mb-2">
-                            <a class="nav-link d-flex align-items-center" href="{{ route('member.events') }}">
-                                <i class="bi bi-calendar-event me-2"></i> Events
-                            </a>
-                </li>
-                <li class="nav-item mb-2">
-                    <a class="nav-link d-flex align-items-center" href="{{ route('member.donations.index') }}">
-                        <i class="bi bi-cash-coin me-2"></i> Donate
-                    </a>
-                </li>
-                <li class="nav-item mb-2">
-                    <a class="nav-link d-flex align-items-center" href="{{ route('member.announcements') }}">
-                        <i class="bi bi-megaphone me-2"></i> Announcements
-                    </a>
-                </li>
-                <li class="nav-item mb-2">
-                    <a class="nav-link d-flex align-items-center" href="{{ route('member.profile.index') }}">
-                        <i class="bi bi-people me-2"></i> My Profile
-                    </a>
-                </li>
-            </ul>
-        </div>
+    <!-- Main Content Area -->
+    <div class="main-content">
+        @yield('content')
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

@@ -64,9 +64,26 @@ class User extends Authenticatable
                 return 'login';
         }
     }
+
+    /**
+     * Get the registrations for the user.
+     */
+    public function registrations()
+    {
+        return $this->hasMany(EventRegistration::class);
+    }
+
+    /**
+     * Get the user's profile photo URL (returns the correct image or a default avatar)
+     */
+    public function getProfilePhotoUrlAttribute()
+    {
+        if (!empty($this->image_path)) {
+            return asset('storage/' . ltrim($this->image_path, '/'));
+        }
+        return asset('images/default-avatar.png');
+    }
 }
-
-
 
 
 

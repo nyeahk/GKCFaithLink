@@ -33,6 +33,8 @@
     --form-hover-border: var(--primary);
     --form-hover-shadow: 0 0 0 3px rgba(79, 149, 157, 0.1);
     --form-hover-transition: all 0.2s ease;
+    /* Adjust this value to match your navbar height */
+    --navbar-height: 56px;
 }
 
 /* Base Styles */
@@ -525,6 +527,20 @@ label:hover {
 .empty-state {
     padding: 2rem;
     text-align: center;
+}
+
+/* Adjust this value to match your navbar height */
+#sidebar {
+    position: fixed;
+    top: var(--navbar-height);
+    left: 0;
+    width: 250px; /* or your sidebar width */
+    height: calc(100vh - var(--navbar-height));
+    background: #5483B3;
+    color: #fff;
+    z-index: 1030;
+    /* Remove overflow-y if you don't want the sidebar to scroll */
+    /* overflow-y: auto; */
 }
 
 

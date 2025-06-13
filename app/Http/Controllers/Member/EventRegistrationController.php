@@ -134,11 +134,11 @@ class EventRegistrationController extends Controller
      */
     public function index()
     {
-        $registrations = EventRegistration::with('event')
-            ->where('user_id', Auth::id())
+                
+        $registrations = EventRegistration::with(['event', 'user'])
             ->orderBy('created_at', 'desc')
-            ->paginate(10);
-            
+            ->paginate(5);                  
+           
         return view('member.events.registrations', compact('registrations'));
     }
 }
