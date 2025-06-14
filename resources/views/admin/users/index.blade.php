@@ -11,7 +11,7 @@
     @endif
     
     <!-- Search and Filters -->
-    <div class="card mb-4">
+    <div class="card mb-4 admin-filter-section">
         <div class="card-body">
             <form action="{{ route('admin.users.index') }}" method="GET" class="row g-3">
                 <!-- Search -->
@@ -47,9 +47,10 @@
                 
                 <!-- Filter Button -->
                 <div class="col-md-2">
+                    <label class="form-label d-block">&nbsp;</label>
                     <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="bi bi-filter"></i> Filter
+                        <button type="submit" class="btn btn-primary filter-button">
+                            <i class="bi bi-funnel-fill me-1"></i> Filter
                         </button>
                         @if(request()->anyFilled(['search', 'role', 'status']))
                             <a href="{{ route('admin.users.index') }}" class="btn btn-outline-secondary">
@@ -183,4 +184,7 @@
     </div>
 </div>
 @endsection
+
+
+
 

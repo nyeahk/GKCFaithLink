@@ -23,12 +23,12 @@
     --error: #dc3545;
     --success: #28a745;
     --warning: #ffc107;
-    /* Updated hover styles with gradient background */
-    --hover-bg: #667eea;
+    /* Updated hover styles to match member panel */
+    --hover-bg: var(--sidebar-hover, rgba(255, 255, 255, 0.15));
     --hover-color: var(--white);
     --hover-transition: all 0.3s ease;
-    --hover-scale: scale(1.02);
-    --hover-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+    --hover-scale: translateX(5px);
+    --hover-shadow: 0 2px 8px rgba(79, 149, 157, 0.3);
     /* Form Hover Styles */
     --form-hover-bg: var(--background-light);
     --form-hover-border: var(--primary);
@@ -47,7 +47,7 @@ body {
 
 /* Top Navigation */
 .top-navigation {
-    background-color: var(--primary-dark);
+    background-color: #367588;
     color: var(--white);
     padding: 1rem 2rem;
     position: fixed;
@@ -297,7 +297,7 @@ body {
     }
 }
 
-/* Unified Hover Effects - Modified for better readability with gradient background */
+/* Unified Hover Effects - Modified to match member panel */
 a:hover,
 button:hover,
 .nav-menu a:hover,
@@ -316,24 +316,24 @@ button:hover,
 .submit-button:hover,
 .qr-button:hover {
     color: var(--white) !important;
-    background-color: var(--hover-bg) !important;
+    background-color: var(--sidebar-hover, rgba(255, 255, 255, 0.15)) !important;
     transform: var(--hover-scale);
     box-shadow: var(--hover-shadow);
     transition: var(--hover-transition);
 }
 
-/* Table Row Hover - Updated with gradient background */
+/* Table Row Hover - Updated to match member panel */
 tr:hover,
 .members-table tr:hover {
-    background-color: var(--hover-bg) !important;
-    color: var(--white) !important;
+    background-color: var(--sidebar-hover, rgba(255, 255, 255, 0.15)) !important;
+    color: var(--text-dark) !important;
     transition: var(--hover-transition);
 }
 
 /* Make sure table cell text changes color on hover */
 tr:hover td,
 .members-table tr:hover td {
-    color: var(--white) !important;
+    color: var(--text-dark) !important;
 }
 
 /* Ensure links inside table rows are visible when row is hovered */
@@ -555,6 +555,8 @@ label:hover {
     font-weight: 600;
     color: var(--white);
 }
+
+
 
 
 

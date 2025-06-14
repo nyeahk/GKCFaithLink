@@ -19,7 +19,7 @@
         <div class="row">
             <!-- Desktop Sidebar (visible on lg screens and up) -->
             <div class="col-lg-3 col-xl-2 d-none d-lg-block p-0">
-                <nav id="sidebar" class="sidebar treasurer-sidebar-enhanced p-3" style="min-height: calc(100vh - 84px); position: sticky; top: 84px;">
+                <nav id="sidebar" class="sidebar treasurer-sidebar-enhanced p-3" style="min-height: calc(100vh - 64px); position: fixed; top: 64px; width: inherit; max-width: inherit;">
                     <div class="sidebar-header mb-4">
                         <h4 class="treasurer-sidebar-title"><i class="bi bi-cash-stack me-2"></i>Treasurer Panel</h4>
                     </div>
@@ -153,28 +153,46 @@
     <style>
         /* Enhanced Treasurer Dashboard Styling */
         :root {
-            --treasurer-primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --treasurer-secondary-gradient: linear-gradient(135deg, #0f7173 0%, #2d8f47 100%);
-            --treasurer-accent-gradient: linear-gradient(135deg, #00b09b 0%, #96c93d 100%);
-            --treasurer-success-gradient: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
-            --treasurer-warning-gradient: linear-gradient(135deg, #f7971e 0%, #ffd200 100%);
-            --treasurer-info-gradient: linear-gradient(135deg, #06beb6 0%, #48b1bf 100%);
-            --treasurer-sidebar-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --treasurer-sidebar-hover: rgba(255, 255, 255, 0.12);
-            --treasurer-sidebar-active: rgba(255, 255, 255, 0.2);
+            --treasurer-primary-gradient: linear-gradient(135deg, #4F959D 0%, #367588 100%);
+            --treasurer-secondary-gradient: linear-gradient(135deg, #4F959D 0%, #367588 100%);
+            --treasurer-accent-gradient: linear-gradient(135deg, #4F959D 0%, #367588 100%);
+            --treasurer-success-gradient: linear-gradient(135deg, #4F959D 0%, #367588 100%);
+            --treasurer-warning-gradient: linear-gradient(135deg, #4F959D 0%, #367588 100%);
+            --treasurer-info-gradient: linear-gradient(135deg, #4F959D 0%, #367588 100%);
+            --treasurer-sidebar-bg: #4F959D;
+            --treasurer-sidebar-hover: rgba(255, 255, 255, 0.15);
+            --treasurer-sidebar-active: #3d7a80;
             --treasurer-text-light: #ffffff;
             --treasurer-text-muted: rgba(255, 255, 255, 0.85);
-            --treasurer-shadow-light: 0 2px 10px rgba(17, 153, 142, 0.2);
-            --treasurer-shadow-medium: 0 4px 20px rgba(17, 153, 142, 0.25);
-            --treasurer-shadow-heavy: 0 8px 30px rgba(17, 153, 142, 0.3);
+            --treasurer-shadow-light: 0 2px 10px rgba(79, 149, 157, 0.2);
+            --treasurer-shadow-medium: 0 4px 20px rgba(79, 149, 157, 0.25);
+            --treasurer-shadow-heavy: 0 8px 30px rgba(79, 149, 157, 0.3);
             --treasurer-border-radius: 12px;
             --treasurer-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --treasurer-navbar-bg: #367588;
+        }
+
+        /* Treasurer Navbar */
+        .treasurer-navbar,
+        .treasurer-header,
+        .navbar,
+        .top-nav,
+        .navigation-header {
+            background-color: var(--treasurer-navbar-bg) !important;
+            color: var(--treasurer-text-light) !important;
+        }
+
+        .navbar-brand,
+        .nav-link,
+        .navbar-text,
+        .navbar-nav .nav-link {
+            color: var(--treasurer-text-light) !important;
         }
 
         /* Enhanced Treasurer Sidebar Styling */
         .treasurer-sidebar-enhanced {
             background: var(--treasurer-sidebar-bg);
-            border-radius: 0 var(--treasurer-border-radius) var(--treasurer-border-radius) 0;
+            border-radius: 0 0 var(--treasurer-border-radius) 0;
             box-shadow: var(--treasurer-shadow-medium);
             border: none;
             overflow: hidden;
@@ -221,7 +239,7 @@
         }
 
         .treasurer-sidebar-link {
-            color: var(--treasurer-text-muted);
+            color: var(--treasurer-text-light);
             padding: 1rem 1.25rem;
             border-radius: var(--treasurer-border-radius);
             margin: 0.25rem 0;
@@ -251,20 +269,13 @@
         }
 
         .treasurer-sidebar-link:hover {
-            color: var(--treasurer-text-light);
-            background: var(--treasurer-sidebar-hover);
-            transform: translateX(8px);
-            box-shadow: var(--treasurer-shadow-light);
-            border-color: rgba(255, 255, 255, 0.2);
+            background-color: var(--treasurer-sidebar-hover);
+            transform: translateX(5px);
         }
 
         .treasurer-sidebar-link.active {
-            color: var(--treasurer-text-light);
-            background: var(--treasurer-sidebar-active);
-            box-shadow: var(--treasurer-shadow-light);
+            background-color: var(--treasurer-sidebar-active);
             font-weight: 600;
-            transform: translateX(5px);
-            border-color: rgba(255, 255, 255, 0.3);
         }
 
         .treasurer-sidebar-link.active::after {
@@ -429,30 +440,16 @@
             overflow: hidden;
         }
 
-        .btn-primary::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.5s;
-        }
-
-        .btn-primary:hover::before {
-            left: 100%;
-        }
-
         .btn-primary:hover {
+            background: linear-gradient(135deg, #367588 0%, #4F959D 100%);
             transform: translateY(-3px);
             box-shadow: var(--treasurer-shadow-medium);
-            background: var(--treasurer-primary-gradient);
+            color: var(--treasurer-text-light);
         }
 
         .btn-outline-primary {
-            border: 2px solid #11998e;
-            color: #11998e;
+            border: 2px solid #4F959D;
+            color: #4F959D;
             border-radius: 25px;
             padding: 0.5rem 1.25rem;
             font-weight: 600;
@@ -464,7 +461,32 @@
             border-color: transparent;
             transform: translateY(-2px);
             box-shadow: var(--treasurer-shadow-light);
-            color: white;
+            color: var(--treasurer-text-light);
+        }
+
+        /* Update all button hover states */
+        .btn:hover,
+        .btn-primary:hover,
+        .btn-secondary:hover,
+        .btn-success:hover,
+        .btn-info:hover,
+        .btn-warning:hover,
+        .btn-danger:hover,
+        .btn-light:hover,
+        .btn-dark:hover,
+        .btn-outline-primary:hover,
+        .btn-outline-secondary:hover,
+        .btn-outline-success:hover,
+        .btn-outline-info:hover,
+        .btn-outline-warning:hover,
+        .btn-outline-danger:hover,
+        .btn-outline-light:hover,
+        .btn-outline-dark:hover {
+            background: var(--treasurer-primary-gradient) !important;
+            color: var(--treasurer-text-light) !important;
+            border-color: transparent !important;
+            transform: translateY(-2px);
+            box-shadow: var(--treasurer-shadow-medium);
         }
 
         /* Mobile Menu Button Enhancement */
@@ -479,8 +501,46 @@
         }
 
         .btn.d-lg-none:hover {
+            background: linear-gradient(135deg, #367588 0%, #4F959D 100%);
             transform: translateY(-2px);
             box-shadow: var(--treasurer-shadow-medium);
+            color: var(--treasurer-text-light);
+        }
+
+        /* Action Buttons */
+        .btn-action {
+            background: var(--treasurer-primary-gradient);
+            color: var(--treasurer-text-light);
+            border: none;
+            border-radius: 20px;
+            padding: 0.5rem 1rem;
+            font-weight: 600;
+            transition: var(--treasurer-transition);
+        }
+
+        .btn-action:hover {
+            background: linear-gradient(135deg, #367588 0%, #4F959D 100%);
+            transform: translateY(-2px);
+            box-shadow: var(--treasurer-shadow-medium);
+            color: var(--treasurer-text-light);
+        }
+
+        /* Table Action Buttons */
+        .table .btn {
+            background: var(--treasurer-primary-gradient);
+            color: var(--treasurer-text-light);
+            border: none;
+            border-radius: 20px;
+            padding: 0.4rem 0.8rem;
+            font-size: 0.875rem;
+            transition: var(--treasurer-transition);
+        }
+
+        .table .btn:hover {
+            background: linear-gradient(135deg, #367588 0%, #4F959D 100%);
+            transform: translateY(-2px);
+            box-shadow: var(--treasurer-shadow-medium);
+            color: var(--treasurer-text-light);
         }
 
         /* Stats Cards Enhancement for Treasurer Dashboard */
@@ -601,6 +661,7 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
             font-size: 0.9rem;
+            background: #367588 !important;
         }
 
         .treasurer-table tbody tr {
@@ -803,7 +864,92 @@
             padding: 1rem;
             margin-bottom: 1rem;
         }
+
+        /* Standardize ALL navigation headers to #367588 */
+        .navbar,
+        .top-nav,
+        .navigation-header,
+        .admin-navbar,
+        .member-navbar,
+        .treasurer-navbar,
+        header.main-header,
+        .app-header,
+        .site-header,
+        nav[class*="navbar"],
+        header[class*="navbar"],
+        div[class*="navbar"],
+        .header-container,
+        .main-header,
+        .header-wrapper,
+        .nav-wrapper,
+        .navigation-container {
+            background-color: #367588 !important;
+            color: #ffffff !important;
+        }
+
+        /* Ensure ALL navbar text is white */
+        .navbar,
+        .navbar *,
+        .navbar-brand, 
+        .navbar-brand strong,
+        .navbar .nav-link,
+        .navbar .dropdown-toggle,
+        .navbar-text,
+        .navbar span,
+        .navbar div,
+        .navbar p,
+        .navbar .dropdown-item,
+        .navbar .welcome-text,
+        .navbar .user-greeting,
+        .navbar .user-name,
+        .navbar .logout-link,
+        .navbar .nav-item,
+        .navbar .nav-link,
+        .navbar .dropdown-menu,
+        .navbar .dropdown-item {
+            color: var(--treasurer-text-light) !important;
+        }
+
+        /* Ensure dropdown menus maintain proper text color */
+        .navbar .dropdown-menu {
+            background-color: var(--treasurer-navbar-bg);
+        }
+
+        .navbar .dropdown-menu .dropdown-item {
+            color: var(--treasurer-text-light) !important;
+        }
+
+        .navbar .dropdown-menu .dropdown-item:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+        /* Monthly Reports Table Headers */
+        .card-header h6.m-0.fw-bold.text-primary,
+        .card-header .text-primary,
+        .card-header .bi-bar-chart,
+        .card-header .bi-pie-chart,
+        .card-header .bi-cash-coin,
+        .card-header .bi-clock-history {
+            color: var(--treasurer-text-light) !important;
+        }
+
+        /* Ensure all card headers in reports have white text */
+        .card-header h6,
+        .card-header .fw-bold,
+        .card-header .text-primary,
+        .card-header i,
+        .card-header .bi {
+            color: var(--treasurer-text-light) !important;
+        }
+
+        /* Update chart legends to use white text */
+        .text-center.small span,
+        .text-center.small i {
+            color: var(--treasurer-text-light) !important;
+        }
     </style>
 </body>
 </html>
+
+
 

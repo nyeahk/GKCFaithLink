@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg navbar-light shadow-sm fixed-top" style="background-color: #4F959D;">
+<nav class="navbar navbar-expand-lg navbar-light shadow-sm fixed-top">
     <div class="container-fluid">
         <a class="navbar-brand d-flex align-items-center" href="{{ Auth::check() ? route(Auth::user()->getRoleDashboardRoute()) : route('login') }}">
             <img src="{{ asset('images/gkc logo new.jpeg') }}" alt="GKC FaithLink Logo" class="logo me-2" style="width: 40px; height: 40px; border-radius: 50%;">
@@ -164,28 +164,70 @@
 
 @push('styles')
 <style>
-    /* Update admin navigation header color to #4F959D */
-    .navbar {
-        background-color: #4F959D !important;
+    /* Standardize ALL navigation headers to #367588 */
+    .navbar,
+    .top-nav,
+    .navigation-header,
+    .admin-navbar,
+    .member-navbar,
+    .treasurer-navbar,
+    header.main-header,
+    .app-header,
+    .site-header,
+    nav[class*="navbar"],
+    header[class*="navbar"],
+    div[class*="navbar"],
+    .header-container,
+    .main-header,
+    .header-wrapper,
+    .nav-wrapper,
+    .navigation-container {
+        background-color: #367588 !important;
+        color: #ffffff !important;
+        height: 64px !important;
+        min-height: 64px !important;
     }
     
-    /* Ensure text is visible against the new background */
-    .navbar-brand, 
-    .navbar-brand strong,
-    .navbar .nav-link,
-    .navbar .dropdown-toggle,
-    .navbar-text,
-    .navbar .welcome-text,
-    .navbar .user-greeting {
+    /* Ensure all text in headers is white for consistency */
+    .navbar *,
+    .top-nav *,
+    .navigation-header *,
+    .admin-navbar *,
+    .member-navbar *,
+    .treasurer-navbar *,
+    header.main-header *,
+    .app-header *,
+    .site-header *,
+    nav[class*="navbar"] *,
+    header[class*="navbar"] *,
+    div[class*="navbar"] *,
+    .header-container *,
+    .main-header *,
+    .header-wrapper *,
+    .nav-wrapper *,
+    .navigation-container *,
+    .navbar .text-muted,
+    .navbar .text-muted strong,
+    .navbar span,
+    .navbar strong {
         color: #ffffff !important;
     }
     
-    /* Change logout button background and text color to white */
-    .navbar .dropdown-item[href$="logout"],
-    form[action$="logout"] button {
-        color: #ffffff !important;
+    /* Exception for dropdown menus */
+    .dropdown-menu,
+    .dropdown-menu * {
+        color: #333333 !important;
         background-color: #ffffff !important;
-        color: #4F959D !important; /* Text color changed to match navbar for contrast */
+    }
+    
+    /* Special styling for logout buttons */
+    .navbar .dropdown-item[href$="logout"],
+    form[action$="logout"] button,
+    .logout-button,
+    button[type="submit"][form*="logout"],
+    a[href*="logout"] {
+        background-color: #ffffff !important;
+        color: #367588 !important;
     }
 
     /* Enhanced Notification Dropdown Styles */
@@ -704,6 +746,10 @@ document.addEventListener('DOMContentLoaded', function() {
 }
 </style>
 @endpush
+
+
+
+
 
 
 

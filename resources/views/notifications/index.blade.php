@@ -73,36 +73,6 @@
                             <span>Events</span>
                         </button>
                     </div>
-
-                    <!-- Additional Filters in a single row -->
-                    <div class="filter-controls d-flex flex-row align-items-center gap-3 mb-4">
-                        <div class="filter-dropdown">
-                            <button class="filter-dropdown-btn d-flex align-items-center">
-                                <i class="fas fa-calendar-alt me-2"></i>
-                                <span>Date Range</span>
-                                <i class="fas fa-chevron-down ms-auto"></i>
-                            </button>
-                            <div class="filter-dropdown-menu">
-                                <a href="#" data-range="all">All Time</a>
-                                <a href="#" data-range="today">Today</a>
-                                <a href="#" data-range="week">This Week</a>
-                                <a href="#" data-range="month">This Month</a>
-                            </div>
-                        </div>
-                        
-                        <div class="filter-dropdown">
-                            <button class="filter-dropdown-btn d-flex align-items-center">
-                                <i class="fas fa-sort me-2"></i>
-                                <span>Sort By</span>
-                                <i class="fas fa-chevron-down ms-auto"></i>
-                            </button>
-                            <div class="filter-dropdown-menu">
-                                <a href="#" data-sort="newest">Newest First</a>
-                                <a href="#" data-sort="oldest">Oldest First</a>
-                                <a href="#" data-sort="unread">Unread First</a>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
 
@@ -516,65 +486,6 @@
         background: rgba(255, 255, 255, 0.3);
     }
 
-    /* Additional Filters */
-    .additional-filters {
-        display: flex;
-        gap: 1rem;
-        flex-wrap: wrap;
-    }
-
-    .filter-dropdown {
-        position: relative;
-    }
-
-    .filter-dropdown-btn {
-        background: white;
-        border: 2px solid var(--border-light);
-        border-radius: var(--border-radius-sm);
-        padding: 0.75rem 1rem;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        cursor: pointer;
-        transition: var(--transition);
-        font-weight: 500;
-    }
-
-    .filter-dropdown-btn:hover {
-        border-color: var(--primary);
-        background: #fafafa;
-    }
-
-    .filter-dropdown-menu {
-        position: absolute;
-        top: 100%;
-        left: 0;
-        background: white;
-        border: 1px solid var(--border-light);
-        border-radius: var(--border-radius-sm);
-        box-shadow: var(--shadow-md);
-        min-width: 160px;
-        z-index: 10;
-        display: none;
-    }
-
-    .filter-dropdown:hover .filter-dropdown-menu {
-        display: block;
-    }
-
-    .filter-dropdown-menu a {
-        display: block;
-        padding: 0.75rem 1rem;
-        color: var(--text-dark);
-        text-decoration: none;
-        transition: var(--transition);
-    }
-
-    .filter-dropdown-menu a:hover {
-        background: var(--background-light);
-        color: var(--primary);
-    }
-
     /* Notifications List */
     .notifications-list {
         background: white;
@@ -908,10 +819,6 @@
         }
 
         .filter-tabs {
-            flex-direction: column;
-        }
-
-        .additional-filters {
             flex-direction: column;
         }
 

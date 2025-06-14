@@ -19,7 +19,7 @@
         <div class="row">
             <!-- Desktop Sidebar (visible on lg screens and up) -->
             <div class="col-lg-3 col-xl-2 d-none d-lg-block p-0">
-                <nav id="sidebar" class="sidebar staff-sidebar-enhanced p-3" style="min-height: calc(100vh - 84px); position: sticky; top: 84px;">
+                <nav id="sidebar" class="sidebar staff-sidebar-enhanced p-3" style="min-height: calc(100vh - 64px); position: fixed; top: 64px; width: inherit; max-width: inherit;">
                     <div class="sidebar-header mb-4">
                         <h4 class="staff-sidebar-title"><i class="bi bi-speedometer2 me-2"></i>Staff Panel</h4>
                     </div>
@@ -60,11 +60,6 @@
 
             <!-- Main Content Area -->
             <div class="col-12 col-lg-9 col-xl-10 p-4">
-                <!-- Mobile sidebar toggle button -->
-                <button class="btn btn-primary d-lg-none mb-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas" aria-controls="sidebarOffcanvas">
-                    <i class="bi bi-list"></i> Menu
-                </button>
-                
                 @yield('content')
             </div>
         </div>
@@ -118,27 +113,73 @@
     <style>
         /* Enhanced Staff Dashboard Styling */
         :root {
-            --staff-primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --staff-secondary-gradient: linear-gradient(135deg, #feca57 0%, #ff9ff3 100%);
-            --staff-success-gradient: linear-gradient(135deg, #48dbfb 0%, #0abde3 100%);
-            --staff-warning-gradient: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
-            --staff-info-gradient: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
-            --staff-sidebar-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --staff-primary-gradient: linear-gradient(135deg, #4F959D 0%, #367588 100%);
+            --staff-secondary-gradient: linear-gradient(135deg, #98D2C0 0%, #4F959D 100%);
+            --staff-success-gradient: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            --staff-warning-gradient: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+            --staff-info-gradient: linear-gradient(135deg, #17a2b8 0%, #0dcaf0 100%);
+            --staff-sidebar-bg: #4F959D;
             --staff-sidebar-hover: rgba(255, 255, 255, 0.15);
-            --staff-sidebar-active: rgba(255, 255, 255, 0.25);
+            --staff-sidebar-active: #3d7a80;
             --staff-text-light: #ffffff;
             --staff-text-muted: rgba(255, 255, 255, 0.85);
-            --staff-shadow-light: 0 2px 10px rgba(255, 107, 107, 0.2);
-            --staff-shadow-medium: 0 4px 20px rgba(255, 107, 107, 0.25);
-            --staff-shadow-heavy: 0 8px 30px rgba(255, 107, 107, 0.3);
+            --staff-shadow-light: 0 2px 10px rgba(79, 149, 157, 0.2);
+            --staff-shadow-medium: 0 4px 20px rgba(79, 149, 157, 0.25);
+            --staff-shadow-heavy: 0 8px 30px rgba(79, 149, 157, 0.3);
             --staff-border-radius: 12px;
             --staff-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --staff-navbar-bg: #367588;          /* Blue-teal - For navbar background */
+        }
+
+        /* Navbar Greeting and Logout Text */
+        .navbar .text-muted,
+        .navbar .text-muted strong,
+        .navbar span,
+        .navbar strong,
+        .navbar .me-3,
+        .navbar .me-3 strong,
+        .navbar .nav-link,
+        .navbar .dropdown-item,
+        .navbar .dropdown-menu .nav-link,
+        .navbar .dropdown-menu .dropdown-item,
+        .navbar .logout-link,
+        .navbar a[href*="logout"],
+        .navbar form[action*="logout"] button,
+        .navbar form[action*="logout"] a {
+            color: var(--staff-text-light) !important;
+            opacity: 1 !important;
+        }
+
+        .navbar .dropdown-menu {
+            background-color: var(--staff-navbar-bg) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        }
+
+        .navbar .dropdown-item:hover {
+            background-color: rgba(255, 255, 255, 0.1) !important;
+        }
+
+        /* Staff Navbar */
+        .staff-navbar,
+        .staff-header,
+        .navbar,
+        .top-nav,
+        .navigation-header {
+            background-color: var(--staff-navbar-bg) !important;
+            color: var(--staff-text-light) !important;
+        }
+
+        .navbar-brand,
+        .nav-link,
+        .navbar-text,
+        .navbar-nav .nav-link {
+            color: var(--staff-text-light) !important;
         }
 
         /* Enhanced Staff Sidebar Styling */
         .staff-sidebar-enhanced {
             background: var(--staff-sidebar-bg);
-            border-radius: 0 var(--staff-border-radius) var(--staff-border-radius) 0;
+            border-radius: 0 0 var(--staff-border-radius) 0;
             box-shadow: var(--staff-shadow-medium);
             border: none;
             overflow: hidden;
@@ -193,7 +234,7 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            background: linear-gradient(90deg, transparent, rgba(79, 149, 157, 0.3), transparent);
             transition: left 0.5s;
         }
 
@@ -203,14 +244,14 @@
 
         .staff-sidebar-link:hover {
             color: var(--staff-text-light);
-            background: var(--staff-sidebar-hover);
+            background: rgba(79, 149, 157, 0.2);
             transform: translateX(8px);
             box-shadow: var(--staff-shadow-light);
         }
 
         .staff-sidebar-link.active {
             color: var(--staff-text-light);
-            background: var(--staff-sidebar-active);
+            background: rgba(79, 149, 157, 0.3);
             box-shadow: var(--staff-shadow-light);
             font-weight: 600;
             transform: translateX(5px);
@@ -312,41 +353,50 @@
 
         /* Enhanced Button Styling for Staff */
         .btn-primary {
-            background: var(--staff-primary-gradient);
-            border: none;
-            border-radius: 25px;
-            padding: 0.75rem 1.5rem;
-            font-weight: 600;
-            transition: var(--staff-transition);
-            box-shadow: var(--staff-shadow-light);
-            position: relative;
-            overflow: hidden;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 0.5rem !important;
+            padding: 0.75rem 1.5rem !important;
+            background: var(--staff-primary-gradient) !important;
+            border: none !important;
+            color: var(--staff-text-light) !important;
+            border-radius: 25px !important;
+            font-weight: 600 !important;
+            transition: var(--staff-transition) !important;
+            box-shadow: var(--staff-shadow-light) !important;
         }
 
-        .btn-primary::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.5s;
-        }
-
-        .btn-primary:hover::before {
-            left: 100%;
+        .btn-primary i {
+            font-size: 1rem !important;
+            line-height: 1 !important;
+            vertical-align: middle !important;
+            margin: 0 !important;
         }
 
         .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--staff-shadow-medium);
-            background: var(--staff-primary-gradient);
+            background: linear-gradient(135deg, #367588 0%, #4F959D 100%) !important;
+            transform: translateY(-2px) !important;
+            box-shadow: var(--staff-shadow-medium) !important;
+        }
+
+        .btn-primary:active {
+            transform: translateY(0) !important;
+        }
+
+        /* Empty State Button */
+        .empty-content .btn-primary {
+            margin-top: 1rem !important;
+        }
+
+        /* Header Button */
+        .announcements-header .btn-primary {
+            margin-left: auto !important;
         }
 
         .btn-outline-primary {
-            border: 2px solid #ff6b6b;
-            color: #ff6b6b;
+            border: 2px solid #4F959D;
+            color: #4F959D;
             border-radius: 25px;
             padding: 0.5rem 1.25rem;
             font-weight: 600;
@@ -354,7 +404,7 @@
         }
 
         .btn-outline-primary:hover {
-            background: var(--staff-primary-gradient);
+            background: linear-gradient(135deg, #367588 0%, #4F959D 100%);
             border-color: transparent;
             transform: translateY(-2px);
             box-shadow: var(--staff-shadow-light);
@@ -375,6 +425,7 @@
         .btn.d-lg-none:hover {
             transform: translateY(-2px);
             box-shadow: var(--staff-shadow-medium);
+            background: linear-gradient(135deg, #367588 0%, #4F959D 100%);
         }
 
         /* Stats Cards Enhancement */
@@ -415,7 +466,7 @@
         .stats-card .stats-number {
             font-size: 2rem;
             font-weight: 700;
-            color: #ff6b6b;
+            color: #4F959D;
             margin: 0.5rem 0;
         }
 
@@ -459,7 +510,7 @@
         }
 
         .calendar-nav-btn {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(79, 149, 157, 0.2);
             color: var(--staff-text-light);
             border: none;
             border-radius: 20px;
@@ -471,7 +522,7 @@
         }
 
         .calendar-nav-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
+            background: rgba(79, 149, 157, 0.4);
             color: var(--staff-text-light);
             transform: translateY(-2px);
         }
@@ -675,12 +726,273 @@
         }
 
         .staff-table tbody tr:hover {
-            background: linear-gradient(135deg, #fff5f5 0%, #ffe8e8 100%);
+            background: linear-gradient(135deg, #f0fdf4 0%, #e8f4ff 100%);
             transform: scale(1.01);
             transition: var(--staff-transition);
+        }
+
+        /* Staff Table Button Styles */
+        .btn-info {
+            background: var(--staff-primary-gradient);
+            border: none;
+            color: var(--staff-text-light);
+            transition: var(--staff-transition);
+        }
+
+        .btn-info:hover {
+            background: linear-gradient(135deg, #367588 0%, #4F959D 100%);
+            color: var(--staff-text-light);
+            transform: translateY(-2px);
+            box-shadow: var(--staff-shadow-light);
+        }
+
+        .btn-info:active {
+            background: linear-gradient(135deg, #367588 0%, #4F959D 100%);
+            transform: translateY(0);
+        }
+
+        /* Table Hover Effects */
+        .table-hover tbody tr:hover {
+            background: linear-gradient(135deg, rgba(79, 149, 157, 0.1) 0%, rgba(54, 117, 136, 0.1) 100%);
+        }
+
+        /* Badge Styles */
+        .badge.bg-primary {
+            background: var(--staff-primary-gradient) !important;
+        }
+
+        .badge.bg-info {
+            background: linear-gradient(135deg, #4F959D 0%, #367588 100%) !important;
+        }
+
+        .badge.bg-success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%) !important;
+        }
+
+        .badge.bg-secondary {
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%) !important;
+        }
+
+        .badge.bg-danger {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%) !important;
+        }
+
+        /* Breadcrumb Link Hover */
+        .breadcrumb-item a {
+            color: #4F959D;
+            transition: var(--staff-transition);
+        }
+
+        .breadcrumb-item a:hover {
+            color: #367588;
+            text-decoration: none;
+        }
+
+        /* Alert Styles */
+        .alert-success {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+
+        .alert-danger {
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+
+        /* Back Button Styles */
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+            border: none;
+            color: var(--staff-text-light);
+            transition: var(--staff-transition);
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #4F959D 0%, #367588 100%);
+            color: var(--staff-text-light);
+            transform: translateY(-2px);
+            box-shadow: var(--staff-shadow-light);
+        }
+
+        .btn-secondary:active {
+            background: linear-gradient(135deg, #367588 0%, #4F959D 100%);
+            transform: translateY(0);
+        }
+
+        /* Card Header Enhancement */
+        .card-header i {
+            color: var(--staff-text-light);
+            opacity: 0.9;
+        }
+
+        /* Profile Page Button Styles */
+        .btn-outline-secondary {
+            border: 2px solid #4F959D;
+            color: #4F959D;
+            background: transparent;
+            transition: var(--staff-transition);
+        }
+
+        .btn-outline-secondary:hover {
+            background: linear-gradient(135deg, #4F959D 0%, #367588 100%);
+            border-color: transparent;
+            color: var(--staff-text-light);
+            transform: translateY(-2px);
+            box-shadow: var(--staff-shadow-light);
+        }
+
+        .btn-outline-secondary:active {
+            background: linear-gradient(135deg, #367588 0%, #4F959D 100%);
+            transform: translateY(0);
+        }
+
+        /* Profile Card Header */
+        .card-header.bg-primary {
+            background: var(--staff-primary-gradient) !important;
+        }
+
+        /* Profile Image Container */
+        .profile-image-container {
+            position: relative;
+            transition: var(--staff-transition);
+        }
+
+        .profile-image-container:hover {
+            transform: scale(1.05);
+        }
+
+        .profile-image-container i {
+            color: #4F959D;
+        }
+
+        /* Table Header Styles */
+        .table thead th {
+            background: #367588 !important;
+            color: var(--staff-text-light) !important;
+            font-weight: 600 !important;
+            padding: 1rem !important;
+            border: none !important;
+            text-transform: uppercase !important;
+            font-size: 0.9rem !important;
+            letter-spacing: 0.5px !important;
+        }
+
+        .table thead th:first-child {
+            border-top-left-radius: var(--staff-border-radius) !important;
+        }
+
+        .table thead th:last-child {
+            border-top-right-radius: var(--staff-border-radius) !important;
+        }
+
+        /* Table Container */
+        .table-responsive {
+            border-radius: var(--staff-border-radius) !important;
+            box-shadow: var(--staff-shadow-light) !important;
+            overflow: hidden !important;
+        }
+
+        /* Notification Dropdown Styles */
+        .navbar .dropdown-menu,
+        .navbar .notification-dropdown,
+        .navbar .notifications-menu {
+            background-color: var(--staff-navbar-bg) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        }
+
+        .navbar .dropdown-item,
+        .navbar .notification-item,
+        .navbar .notifications-menu .dropdown-item,
+        .navbar .notifications-menu a,
+        .navbar .notification-text,
+        .navbar .notification-time,
+        .navbar .view-all-notifications,
+        .navbar .dropdown-menu a,
+        .navbar .dropdown-menu .text-muted,
+        .navbar .dropdown-menu .notification-message,
+        .navbar .dropdown-menu .notification-title {
+            color: var(--staff-text-light) !important;
+            opacity: 1 !important;
+        }
+
+        .navbar .dropdown-item:hover,
+        .navbar .notification-item:hover,
+        .navbar .notifications-menu .dropdown-item:hover {
+            background-color: rgba(255, 255, 255, 0.1) !important;
+        }
+
+        .navbar .dropdown-divider {
+            border-top-color: rgba(255, 255, 255, 0.1) !important;
+        }
+
+        /* Notification Badge and Count Styles */
+        .navbar .notification-badge,
+        .navbar .badge,
+        .navbar .notification-count,
+        .navbar .unread-count {
+            background-color: #ff4757 !important;
+            color: var(--staff-text-light) !important;
+            font-weight: 600 !important;
+            padding: 0.25rem 0.5rem !important;
+            border-radius: 12px !important;
+            font-size: 0.75rem !important;
+            min-width: 20px !important;
+            height: 20px !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            box-shadow: 0 2px 5px rgba(255, 71, 87, 0.3) !important;
+        }
+
+        .navbar .notification-text,
+        .navbar .unread-notifications-text,
+        .navbar .notification-label {
+            color: var(--staff-text-light) !important;
+            font-weight: 500 !important;
+            font-size: 0.9rem !important;
+            opacity: 1 !important;
+            margin-left: 0.5rem !important;
+        }
+
+        .navbar .notification-wrapper {
+            display: flex !important;
+            align-items: center !important;
+            gap: 0.5rem !important;
+        }
+
+        /* Notification Dropdown Header Styles */
+        .navbar .dropdown-menu .dropdown-header,
+        .navbar .notifications-menu .dropdown-header,
+        .navbar .notification-header {
+            background-color: rgba(255, 255, 255, 0.1) !important;
+            color: var(--staff-text-light) !important;
+            font-weight: 600 !important;
+            font-size: 1rem !important;
+            padding: 1rem !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+        }
+
+        .navbar .dropdown-menu .text-muted,
+        .navbar .notifications-menu .text-muted,
+        .navbar .unread-notifications-text,
+        .navbar .notification-count-text {
+            color: var(--staff-text-light) !important;
+            opacity: 0.9 !important;
+            font-weight: 500 !important;
+            font-size: 0.9rem !important;
+            margin-top: 0.25rem !important;
+        }
+
+        .navbar .dropdown-menu .notification-header-wrapper {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 0.25rem !important;
         }
     </style>
 </body>
 </html>
+
 
 

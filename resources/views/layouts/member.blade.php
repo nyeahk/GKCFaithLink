@@ -502,9 +502,90 @@
             height: 48px !important;
             padding: 12px 15px !important;
         }
+        
+        /* Ensure consistent hover effects across all elements */
+        a:hover,
+        button:hover,
+        .nav-link:hover,
+        .nav-link.active,
+        .dropdown-item:hover,
+        .btn:hover,
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.15) !important;
+            color: var(--white) !important;
+            transform: translateX(5px);
+            box-shadow: 0 2px 8px rgba(79, 149, 157, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        /* Override any global hover styles that might be causing purple */
+        .sidebar a:hover,
+        .sidebar button:hover,
+        .sidebar .nav-menu a:hover,
+        .sidebar .nav-menu a.active,
+        .sidebar .menu-section a:hover,
+        .sidebar .menu-section a.active,
+        .sidebar .dropdown-menu a:hover,
+        .sidebar .dropdown-menu button:hover,
+        .sidebar .btn:hover,
+        .sidebar .btn-submit:hover,
+        .sidebar .btn-cancel:hover,
+        .sidebar .nav-icons a:hover,
+        .sidebar .nav-brand a:hover,
+        .sidebar .user-button:hover,
+        .sidebar .close:hover,
+        .sidebar .submit-button:hover,
+        .sidebar .qr-button:hover {
+            background-color: rgba(255, 255, 255, 0.15) !important;
+            color: var(--white) !important;
+        }
+
+        /* Member Profile Button Styles */
+        .btn-primary.btn-sm {
+            background: linear-gradient(135deg, #4F959D 0%, #367588 100%) !important;
+            border: none !important;
+            color: var(--white) !important;
+            padding: 0.5rem 1rem !important;
+            font-size: 0.875rem !important;
+            border-radius: 20px !important;
+            transition: all 0.3s ease !important;
+            box-shadow: 0 2px 5px rgba(79, 149, 157, 0.2) !important;
+        }
+
+        .btn-primary.btn-sm:hover {
+            background: linear-gradient(135deg, #367588 0%, #4F959D 100%) !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 4px 10px rgba(79, 149, 157, 0.3) !important;
+        }
+
+        .btn-outline-secondary.btn-sm {
+            border: 2px solid #4F959D !important;
+            color: #4F959D !important;
+            background: transparent !important;
+            padding: 0.5rem 1rem !important;
+            font-size: 0.875rem !important;
+            border-radius: 20px !important;
+            transition: all 0.3s ease !important;
+        }
+
+        .btn-outline-secondary.btn-sm:hover {
+            background: linear-gradient(135deg, #4F959D 0%, #367588 100%) !important;
+            border-color: transparent !important;
+            color: var(--white) !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 4px 10px rgba(79, 149, 157, 0.3) !important;
+        }
+
+        .btn-primary.btn-sm:active,
+        .btn-outline-secondary.btn-sm:active {
+            transform: translateY(0) !important;
+        }
     </style>
 </body>
 </html>
+
+
 
 
 

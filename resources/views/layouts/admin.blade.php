@@ -19,7 +19,7 @@
         <div class="row">
             <!-- Desktop Sidebar (visible on lg screens and up) -->
             <div class="col-lg-3 col-xl-2 d-none d-lg-block p-0">
-                <nav id="sidebar" class="sidebar admin-sidebar-enhanced p-3" style="min-height: calc(100vh - 84px); position: sticky; top: 84px;">
+                <nav id="sidebar" class="sidebar admin-sidebar-enhanced p-3" style="min-height: calc(100vh - 64px); position: fixed; top: 64px; width: inherit; max-width: inherit;">
                     <div class="sidebar-header mb-4">
                         <h4 class="admin-sidebar-title"><i class="bi bi-speedometer2 me-2"></i> Admin Panel</h4>
                     </div>
@@ -142,30 +142,364 @@
     @stack('scripts')
 
     <style>
-        /* Update admin color palette to match member panel */
+        /* Update admin color palette to perfectly match member panel */
         :root {
-            --admin-primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --admin-secondary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --admin-accent-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            --admin-success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            --admin-warning-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-            --admin-info-gradient: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-            --admin-sidebar-bg: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
-            --admin-sidebar-hover: rgba(252, 253, 253, 0.12);
-            --admin-sidebar-active: rgba(255, 255, 255, 0.2);
+            --admin-primary: #4F959D;            /* Teal - Main brand color */
+            --admin-primary-dark: #3d7a80;       /* Darker teal - For hover states */
+            --admin-primary-light: #98D2C0;      /* Light teal/mint - For secondary elements */
+            --admin-background-light: #F6F8D5;   /* Very light yellow/green - For backgrounds */
+            --admin-navbar-bg: #367588;          /* Blue-teal - For navbar background */
+            --admin-sidebar-bg: #4F959D;
+            --admin-sidebar-hover: rgba(255, 255, 255, 0.15);
+            --admin-sidebar-active: #3d7a80;
             --admin-text-light: #ffffff;
+            --admin-text-dark: #333333;
+            --admin-text-darker: #111111;
             --admin-text-muted: rgba(255, 255, 255, 0.85);
-            --admin-shadow-light: 0 2px 10px rgba(102, 126, 234, 0.2);
-            --admin-shadow-medium: 0 4px 20px rgba(102, 126, 234, 0.25);
-            --admin-shadow-heavy: 0 8px 30px rgba(102, 126, 234, 0.3);
+            --admin-shadow-light: 0 2px 10px rgba(79, 149, 157, 0.2);
+            --admin-shadow-medium: 0 4px 20px rgba(79, 149, 157, 0.25);
+            --admin-shadow-heavy: 0 8px 30px rgba(79, 149, 157, 0.3);
             --admin-border-radius: 12px;
             --admin-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Admin Navbar */
+        .admin-navbar,
+        .admin-header,
+        .navbar,
+        .top-nav,
+        .navigation-header {
+            background-color: var(--admin-navbar-bg) !important;
+            color: var(--admin-text-light) !important;
+            padding: 0.5rem 2rem !important;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) !important;
+            height: 64px !important;
+            min-height: 64px !important;
+            display: flex !important;
+            align-items: center !important;
+        }
+
+        .navbar .container-fluid {
+            padding-top: 0.25rem !important;
+            padding-bottom: 0.25rem !important;
+        }
+
+        .navbar-brand,
+        .nav-link,
+        .navbar-text,
+        .navbar-nav .nav-link {
+            color: var(--admin-text-light) !important;
+            margin-top: -0.25rem !important;
+        }
+
+        /* Navbar Links and Dropdowns */
+        .navbar .nav-link,
+        .navbar .dropdown-toggle,
+        .navbar .dropdown-item {
+            color: var(--admin-text-light) !important;
+            padding: 0.5rem 1rem !important;
+            transition: all 0.3s ease !important;
+        }
+
+        .navbar .nav-link:hover,
+        .navbar .dropdown-toggle:hover,
+        .navbar .dropdown-item:hover {
+            background-color: rgba(255, 255, 255, 0.1) !important;
+            color: var(--admin-text-light) !important;
+        }
+
+        /* Dropdown Menu */
+        .navbar .dropdown-menu {
+            background-color: var(--admin-navbar-bg) !important;
+            border: none !important;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+            border-radius: 8px !important;
+            padding: 0.5rem !important;
+        }
+
+        .navbar .dropdown-item {
+            color: var(--admin-text-light) !important;
+            border-radius: 6px !important;
+            margin: 0.2rem 0 !important;
+        }
+
+        .navbar .dropdown-item:hover {
+            background-color: rgba(255, 255, 255, 0.1) !important;
+        }
+
+        /* User Info Section */
+        .navbar .user-info {
+            display: flex !important;
+            align-items: center !important;
+            gap: 1rem !important;
+        }
+
+        .navbar .user-greeting {
+            color: var(--admin-text-light) !important;
+            font-weight: 500 !important;
+        }
+
+        .navbar .user-name {
+            color: var(--admin-text-light) !important;
+            font-weight: 600 !important;
+        }
+
+        /* Logout Link */
+        .navbar .logout-link {
+            color: var(--admin-text-light) !important;
+            font-weight: 500 !important;
+            padding: 0.5rem 1rem !important;
+            border-radius: 6px !important;
+            transition: all 0.3s ease !important;
+        }
+
+        .navbar .logout-link:hover {
+            background-color: rgba(255, 255, 255, 0.1) !important;
+            color: var(--admin-text-light) !important;
+        }
+
+        /* Icons in Navbar */
+        .navbar .bi,
+        .navbar i {
+            color: var(--admin-text-light) !important;
+            font-size: 1.1rem !important;
+        }
+
+        /* Mobile Menu Button */
+        .navbar-toggler {
+            border: none !important;
+            padding: 0.5rem !important;
+            color: var(--admin-text-light) !important;
+        }
+
+        .navbar-toggler:focus {
+            box-shadow: none !important;
+        }
+
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 255, 255, 1)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
+        }
+
+        /* Admin Sidebar */
+        .admin-sidebar-enhanced {
+            background: var(--admin-sidebar-bg);
+            border-radius: 0 0 var(--admin-border-radius) 0;
+            box-shadow: var(--admin-shadow-medium);
+        }
+
+        .admin-sidebar-link {
+            color: var(--admin-text-light);
+            transition: var(--admin-transition);
+        }
+
+        .admin-sidebar-link:hover {
+            background-color: var(--admin-sidebar-hover);
+            transform: translateX(5px);
+        }
+
+        .admin-sidebar-link.active {
+            background-color: var(--admin-sidebar-active);
+            font-weight: 600;
+        }
+
+        /* Admin Cards */
+        .card {
+            border-radius: var(--admin-border-radius);
+            box-shadow: var(--admin-shadow-light);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, var(--admin-primary) 0%, var(--admin-primary-dark) 100%) !important;
+            color: var(--admin-text-light) !important;
+            border: none;
+        }
+
+        /* Admin Buttons */
+        .btn-primary {
+            background: linear-gradient(135deg, #4F959D 0%, #367588 100%);
+            border: none;
+            border-radius: 25px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            transition: var(--admin-transition);
+            box-shadow: var(--admin-shadow-light);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #367588 0%, #4F959D 100%);
+            transform: translateY(-3px);
+            box-shadow: var(--admin-shadow-medium);
+            color: var(--admin-text-light);
+        }
+
+        .btn-outline-primary {
+            border: 2px solid #4F959D;
+            color: #4F959D;
+            border-radius: 25px;
+            padding: 0.5rem 1.25rem;
+            font-weight: 600;
+            transition: var(--admin-transition);
+        }
+
+        .btn-outline-primary:hover {
+            background: linear-gradient(135deg, #4F959D 0%, #367588 100%);
+            border-color: transparent;
+            transform: translateY(-2px);
+            box-shadow: var(--admin-shadow-light);
+            color: var(--admin-text-light);
+        }
+
+        /* Update all button hover states */
+        .btn:hover,
+        .btn-primary:hover,
+        .btn-secondary:hover,
+        .btn-success:hover,
+        .btn-info:hover,
+        .btn-warning:hover,
+        .btn-danger:hover,
+        .btn-light:hover,
+        .btn-dark:hover,
+        .btn-outline-primary:hover,
+        .btn-outline-secondary:hover,
+        .btn-outline-success:hover,
+        .btn-outline-info:hover,
+        .btn-outline-warning:hover,
+        .btn-outline-danger:hover,
+        .btn-outline-light:hover,
+        .btn-outline-dark:hover {
+            background: linear-gradient(135deg, #4F959D 0%, #367588 100%) !important;
+            color: var(--admin-text-light) !important;
+            border-color: transparent !important;
+            transform: translateY(-2px);
+            box-shadow: var(--admin-shadow-medium);
+        }
+
+        /* Mobile Menu Button Enhancement */
+        .btn.d-lg-none {
+            background: linear-gradient(135deg, #4F959D 0%, #367588 100%);
+            border: none;
+            border-radius: var(--admin-border-radius);
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            box-shadow: var(--admin-shadow-light);
+            transition: var(--admin-transition);
+        }
+
+        .btn.d-lg-none:hover {
+            background: linear-gradient(135deg, #367588 0%, #4F959D 100%);
+            transform: translateY(-2px);
+            box-shadow: var(--admin-shadow-medium);
+            color: var(--admin-text-light);
+        }
+
+        /* Action Buttons */
+        .btn-action {
+            background: linear-gradient(135deg, #4F959D 0%, #367588 100%);
+            color: var(--admin-text-light);
+            border: none;
+            border-radius: 20px;
+            padding: 0.5rem 1rem;
+            font-weight: 600;
+            transition: var(--admin-transition);
+        }
+
+        .btn-action:hover {
+            background: linear-gradient(135deg, #367588 0%, #4F959D 100%);
+            transform: translateY(-2px);
+            box-shadow: var(--admin-shadow-medium);
+            color: var(--admin-text-light);
+        }
+
+        /* Table Action Buttons */
+        .table .btn {
+            background: linear-gradient(135deg, #4F959D 0%, #367588 100%);
+            color: var(--admin-text-light);
+            border: none;
+            border-radius: 20px;
+            padding: 0.4rem 0.8rem;
+            font-size: 0.875rem;
+            transition: var(--admin-transition);
+        }
+
+        .table .btn:hover {
+            background: linear-gradient(135deg, #367588 0%, #4F959D 100%);
+            transform: translateY(-2px);
+            box-shadow: var(--admin-shadow-medium);
+            color: var(--admin-text-light);
+        }
+
+        /* Filter Button Enhancement */
+        .filter-button {
+            background: linear-gradient(135deg, #4F959D 0%, #367588 100%) !important;
+            color: var(--admin-text-light) !important;
+            font-weight: 600 !important;
+            padding: 0.5rem 1.25rem !important;
+            border: none !important;
+            box-shadow: var(--admin-shadow-light) !important;
+            transition: var(--admin-transition) !important;
+        }
+        
+        .filter-button:hover {
+            background: linear-gradient(135deg, #367588 0%, #4F959D 100%) !important;
+            transform: translateY(-2px) !important;
+            box-shadow: var(--admin-shadow-medium) !important;
+            color: var(--admin-text-light) !important;
+        }
+
+        /* Admin Tables */
+        .admin-table thead {
+            background: linear-gradient(135deg, var(--admin-primary) 0%, var(--admin-primary-dark) 100%);
+            color: var(--admin-text-light);
+        }
+
+        /* Admin Stats Cards */
+        .admin-stats-card::before {
+            background: linear-gradient(135deg, var(--admin-primary) 0%, var(--admin-primary-dark) 100%);
+        }
+
+        .admin-stats-card .stats-icon {
+            background: linear-gradient(135deg, var(--admin-primary) 0%, var(--admin-primary-dark) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Admin Calendar */
+        .calendar-header {
+            background: linear-gradient(180deg, var(--admin-primary) 0%, var(--admin-primary-dark) 100%);
+            color: var(--admin-text-light);
+        }
+
+        .calendar-table th {
+            background-color: var(--admin-primary-light);
+            color: var(--admin-primary-dark);
+        }
+
+        .calendar-table .today {
+            background-color: var(--admin-background-light);
+        }
+
+        /* Admin Badges */
+        .admin-badge {
+            background: linear-gradient(135deg, var(--admin-primary) 0%, var(--admin-primary-dark) 100%);
+        }
+
+        /* Admin Progress Bars */
+        .admin-progress .progress-bar {
+            background: linear-gradient(135deg, var(--admin-primary) 0%, var(--admin-primary-dark) 100%);
+        }
+
+        /* Admin Alerts */
+        .admin-alert {
+            border-left: 4px solid var(--admin-primary);
         }
 
         /* Enhanced Admin Sidebar Styling */
         .admin-sidebar-enhanced {
             background: var(--admin-sidebar-bg);
-            border-radius: 0 var(--admin-border-radius) var(--admin-border-radius) 0;
+            border-radius: 0 0 var(--admin-border-radius) 0;
             box-shadow: var(--admin-shadow-medium);
             border: none;
             overflow: hidden;
@@ -407,73 +741,6 @@
             z-index: 2;
         }
 
-        /* Enhanced Button Styling for Admin */
-        .btn-primary {
-            background: var(--admin-primary-gradient);
-            border: none;
-            border-radius: 25px;
-            padding: 0.75rem 1.5rem;
-            font-weight: 600;
-            transition: var(--admin-transition);
-            box-shadow: var(--admin-shadow-light);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn-primary::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.5s;
-        }
-
-        .btn-primary:hover::before {
-            left: 100%;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--admin-shadow-medium);
-            background: var(--admin-primary-gradient);
-        }
-
-        .btn-outline-primary {
-            border: 2px solid #667eea;
-            color: #667eea;
-            border-radius: 25px;
-            padding: 0.5rem 1.25rem;
-            font-weight: 600;
-            transition: var(--admin-transition);
-        }
-
-        .btn-outline-primary:hover {
-            background: var(--admin-primary-gradient);
-            border-color: transparent;
-            transform: translateY(-2px);
-            box-shadow: var(--admin-shadow-light);
-            color: white;
-        }
-
-        /* Mobile Menu Button Enhancement */
-        .btn.d-lg-none {
-            background: var(--admin-primary-gradient);
-            border: none;
-            border-radius: var(--admin-border-radius);
-            padding: 0.75rem 1.5rem;
-            font-weight: 600;
-            box-shadow: var(--admin-shadow-light);
-            transition: var(--admin-transition);
-        }
-
-        .btn.d-lg-none:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--admin-shadow-medium);
-        }
-
         /* Stats Cards Enhancement for Admin Reports */
         .admin-stats-card {
             background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
@@ -549,16 +816,24 @@
         }
 
         .admin-table thead {
-            background: var(--admin-primary-gradient);
-            color: white;
+            background: #367588 !important;
+            color: var(--admin-text-light) !important;
         }
 
         .admin-table thead th {
-            border: none;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-size: 0.9rem;
+            background: #367588 !important;
+            color: var(--admin-text-light) !important;
+            font-weight: 600 !important;
+            padding: 1rem !important;
+            border: none !important;
+            text-transform: uppercase !important;
+            font-size: 0.9rem !important;
+            letter-spacing: 0.5px !important;
+        }
+
+        .admin-table thead th:first-child,
+        .admin-table thead th:last-child {
+            border-radius: var(--admin-border-radius) !important;
         }
 
         .admin-table tbody tr {
@@ -566,12 +841,13 @@
         }
 
         .admin-table tbody tr:hover {
-            background: linear-gradient(135deg, #f8f9ff 0%, #e8ecff 100%);
-            transform: scale(1.01);
+            background: linear-gradient(135deg, rgba(79, 149, 157, 0.1) 0%, rgba(54, 117, 136, 0.1) 100%) !important;
         }
 
         .admin-table tbody td {
-            border-color: rgba(102, 126, 234, 0.1);
+            padding: 1rem !important;
+            vertical-align: middle !important;
+            border-bottom: 1px solid var(--border-light) !important;
         }
 
         /* Chart Container Enhancement */
@@ -699,9 +975,195 @@
             position: relative;
             z-index: 2;
         }
+
+        /* Table Header Styles */
+        .table thead th,
+        .table th,
+        .table-header th,
+        .data-table thead th,
+        .admin-table thead th,
+        .staff-table thead th,
+        .table-responsive thead th {
+            background: #367588 !important;
+            color: var(--admin-text-light) !important;
+            font-weight: 600 !important;
+            padding: 1rem !important;
+            border: none !important;
+            text-transform: uppercase !important;
+            font-size: 0.9rem !important;
+            letter-spacing: 0.5px !important;
+        }
+
+        .table thead th:first-child,
+        .table th:first-child,
+        .table-header th:first-child,
+        .data-table thead th:first-child,
+        .admin-table thead th:first-child,
+        .staff-table thead th:first-child,
+        .table-responsive thead th:first-child {
+            border-top-left-radius: var(--admin-border-radius) !important;
+        }
+
+        .table thead th:last-child,
+        .table th:last-child,
+        .table-header th:last-child,
+        .data-table thead th:last-child,
+        .admin-table thead th:last-child,
+        .staff-table thead th:last-child,
+        .table-responsive thead th:last-child {
+            border-top-right-radius: var(--admin-border-radius) !important;
+        }
+
+        /* Table Container */
+        .table-responsive,
+        .table-container,
+        .data-table-container,
+        .admin-table-container {
+            border-radius: var(--admin-border-radius) !important;
+            box-shadow: var(--admin-shadow-light) !important;
+            overflow: hidden !important;
+        }
+
+        /* Table Body Styles */
+        .table tbody tr {
+            transition: var(--admin-transition);
+        }
+
+        .table tbody tr:hover {
+            background: linear-gradient(135deg, rgba(79, 149, 157, 0.1) 0%, rgba(54, 117, 136, 0.1) 100%) !important;
+        }
+
+        .table tbody td {
+            padding: 1rem !important;
+            vertical-align: middle !important;
+            border-bottom: 1px solid var(--border-light) !important;
+        }
+
+        /* Update admin table specific styles */
+        .admin-table thead {
+            background: #367588 !important;
+        }
+
+        .admin-table thead th {
+            background: #367588 !important;
+            color: var(--admin-text-light) !important;
+        }
+
+        /* Update card headers to match */
+        .card-header {
+            background: #367588 !important;
+            color: var(--admin-text-light) !important;
+        }
+
+        .card-header h5, 
+        .card-header h4, 
+        .card-header h3,
+        .card-header .text-primary {
+            color: var(--admin-text-light) !important;
+        }
+
+        /* Calendar and Events Archive Spacing */
+        .calendar-container {
+            margin-bottom: 2rem !important;
+            padding-bottom: 2rem !important;
+            border-bottom: 1px solid rgba(79, 149, 157, 0.2) !important;
+        }
+
+        .card.shadow-sm.mb-4 {
+            margin-top: 2rem !important;
+        }
+
+        /* Ensure proper spacing in the dashboard layout */
+        .container-fluid {
+            padding-top: 2rem !important;
+        }
+
+        .row {
+            margin-bottom: 2rem !important;
+        }
+
+        /* Add spacing between sections */
+        .card + .card {
+            margin-top: 2rem !important;
+        }
+
+        /* Calendar specific spacing */
+        .calendar-table {
+            margin-bottom: 2rem !important;
+        }
+
+        /* Past Events Archive specific spacing */
+        .card-header.bg-secondary {
+            margin-top: 2rem !important;
+        }
+
+        /* Ensure ALL navbar text is white */
+        .navbar,
+        .navbar *,
+        .navbar-brand, 
+        .navbar-brand strong,
+        .navbar .nav-link,
+        .navbar .dropdown-toggle,
+        .navbar-text,
+        .navbar span,
+        .navbar div,
+        .navbar p,
+        .navbar .dropdown-item,
+        .navbar .welcome-text,
+        .navbar .user-greeting,
+        .navbar .user-name,
+        .navbar .logout-link,
+        .navbar .nav-item,
+        .navbar .nav-link,
+        .navbar .dropdown-menu,
+        .navbar .dropdown-item {
+            color: var(--admin-text-light) !important;
+        }
+
+        /* Specific styles for greeting and logout */
+        .navbar .welcome-text,
+        .navbar .user-greeting,
+        .navbar .user-name,
+        .navbar .logout-link,
+        .navbar .nav-link[href*="logout"] {
+            color: var(--admin-text-light) !important;
+            font-weight: 500;
+        }
+
+        .navbar .welcome-text:hover,
+        .navbar .user-greeting:hover,
+        .navbar .user-name:hover,
+        .navbar .logout-link:hover,
+        .navbar .nav-link[href*="logout"]:hover {
+            color: var(--admin-text-light) !important;
+            opacity: 0.9;
+        }
+
+        /* Additional navbar text color overrides */
+        .navbar .text-dark,
+        .navbar .text-muted,
+        .navbar .text-secondary,
+        .navbar .text-primary {
+            color: var(--admin-text-light) !important;
+        }
+
+        /* Ensure icons are also white */
+        .navbar .bi,
+        .navbar i,
+        .navbar .fas,
+        .navbar .far,
+        .navbar .fab {
+            color: var(--admin-text-light) !important;
+        }
     </style>
 </body>
 </html>
+
+
+
+
+
+
 
 
 
