@@ -73,7 +73,7 @@
     @endif
 </div>
                                     <div class="mt-3">
-                                        <label for="image" class="btn btn-outline-primary btn-sm">
+                                        <label for="image" class="btn btn-outline-primary btn-sm" style="transition: all 0.3s ease;">
                                             <i class="bi bi-upload me-1"></i> Change Photo
                                         </label>
                                         <input type="file" id="image" name="image" class="d-none" accept="image/*" onchange="previewImage(this)">
@@ -104,15 +104,23 @@
             </div>
             <div class="d-flex justify-content-end mt-4">
                 @if(auth()->user()->role == 3)
-                    <a href="{{ route('member.profile.index') }}" class="btn btn-secondary me-2">Cancel</a>
+                    <a href="{{ route('member.profile.index') }}" class="btn btn-secondary me-2 rounded-pill d-flex align-items-center justify-content-center" style="transition: all 0.3s ease;">
+                        Cancel
+                    </a>
                 @elseif(auth()->user()->role == 1)
-                    <a href="{{ route('admin.profile.index') }}" class="btn btn-secondary me-2">Cancel</a>
+                    <a href="{{ route('admin.profile.index') }}" class="btn btn-secondary me-2 rounded-pill d-flex align-items-center justify-content-center" style="transition: all 0.3s ease;">
+                        Cancel
+                    </a>
                 @elseif(auth()->user()->role == 2)
-                    <a href="{{ route('treasurer.profile.index') }}" class="btn btn-secondary me-2">Cancel</a>
+                    <a href="{{ route('treasurer.profile.index') }}" class="btn btn-secondary me-2 rounded-pill d-flex align-items-center justify-content-center" style="transition: all 0.3s ease;">
+                        Cancel
+                    </a>
                 @elseif(auth()->user()->role == 4)
-                    <a href="{{ route('staff.profile.index') }}" class="btn btn-secondary me-2">Cancel</a>
+                    <a href="{{ route('staff.profile.index') }}" class="btn btn-secondary me-2 rounded-pill d-flex align-items-center justify-content-center" style="transition: all 0.3s ease;">
+                        Cancel
+                    </a>
                 @endif
-                <button type="submit" class="btn btn-primary">Save Changes</button>
+                <button type="submit" class="btn btn-primary" style="transition: all 0.3s ease;">Save Changes</button>
             </div>
         </div>
     </div>
@@ -142,5 +150,85 @@
         }
     }
 </script>
+@endpush
+
+@push('styles')
+<style>
+    /* Button hover styles */
+    .profile-image-container .btn-outline-primary {
+        color: #4F959D !important;
+        border-color: #4F959D !important;
+        background-color: transparent !important;
+    }
+
+    .profile-image-container .btn-outline-primary:hover {
+        background-color: #4F959D !important;
+        color: #ffffff !important;
+        border-color: #4F959D !important;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    .card-body .btn-secondary {
+        background-color: #6c757d !important;
+        border-color: #6c757d !important;
+        color: #ffffff !important;
+    }
+
+    .card-body .btn-secondary:hover {
+        background-color: #5a6268 !important;
+        border-color: #5a6268 !important;
+        color: #ffffff !important;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    .card-body .btn-primary {
+        background-color: #4F959D !important;
+        border-color: #4F959D !important;
+        color: #ffffff !important;
+    }
+
+    .card-body .btn-primary:hover {
+        background-color: #3d7a80 !important;
+        border-color: #3d7a80 !important;
+        color: #ffffff !important;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    /* Add active state styles */
+    .profile-image-container .btn-outline-primary:active,
+    .card-body .btn-secondary:active,
+    .card-body .btn-primary:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    /* Override any default Bootstrap styles */
+    .btn-outline-primary:hover,
+    .btn-outline-primary:focus,
+    .btn-outline-primary:active {
+        background-color: #4F959D !important;
+        color: #ffffff !important;
+        border-color: #4F959D !important;
+    }
+
+    .btn-secondary:hover,
+    .btn-secondary:focus,
+    .btn-secondary:active {
+        background-color: #5a6268 !important;
+        color: #ffffff !important;
+        border-color: #5a6268 !important;
+    }
+
+    .btn-primary:hover,
+    .btn-primary:focus,
+    .btn-primary:active {
+        background-color: #3d7a80 !important;
+        color: #ffffff !important;
+        border-color: #3d7a80 !important;
+    }
+</style>
 @endpush
 @endsection

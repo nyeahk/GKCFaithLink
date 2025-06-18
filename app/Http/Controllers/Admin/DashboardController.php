@@ -179,8 +179,8 @@ class DashboardController extends Controller
             $lastDayOfCalendar->addDays(6 - $lastDayOfCalendar->dayOfWeek);
         }
         
-        // Get today's date for highlighting
-        $today = Carbon::today();
+        // Get today's date for highlighting in Philippines timezone
+        $today = Carbon::now('Asia/Manila')->startOfDay();
         
         // Get ONLY current and future events for the month (exclude past events)
         $events = Event::where('end_date', '>=', $today)
@@ -199,26 +199,26 @@ class DashboardController extends Controller
         
         while ($currentDay <= $lastDayOfCalendar) {
             $week = [];
-            
-            // Build a week
             for ($i = 0; $i < 7; $i++) {
+                $isCurrentMonth = $currentDay->month === $date->month;
+                $isToday = $currentDay->format('Y-m-d') === $today->format('Y-m-d');
+                
                 $dayData = [
                     'day' => $currentDay->day,
                     'date' => $currentDay->copy(),
-                    'isCurrentMonth' => $currentDay->month === $date->month,
-                    'isToday' => $currentDay->isSameDay($today)
+                    'isCurrentMonth' => $isCurrentMonth,
+                    'isToday' => $isToday
                 ];
                 
-                // Add events for this day if any
-                $dayKey = $currentDay->format('Y-m-d');
-                if (isset($events[$dayKey])) {
-                    $dayData['events'] = $events[$dayKey];
+                // Add events for this day if any exist
+                $dateKey = $currentDay->format('Y-m-d');
+                if (isset($events[$dateKey])) {
+                    $dayData['events'] = $events[$dateKey];
                 }
                 
                 $week[] = $dayData;
                 $currentDay->addDay();
             }
-            
             $calendar[] = $week;
         }
         

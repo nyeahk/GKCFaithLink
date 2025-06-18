@@ -35,6 +35,15 @@
         <div class="card-body">
             <form method="GET" action="{{ route('reports.monthly') }}" class="row g-3">
                 <div class="col-md-4">
+                    <label for="statusFilter" class="form-label">Filter by Status</label>
+                    <select name="status" id="statusFilter" class="form-select">
+                        <option value="">All Statuses</option>
+                        <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
+                        <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>Completed</option>
+                        <option value="failed" {{ request('status') == 'failed' ? 'selected' : '' }}>Failed</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
                     <label for="dateFilter" class="form-label">Filter by Month</label>
                     <input type="month" name="date" id="dateFilter" class="form-control"
                            value="{{ request('date', $startDate->format('Y-m')) }}">
@@ -170,15 +179,15 @@
                     <div class="chart-pie pt-4 pb-2">
                         <canvas id="donationsPieChart"></canvas>
                     </div>
-                    <div class="mt-4 text-center small">
-                        <span class="me-2">
-                            <i class="fas fa-circle text-primary"></i> Tithes
+                    <div class="mt-4 text-center small monthly-breakdown-container">
+                        <span class="monthly-breakdown-label tithes" style="color: #000 !important;">
+                            <i class="fas fa-circle me-1" style="color: #2e59d9 !important;"></i> <span style="color: #000 !important;">Tithes</span>
                         </span>
-                        <span class="me-2">
-                            <i class="fas fa-circle text-success"></i> Offerings
+                        <span class="monthly-breakdown-label offerings" style="color: #000 !important;">
+                            <i class="fas fa-circle me-1" style="color: #17a673 !important;"></i> <span style="color: #000 !important;">Offerings</span>
                         </span>
-                        <span class="me-2">
-                            <i class="fas fa-circle text-info"></i> Mission
+                        <span class="monthly-breakdown-label mission" style="color: #000 !important;">
+                            <i class="fas fa-circle me-1" style="color: #2c9faf !important;"></i> <span style="color: #000 !important;">Mission</span>
                         </span>
                     </div>
                 </div>
@@ -289,6 +298,58 @@
     @keyframes fadeIn {
         0% { opacity: 0; }
         100% { opacity: 1; }
+    }
+
+    /* Styles for monthly breakdown labels */
+    .monthly-breakdown-label {
+        background-color: transparent !important;
+        border: none !important;
+        color: #000 !important;
+        font-weight: 700 !important;
+        font-size: 14px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        padding: 3px 8px !important;
+        margin-right: 10px !important;
+    }
+
+    /* Container for labels */
+    .monthly-breakdown-container {
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        gap: 10px !important;
+    }
+
+    /* Specific colors for each label's circle */
+    .monthly-breakdown-label.tithes i {
+        color: #2e59d9 !important; /* Blue for Tithes */
+    }
+    .monthly-breakdown-label.offerings i {
+        color: #17a673 !important; /* Green for Offerings */
+    }
+    .monthly-breakdown-label.mission i {
+        color: #2c9faf !important; /* Teal for Mission */
+    }
+
+    /* Ensure text is black */
+    .monthly-breakdown-label span {
+        color: #000 !important;
+        font-weight: 700 !important;
+    }
+
+    /* Override any other color settings */
+    .monthly-breakdown-label.tithes span,
+    .monthly-breakdown-label.offerings span,
+    .monthly-breakdown-label.mission span {
+        color: #000 !important;
+    }
+
+    /* Additional override for text color */
+    .monthly-breakdown-label.tithes,
+    .monthly-breakdown-label.offerings,
+    .monthly-breakdown-label.mission {
+        color: #000 !important;
     }
 </style>
 @endpush
@@ -423,9 +484,10 @@
                 labels: ['Tithes', 'Offerings', 'Mission Funds'],
                 datasets: [{
                     data: [tithes, offerings, missions],
-                    backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc'],
+                    backgroundColor: ['#2e59d9', '#17a673', '#2c9faf'],
                     hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf'],
                     hoverBorderColor: "rgba(234, 236, 244, 1)",
+                    borderWidth: 2
                 }]
             },
             options: {
@@ -437,14 +499,13 @@
                         display: false
                     },
                     tooltip: {
-                        backgroundColor: "rgb(255,255,255)",
-                        bodyColor: "#858796",
-                        borderColor: '#dddfeb',
-                        borderWidth: 1,
-                        xPadding: 15,
-                        yPadding: 15,
-                        displayColors: false,
-                        caretPadding: 10,
+                        backgroundColor: "rgba(255, 255, 255, 0.9)",
+                        titleColor: "#000",
+                        bodyColor: "#000",
+                        borderColor: '#2e59d9',
+                        borderWidth: 2,
+                        padding: 15,
+                        displayColors: true,
                         callbacks: {
                             label: function(context) {
                                 const label = context.label || '';
@@ -458,7 +519,8 @@
                 },
                 elements: {
                     arc: {
-                        borderWidth: 2
+                        borderWidth: 2,
+                        borderColor: '#fff'
                     }
                 }
             }

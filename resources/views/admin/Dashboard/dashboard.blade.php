@@ -9,15 +9,19 @@
         <div class="col-12">
             <div class="calendar-container">
                 <div class="calendar-header">
-    <div class="calendar-title">
-        {{ $currentDate->format('F Y') }}
+    <div class="calendar-title text-white">
+        @php
+            $today = \Carbon\Carbon::now('Asia/Manila');
+            $dayName = $today->format('l'); // Full day name
+            $dayNumber = $today->format('j'); // Day of month without leading zeros
+            $month = $today->format('F'); // Full month name
+            $year = $today->format('Y');
+        @endphp
+        {{ $dayName }}, {{ $month }} {{ $dayNumber }}, {{ $year }}
     </div>
     <div class="calendar-nav">
         <a href="{{ route('admin.dashboard', ['timestamp' => $lastMonthTimestamp]) }}" class="calendar-nav-btn">
             <i class="bi bi-chevron-left"></i> Prev
-        </a>
-        <a href="{{ route('admin.dashboard', ['timestamp' => $todayTimestamp]) }}" class="calendar-nav-btn">
-            Today
         </a>
         <a href="{{ route('admin.dashboard', ['timestamp' => $nextMonthTimestamp]) }}" class="calendar-nav-btn">
             Next <i class="bi bi-chevron-right"></i>

@@ -9,6 +9,7 @@ use Laravel\Sanctum\HasApiTokens;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use App\Traits\HasRoles;
+use Illuminate\Notifications\DatabaseNotification;
 
 class User extends Authenticatable
 {
@@ -92,6 +93,16 @@ class User extends Authenticatable
                 $query->where('slug', $permission);
             })
             ->exists();
+    }
+
+    public function notifications()
+    {
+        return $this->morphMany(DatabaseNotification::class, 'notifiable')->orderBy('created_at', 'desc');
+    }
+
+    public function unreadNotifications()
+    {
+        return $this->morphMany(DatabaseNotification::class, 'notifiable')->whereNull('read_at');
     }
 }
 

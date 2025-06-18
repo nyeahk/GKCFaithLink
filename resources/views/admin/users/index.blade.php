@@ -3,8 +3,8 @@
 @section('title', 'Users')
 
 @section('content')
-<div class="container py-4">
-    <h1 class="mb-4">Users</h1>
+<div class="container py-2">
+    <h1 class="mb-3">Users</h1>
     
     @if(session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
@@ -13,7 +13,7 @@
     <!-- Search and Filters -->
     <div class="card mb-4 admin-filter-section">
         <div class="card-body">
-            <form action="{{ route('admin.users.index') }}" method="GET" class="row g-3">
+            <form action="{{ route('admin.users.index') }}" method="GET" class="row g-3 align-items-end">
                 <!-- Search -->
                 <div class="col-md-4">
                     <div class="input-group">
@@ -47,7 +47,6 @@
                 
                 <!-- Filter Button -->
                 <div class="col-md-2">
-                    <label class="form-label d-block">&nbsp;</label>
                     <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                         <button type="submit" class="btn btn-primary filter-button">
                             <i class="bi bi-funnel-fill me-1"></i> Filter

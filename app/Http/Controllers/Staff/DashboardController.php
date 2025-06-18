@@ -18,11 +18,16 @@ class DashboardController extends Controller
      */
     public function index(Request $request)
     {
-        // Get the timestamp from the request, or use current time
-        $timestamp = $request->input('timestamp', now()->timestamp);
+        // Set timezone
+        date_default_timezone_set('Asia/Manila');
         
-        // Create a Carbon instance from the timestamp
-        $currentDate = Carbon::createFromTimestamp($timestamp);
+        // Get current date
+        $today = Carbon::now();
+        $todayTimestamp = $today->timestamp;
+
+        // Determine current date based on timestamp from GET request
+        $currentTimestamp = $request->query('timestamp', $todayTimestamp);
+        $currentDate = Carbon::createFromTimestamp($currentTimestamp);
         
         // Get previous and next month timestamps for navigation
         $lastMonth = $currentDate->copy()->subMonth();
@@ -75,53 +80,46 @@ class DashboardController extends Controller
             $lastDayOfCalendar->addDays(6 - $lastDayOfCalendar->dayOfWeek);
         }
         
-        // Get today's date for comparison
-        $today = Carbon::today();
+        // Get today's date for highlighting in Philippines timezone
+        $today = Carbon::now('Asia/Manila')->startOfDay();
         
-        // Get current and future events for this month (exclude past events)
-        $currentDate = Carbon::now()->startOfDay();
-        $events = Event::where(function($query) use ($currentDate) {
-                $query->whereDate('start_date', '>=', $currentDate)
-                      ->orWhereDate('end_date', '>=', $currentDate);
-            })
-            ->whereBetween('start_date', [$firstDayOfCalendar, $lastDayOfCalendar])
-            ->get();
+        // Get ONLY current and future events for the month (exclude past events)
+        $events = Event::where('end_date', '>=', $today)
+            ->whereBetween('start_date', [
+                $firstDayOfCalendar->copy()->startOfDay(),
+                $lastDayOfCalendar->copy()->endOfDay()
+            ])
+            ->get()
+            ->groupBy(function ($event) {
+                return Carbon::parse($event->start_date)->format('Y-m-d');
+            });
         
-        // Group events by date
-        $eventsByDate = [];
-        foreach ($events as $event) {
-            $eventDate = $event->start_date->format('Y-m-d');
-            if (!isset($eventsByDate[$eventDate])) {
-                $eventsByDate[$eventDate] = [];
-            }
-            $eventsByDate[$eventDate][] = $event;
-        }
-        
-        // Generate the calendar data
+        // Build the calendar array
         $calendar = [];
         $currentDay = $firstDayOfCalendar->copy();
         
-        while ($currentDay->lte($lastDayOfCalendar)) {
+        while ($currentDay <= $lastDayOfCalendar) {
             $week = [];
-            
             for ($i = 0; $i < 7; $i++) {
+                $isCurrentMonth = $currentDay->month === $date->month;
+                $isToday = $currentDay->format('Y-m-d') === $today->format('Y-m-d');
+                
                 $dayData = [
                     'day' => $currentDay->day,
-                    'date' => $currentDay->format('Y-m-d'), // Store as string instead of Carbon object
-                    'isCurrentMonth' => $currentDay->month === $date->month,
-                    'isToday' => $currentDay->isSameDay($today)
+                    'date' => $currentDay->copy(),
+                    'isCurrentMonth' => $isCurrentMonth,
+                    'isToday' => $isToday
                 ];
                 
-                // Add events for this day if any
-                $currentDayStr = $currentDay->format('Y-m-d');
-                if (isset($eventsByDate[$currentDayStr])) {
-                    $dayData['events'] = $eventsByDate[$currentDayStr];
+                // Add events for this day if any exist
+                $dateKey = $currentDay->format('Y-m-d');
+                if (isset($events[$dateKey])) {
+                    $dayData['events'] = $events[$dateKey];
                 }
                 
                 $week[] = $dayData;
                 $currentDay->addDay();
             }
-            
             $calendar[] = $week;
         }
         

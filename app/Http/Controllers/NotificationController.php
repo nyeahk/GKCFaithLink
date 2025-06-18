@@ -3,13 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class NotificationController extends Controller
 {
     public function index(Request $request)
     {
         // Get the authenticated user
-        $user = auth()->user();
+        $user = Auth::user();
 
         // Filter by type if provided
         $query = $user->notifications();
@@ -99,7 +100,7 @@ class NotificationController extends Controller
     
     public function show($id)
     {
-        $notification = auth()->user()->notifications()->findOrFail($id);
+        $notification = Auth::user()->notifications()->findOrFail($id);
         
         // Mark as read if unread
         if (!$notification->read_at) {
@@ -111,14 +112,14 @@ class NotificationController extends Controller
     
     public function markAllAsRead()
     {
-        auth()->user()->unreadNotifications->markAsRead();
+        Auth::user()->unreadNotifications->markAsRead();
         
         return redirect()->back()->with('success', 'All notifications marked as read.');
     }
     
     public function markAsRead($id)
     {
-        $notification = auth()->user()->notifications()->findOrFail($id);
+        $notification = Auth::user()->notifications()->findOrFail($id);
         $notification->markAsRead();
         
         if (request()->ajax()) {
@@ -130,7 +131,7 @@ class NotificationController extends Controller
     
     public function getCount()
     {
-        $count = auth()->user()->unreadNotifications->count();
+        $count = Auth::user()->unreadNotifications->count();
         
         return response()->json(['count' => $count]);
     }

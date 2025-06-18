@@ -43,10 +43,10 @@
                             </div>
                             
                             <!-- Notification counter -->
-                            <div class="notification-counter p-2 bg-light border-bottom">
-                                <small class="text-muted">
-                                    <i class="fas fa-circle {{ auth()->user()->unreadNotifications->count() > 0 ? 'text-primary' : 'text-secondary' }} me-1" style="font-size: 8px;"></i>
-                                    <span>{{ auth()->user()->unreadNotifications->count() }} unread notifications</span>
+                            <div class="notification-counter p-2 border-bottom text-center" style="background-color: #e9ecef !important;">
+                                <small style="color: #000 !important; font-weight: 600 !important; display: inline-flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-circle {{ auth()->user()->unreadNotifications->count() > 0 ? 'text-primary' : 'text-dark' }} me-1" style="font-size: 8px; color: #000 !important;"></i>
+                                    <span style="color: #000 !important;">{{ auth()->user()->unreadNotifications->count() }} unread notifications</span>
                                 </small>
                             </div>
                             
@@ -153,7 +153,7 @@
                 <span class="me-3 text-muted">Hi, <strong>{{ Auth::user()->username }}</strong></span>
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
-                    <button type="submit" class="btn btn-outline-danger btn-sm">
+                    <button type="submit" class="btn btn-outline-light btn-sm">
                         <i class="fas fa-sign-out-alt me-1"></i> Logout
                     </button>
                 </form>
@@ -226,8 +226,20 @@
     .logout-button,
     button[type="submit"][form*="logout"],
     a[href*="logout"] {
-        background-color: #ffffff !important;
-        color: #367588 !important;
+        background-color: transparent !important;
+        color: #ffffff !important;
+        border: 1px solid #ffffff !important;
+        transition: all 0.3s ease !important;
+    }
+
+    .navbar .dropdown-item[href$="logout"]:hover,
+    form[action$="logout"] button:hover,
+    .logout-button:hover,
+    button[type="submit"][form*="logout"]:hover,
+    a[href*="logout"]:hover {
+        background-color: rgba(255, 255, 255, 0.1) !important;
+        color: #ffffff !important;
+        border-color: #ffffff !important;
     }
 
     /* Enhanced Notification Dropdown Styles */
@@ -616,6 +628,24 @@
             height: 32px;
             font-size: 0.8rem;
         }
+    }
+
+    /* Notification counter styles */
+    .notification-counter {
+        background-color: #e9ecef !important;
+        text-align: center !important;
+    }
+
+    .notification-counter small {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        color: #000 !important;
+        font-weight: 600 !important;
+    }
+
+    .notification-counter small span {
+        color: #000 !important;
     }
 </style>
 @endpush

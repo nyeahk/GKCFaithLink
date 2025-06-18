@@ -126,7 +126,7 @@ class DashboardController extends Controller
         }
         
         // Get today's date for comparison
-        $today = Carbon::today();
+        $today = Carbon::now();
         
         // Get current and future events for this month (exclude past events)
         $currentDate = Carbon::now()->startOfDay();

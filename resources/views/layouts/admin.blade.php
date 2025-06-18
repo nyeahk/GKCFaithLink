@@ -1155,6 +1155,77 @@
         .navbar .fab {
             color: var(--admin-text-light) !important;
         }
+
+        /* Admin Panel Layout */
+        .admin-container {
+            display: flex;
+            min-height: calc(100vh - 64px);
+            margin-top: 64px;
+        }
+
+        .admin-sidebar {
+            width: 250px;
+            background: var(--admin-sidebar-bg);
+            position: fixed;
+            top: 64px;
+            bottom: 0;
+            left: 0;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .admin-content {
+            flex: 1;
+            margin-left: 250px;
+            padding: 1rem;
+        }
+
+        /* Adjust container padding */
+        .container-fluid {
+            padding-top: 0.5rem !important;
+        }
+
+        /* Adjust card margins */
+        .card {
+            margin-bottom: 1rem !important;
+        }
+
+        /* Adjust row margins */
+        .row {
+            margin-bottom: 1rem !important;
+        }
+
+        /* Adjust breadcrumb spacing */
+        .breadcrumb {
+            margin-bottom: 0.5rem !important;
+            padding: 0.5rem 0 !important;
+        }
+
+        /* Adjust section spacing */
+        .section {
+            margin-top: 0.5rem !important;
+            margin-bottom: 1rem !important;
+        }
+
+        /* Adjust table spacing */
+        .table-responsive {
+            margin-top: 0.5rem !important;
+        }
+
+        /* Adjust form spacing */
+        .form-group {
+            margin-bottom: 0.75rem !important;
+        }
+
+        /* Adjust button spacing */
+        .btn-group {
+            margin-bottom: 0.5rem !important;
+        }
+
+        /* Adjust alert spacing */
+        .alert {
+            margin-bottom: 0.75rem !important;
+        }
     </style>
 </body>
 </html>

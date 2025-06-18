@@ -303,19 +303,37 @@
             margin-top: 0 !important;
             border-top: none;
             border-radius: 0;
+            position: fixed !important;
+            top: 64px !important;
+            left: 0;
+            height: calc(100vh - 64px) !important;
+            z-index: 1000;
         }
         
-        /* Adjust the sidebar's top position to align with navbar */
+        .sidebar-column {
+            position: fixed !important;
+            top: 64px !important;
+            left: 0;
+            height: calc(100vh - 64px) !important;
+            z-index: 1000;
+        }
+
+        /* Adjust main content to account for fixed sidebar */
+        .main-content-column {
+            margin-left: 16.666667% !important; /* col-lg-3 width */
+        }
+
+        @media (min-width: 1200px) {
+            .main-content-column {
+                margin-left: 16.666667% !important; /* col-xl-2 width */
+            }
+        }
+
+        /* Ensure sidebar is always visible */
         #sidebar {
-            min-height: calc(100vh - 64px) !important; 
-            position: sticky !important;
-            top: 64px !important; /* Match navbar height exactly */
+            min-height: calc(100vh - 64px) !important;
             padding-top: 1rem !important;
-        }
-        
-        /* Adjust the main container to align with the top of the sidebar */
-        .main-container {
-            margin-top: 64px;
+            overflow-y: auto;
         }
         
         /* Change text color to white */
