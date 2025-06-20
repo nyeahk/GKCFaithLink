@@ -11,7 +11,6 @@ class UserController extends Controller
     /**
      * Display a listing of the users.
      *
-     * @param Request $request
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
@@ -21,35 +20,36 @@ class UserController extends Controller
         
         $query = User::query();
         
-        // Search functionality
-        if ($request->filled('search')) {
-            $searchTerm = '%' . $request->search . '%';
-            $query->where(function($q) use ($searchTerm) {
-                $q->where('username', 'like', $searchTerm)
-                  ->orWhere('email', 'like', $searchTerm)
-                  ->orWhere('name', 'like', $searchTerm);
+        // Apply search filter if provided
+        if ($request->has('search')) {
+            $search = $request->input('search');
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhere('username', 'like', "%{$search}%");
             });
         }
         
-        // Role filter
-        if ($request->filled('role')) {
-            $query->where('role', $request->role);
+        // Apply role filter if provided
+        if ($request->has('role') && $request->input('role') != '') {
+            $query->where('role', $request->input('role'));
         }
         
-        // Status filter
-        if ($request->filled('status')) {
-            $isActive = $request->status === 'active' ? 1 : 0;
-            $query->where('is_active', $isActive);
+        // Apply status filter if provided
+        if ($request->has('status')) {
+            $status = $request->input('status');
+            if ($status === 'active') {
+                $query->where('is_active', true);
+            } elseif ($status === 'inactive') {
+                $query->where('is_active', false);
+            }
         }
         
-        // Get users with pagination
-        $users = $query->orderBy('created_at', 'desc')->paginate(10)->withQueryString();
+        // Order by created_at by default
+        $query->orderBy('created_at', 'desc');
         
-        // Debug the SQL query
-        \Log::info('User search query:', [
-            'sql' => $query->toSql(),
-            'bindings' => $query->getBindings()
-        ]);
+        // Paginate the results
+        $users = $query->paginate(15);
         
         return view('admin.users.index', compact('users'));
     }
@@ -77,10 +77,6 @@ class UserController extends Controller
         return view('admin.users.by-role', compact('users', 'roleName', 'role'));
     }
 }
-
-
-
-
 
 
 

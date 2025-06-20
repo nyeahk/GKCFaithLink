@@ -55,33 +55,33 @@
                                 @endphp
                                 {{ $roleName }}
                             </p>
-                            <div class="mt-3">
+                            <div class="mt-3 d-flex gap-2">
                                 @if(auth()->user()->role == 1)
-                                    <a href="{{ route('admin.profile.edit') }}" class="btn btn-primary btn-sm">
+                                    <a href="{{ route('admin.profile.edit') }}" class="btn btn-primary btn-sm rounded-pill d-flex align-items-center justify-content-center" style="height: 31px;">
                                         <i class="bi bi-pencil-square me-1"></i> Edit Profile
                                     </a>
-                                    <a href="{{ route('admin.profile.password') }}" class="btn btn-outline-secondary btn-sm ms-2">
+                                    <a href="{{ route('admin.profile.password') }}" class="btn btn-outline-secondary btn-sm rounded-pill" style="height: 31px;">
                                         <i class="bi bi-key me-1"></i> Change Password
                                     </a>
                                 @elseif(auth()->user()->role == 2)
-                                    <a href="{{ route('treasurer.profile.edit') }}" class="btn btn-primary btn-sm">
+                                    <a href="{{ route('treasurer.profile.edit') }}" class="btn btn-primary btn-sm rounded-pill d-flex align-items-center justify-content-center" style="height: 31px;">
                                         <i class="bi bi-pencil-square me-1"></i> Edit Profile
                                     </a>
-                                    <a href="{{ route('treasurer.profile.password') }}" class="btn btn-outline-secondary btn-sm ms-2">
+                                    <a href="{{ route('treasurer.profile.password') }}" class="btn btn-outline-secondary btn-sm rounded-pill" style="height: 31px;">
                                         <i class="bi bi-key me-1"></i> Change Password
                                     </a>
                                 @elseif(auth()->user()->role == 3)
-                                    <a href="{{ route('member.profile.edit') }}" class="btn btn-primary btn-sm">
+                                    <a href="{{ route('member.profile.edit') }}" class="btn btn-primary btn-sm rounded-pill d-flex align-items-center justify-content-center" style="height: 31px;">
                                         <i class="bi bi-pencil-square me-1"></i> Edit Profile
                                     </a>
-                                    <a href="{{ route('member.profile.password') }}" class="btn btn-outline-secondary btn-sm ms-2">
+                                    <a href="{{ route('member.profile.password') }}" class="btn btn-outline-secondary btn-sm rounded-pill d-flex align-items-center justify-content-center" style="height: 31px;">
                                         <i class="bi bi-key me-1"></i> Change Password
                                     </a>
                                 @elseif(auth()->user()->role == 4)
-                                    <a href="{{ route('staff.profile.edit') }}" class="btn btn-primary btn-sm">
+                                    <a href="{{ route('staff.profile.edit') }}" class="btn btn-primary btn-sm rounded-pill d-flex align-items-center justify-content-center" style="height: 31px;">
                                         <i class="bi bi-pencil-square me-1"></i> Edit Profile
                                     </a>
-                                    <a href="{{ route('staff.profile.password') }}" class="btn btn-outline-secondary btn-sm ms-2">
+                                    <a href="{{ route('staff.profile.password') }}" class="btn btn-outline-secondary btn-sm rounded-pill" style="height: 31px;">
                                         <i class="bi bi-key me-1"></i> Change Password
                                     </a>
                                 @endif

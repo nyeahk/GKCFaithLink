@@ -22,8 +22,8 @@
                 <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                     <h5 class="mb-0"><i class="bi bi-cash-coin me-2"></i>Donation Details #{{ $donation->id }}</h5>
                     <div>
-                        <a href="{{ route('treasurer.donations.index') }}" class="btn btn-light btn-sm">
-                            <i class="bi bi-arrow-left me-1"></i> Back
+                        <a href="{{ route('treasurer.donations.index') }}" class="btn btn-light btn-sm" style="background-color:rgb(6, 92, 114);">
+                            <i class="bi bi-arrow-left me-1" style="color: #fff;"></i> <span style="color: #fff;">Back</span>
                         </a>
                     </div>
                 </div>
@@ -130,13 +130,13 @@
                                 @if($donation->user_id)
                                 <div class="donor-profile d-flex align-items-center mb-3">
                                     <div class="donor-avatar me-3">
-                                        @if($donation->user->profile_photo)
-                                            <img src="{{ asset('storage/' . $donation->user->profile_photo) }}" 
+                                        @if($donation->user->image_path)
+                                            <img src="{{ asset('storage/' . $donation->user->image_path) }}" 
                                                 alt="{{ $donation->user->name }}" 
                                                 class="rounded-circle" width="60" height="60">
                                         @else
-                                            <div class="avatar-placeholder">
-                                                <i class="bi bi-person-fill"></i>
+                                            <div class="avatar-placeholder rounded-circle bg-light d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                                <i class="bi bi-person-fill" style="font-size: 1.5rem; color: #6c757d;"></i>
                                             </div>
                                         @endif
                                     </div>
@@ -401,7 +401,28 @@
     .badge {
         font-weight: 500;
     }
+
+    .btn-light {
+        background-color: #fff;
+        border: 1px solid #367588;
+        color: #367588;
+        transition: all 0.2s;
+    }
+
+    .btn-light:hover {
+        background-color: #367588;
+        color: #000;
+    }
+
+    .btn-light i {
+        color: #367588;
+    }
+
+    .btn-light:hover i {
+        color: #000;
+    }
 </style>
 @endpush
+
 
 

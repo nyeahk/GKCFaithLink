@@ -134,8 +134,8 @@
     }
 
     th {
-        background-color: #f7fafc;
-        color: #1a365d;
+        background-color: #367588 !important;
+        color: #fff !important;
         font-weight: 600;
         padding: 1rem;
         text-align: left;

@@ -78,17 +78,20 @@
                     </div>
                     
                     <div class="mt-4 d-flex">
-                        <a href="{{ route('admin.users.index') }}" class="btn btn-secondary me-2">Back to Users</a>
+                        <a href="{{ route('admin.users.index') }}" class="btn btn-secondary me-2 rounded-pill d-flex align-items-center justify-content-center" style="height: 38px;">
+                            <i class="bi bi-arrow-left me-1"></i> Back to Users
+                        </a>
                         <form action="{{ route('admin.users.toggle', $user->id) }}" method="POST" class="me-2">
                             @csrf
                             @method('PATCH')
-                            <button type="submit" class="btn {{ $user->is_active ? 'btn-danger' : 'btn-success' }}">
+                            <button type="submit" class="btn {{ $user->is_active ? 'btn-danger' : 'btn-success' }} rounded-pill d-flex align-items-center justify-content-center" style="height: 38px;">
+                                <i class="bi {{ $user->is_active ? 'bi-person-x' : 'bi-person-check' }} me-1"></i>
                                 {{ $user->is_active ? 'Disable' : 'Enable' }} User
                             </button>
                         </form>
                         <div class="dropdown">
-                            <button class="btn btn-primary dropdown-toggle" type="button" id="roleDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                Change Role
+                            <button class="btn btn-primary dropdown-toggle rounded-pill d-flex align-items-center justify-content-center" type="button" id="roleDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="height: 38px;">
+                                <i class="bi bi-person-gear me-1"></i> Change Role
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="roleDropdown">
                                 <form action="{{ route('admin.users.assignRole', $user->id) }}" method="POST">

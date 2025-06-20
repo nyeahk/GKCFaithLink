@@ -21,6 +21,22 @@
             </div>
         @endif
 
+        <!-- Filter tabs -->
+        <div class="events-filter-tabs mb-4">
+            <a href="{{ route('staff.events.index') }}?filter=upcoming" 
+               class="filter-tab {{ $filter === 'upcoming' ? 'active' : '' }}">
+                <i class="fas fa-calendar-day"></i> Upcoming Events
+            </a>
+            <a href="{{ route('staff.events.index') }}?filter=past" 
+               class="filter-tab {{ $filter === 'past' ? 'active' : '' }}">
+                <i class="fas fa-history"></i> Past Events
+            </a>
+            <a href="{{ route('staff.events.index') }}?filter=all" 
+               class="filter-tab {{ $filter === 'all' ? 'active' : '' }}">
+                <i class="fas fa-calendar-alt"></i> All Events
+            </a>
+        </div>
+
         <div class="events-table">
             <table>
                 <thead>
@@ -42,8 +58,8 @@
                                     <span>{{ $event->title }}</span>
                                 </div>
                             </td>
-                            <td>{{ $event->start_date->format('M d, Y h:i A') }}</td>
-                            <td>{{ $event->end_date->format('M d, Y h:i A') }}</td>
+                            <td>{{ $event->start_date->format('M d, Y g:i A') }}</td>
+                            <td>{{ $event->end_date->format('M d, Y g:i A') }}</td>
                             <td>
                                 <div class="event-location clickable" data-event-id="{{ $event->id }}">
                                     <i class="fas fa-map-marker-alt"></i>
@@ -89,10 +105,16 @@
             </table>
         </div>
 
-        @if($events->hasPages())
-            <div class="pagination">
-                {{ $events->links() }}
+        <!-- Pagination -->
+        @if(isset($events) && method_exists($events, 'hasPages') && $events->hasPages())
+        <div class="d-flex justify-content-between align-items-center mt-4">
+            <div>
+                Showing {{ $events->firstItem() }} to {{ $events->lastItem() }} of {{ $events->total() }} events
             </div>
+            <div>
+                {{ $events->appends(request()->query())->links('pagination::bootstrap-5') }}
+            </div>
+        </div>
         @endif
     </div>
 
@@ -192,8 +214,8 @@
     }
 
     th {
-        background-color: #f7fafc;
-        color: #1a365d;
+        background-color: #367588 !important;
+        color: #fff !important;
         font-weight: 600;
         padding: 1rem;
         text-align: left;
@@ -488,6 +510,36 @@
         border-radius: 8px;
         object-fit: cover;
     }
+
+    /* Filter tabs styling */
+    .events-filter-tabs {
+        display: flex;
+        border-bottom: 1px solid #dee2e6;
+        margin-top: 1rem;
+    }
+
+    .filter-tab {
+        padding: 0.75rem 1.5rem;
+        color: #495057;
+        text-decoration: none;
+        font-weight: 500;
+        border-bottom: 3px solid transparent;
+        transition: all 0.3s ease;
+    }
+
+    .filter-tab:hover {
+        color: #ff6b6b;
+        border-bottom-color: #ffcece;
+    }
+
+    .filter-tab.active {
+        color: #ff6b6b;
+        border-bottom-color: #ff6b6b;
+    }
+
+    .filter-tab i {
+        margin-right: 0.5rem;
+    }
 </style>
 @endpush
 
@@ -680,3 +732,8 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 @endpush 
+
+
+
+
+

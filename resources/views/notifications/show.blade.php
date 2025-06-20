@@ -76,7 +76,7 @@
                     </h3>
                     
                     <div class="notification-time">
-                        <i class="bi bi-clock me-1"></i> {{ $notification->created_at->format('F d, Y h:i A') }}
+                        <i class="bi bi-clock me-1"></i> {{ $notification->created_at->format('F d, Y g:i A') }}
                     </div>
                 </div>
                 
@@ -136,9 +136,72 @@
 
 @push('styles')
 <style>
+    /* Comprehensive override for all buttons and links */
+    .btn,
+    .btn-primary,
+    .btn-lg,
+    .notification-action a,
+    .notification-action .btn,
+    a.btn,
+    button.btn,
+    .action-btn,
+    .view-details,
+    .btn-view-details,
+    .btn-action {
+        background-color: var(--primary) !important;
+        border-color: var(--primary) !important;
+        color: white !important;
+        transition: all 0.3s ease !important;
+    }
+    
+    /* Hover states for all buttons */
+    .btn:hover,
+    .btn-primary:hover,
+    .btn-lg:hover,
+    .notification-action a:hover,
+    .notification-action .btn:hover,
+    a.btn:hover,
+    button.btn:hover,
+    .action-btn:hover,
+    .view-details:hover,
+    .btn-view-details:hover,
+    .btn-action:hover {
+        background-color: var(--primary-dark) !important;
+        border-color: var(--primary-dark) !important;
+        color: white !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 4px 8px rgba(79, 149, 157, 0.3) !important;
+        background-image: none !important;
+    }
+    
+    /* Target the specific action button in notification detail */
+    .notification-action .btn-primary,
+    .notification-action .btn-lg,
+    .notification-body .btn-primary,
+    .notification-body .btn-lg {
+        background-color: var(--primary) !important;
+        border-color: var(--primary) !important;
+    }
+    
+    .notification-action .btn-primary:hover,
+    .notification-action .btn-lg:hover,
+    .notification-body .btn-primary:hover,
+    .notification-body .btn-lg:hover {
+        background-color: var(--primary-dark) !important;
+        border-color: var(--primary-dark) !important;
+    }
+    
+    /* Override any Bootstrap or custom styles that might be causing purple */
+    a:hover,
+    button:hover {
+        background-color: var(--primary-dark) !important;
+        background-image: none !important;
+        border-color: var(--primary-dark) !important;
+    }
+    
     /* Card styles */
     .notification-detail-card {
-        background-color: #fff;
+        background-color: var(--white);
         border-radius: 16px;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
         overflow: hidden;
@@ -147,7 +210,7 @@
     
     /* Header styles */
     .notification-header {
-        background-color: #f8f9fa;
+        background-color: var(--background-light);
         padding: 30px;
         text-align: center;
         border-bottom: 1px solid rgba(0, 0, 0, 0.05);
@@ -174,11 +237,11 @@
     .notification-title {
         margin-bottom: 10px;
         font-weight: 600;
-        color: #212529;
+        color: var(--text-darker);
     }
     
     .notification-time {
-        color: #6c757d;
+        color: var(--text-light);
         font-size: 0.9rem;
     }
     
@@ -202,23 +265,23 @@
     .section-title {
         font-size: 1rem;
         font-weight: 600;
-        color: #495057;
+        color: var(--text-dark);
         margin-bottom: 12px;
     }
     
     .section-content {
-        background-color: #f8f9fa;
+        background-color: var(--background-light);
         padding: 20px;
         border-radius: 10px;
         font-size: 1.05rem;
         line-height: 1.6;
-        color: #212529;
+        color: var(--text-dark);
     }
     
     .section-content.amount {
         font-size: 1.5rem;
         font-weight: 600;
-        color: #0d6efd;
+        color: var(--primary);
     }
     
     /* Action styles */
@@ -227,20 +290,73 @@
         margin-top: 30px;
     }
     
-    /* Button styles */
-    .btn-outline-primary {
-        border-color: #0d6efd;
-        color: #0d6efd;
-        padding: 8px 16px;
+    .btn-back {
+        background-color: var(--background-light);
+        color: var(--text-dark);
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-weight: 500;
+        transition: var(--hover-transition);
     }
     
-    .btn-outline-primary:hover {
-        background-color: #0d6efd;
-        color: #fff;
+    .btn-back:hover {
+        background-color: var(--primary-light);
+        color: var(--text-darker);
+        transform: var(--hover-scale);
     }
     
-    /* Make sure Bootstrap Icons are loaded */
-    @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css");
+    .btn-primary {
+        background-color: var(--primary);
+        border-color: var(--primary);
+    }
+    
+    .btn-primary:hover {
+        background-color: var(--primary-dark);
+        border-color: var(--primary-dark);
+        transform: var(--hover-scale);
+    }
+    
+    /* Icon colors */
+    .bg-success {
+        background-color: var(--success);
+    }
+    
+    .bg-danger {
+        background-color: var(--error);
+    }
+    
+    .bg-warning {
+        background-color: var(--warning);
+    }
+    
+    .bg-primary {
+        background-color: var(--primary);
+    }
+    
+    /* Back button */
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        color: var(--text-light);
+        text-decoration: none;
+        margin-bottom: 20px;
+        font-weight: 500;
+        transition: all 0.2s ease;
+    }
+    
+    .back-link:hover {
+        color: var(--primary);
+        transform: translateX(-3px);
+    }
+    
+    .back-link i {
+        margin-right: 5px;
+    }
 </style>
 @endpush
+
+
+
+
 

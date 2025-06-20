@@ -88,3 +88,29 @@
     </div>
 </div>
 @endsection
+
+@push('styles')
+<style>
+    .table .btn-info,
+    .table .btn-info:hover,
+    .table .btn-info:focus,
+    .table .btn-info:active,
+    .table .btn-info.active,
+    .table .btn-info:not(:disabled):not(.disabled):active,
+    .table .btn-info:not(:disabled):not(.disabled).active {
+        background-color: #4F959D !important;
+        border-color: #4F959D !important;
+        color: white !important;
+    }
+
+    .table .btn-info:hover,
+    .table .btn-info:focus,
+    .table .btn-info:active,
+    .table .btn-info.active {
+        background-color: #367588 !important;
+        border-color: #367588 !important;
+        color: white !important;
+        box-shadow: none !important;
+    }
+</style>
+@endpush

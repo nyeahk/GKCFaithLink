@@ -7,6 +7,11 @@
     --info-color: #6cb2eb;
     --light-color: #f8f9fa;
     --dark-color: #343a40;
+    --text-darker: #111111;
+    --white: #ffffff;
+    /* Updated hover styles to match member panel */
+    --hover-bg: rgba(255, 255, 255, 0.15);
+    --hover-transition: all 0.3s ease;
 }
 
 body {
@@ -26,23 +31,24 @@ body {
     /* Height and margin-top are set inline to account for the navbar height */
 }
 
+/* Preserve original sidebar link color */
 .sidebar .nav-link {
-    color: #495057;
+    color: var(--text-darker);
     border-radius: 5px;
-    transition: all 0.3s;
+    transition: all 0.3s ease;
+    font-weight: 500;
 }
 
-.sidebar .nav-link:hover {
-    background-color: rgba(52, 144, 220, 0.1);
-    color: var(--primary-color);
-}
-
+/* Change to white text on hover with gradient background */
+.sidebar .nav-link:hover,
 .sidebar .nav-link.active {
-    background-color: var(--primary-color);
-    color: white;
+    background-color: var(--hover-bg) !important;
+    color: var(--white) !important;
+    transform: translateX(5px);
+    box-shadow: 0 2px 8px rgba(79, 149, 157, 0.3);
 }
 
-/* Calendar styles */
+/* Calendar styles - restored to original */
 .calendar-container {
     background-color: white;
     border-radius: 8px;
@@ -55,13 +61,13 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 15px 20px;
-    background-color: var(--primary-color);
-    color: white;
+    background: linear-gradient(180deg, #4F959D 0%, #3d7a80 100%);
+    color: var(--white);
 }
 
 .calendar-title {
-    font-size: 1.5rem;
-    font-weight: bold;
+    font-weight: 600;
+    font-size: 1.2rem;
 }
 
 .calendar-nav {
@@ -71,18 +77,16 @@ body {
 
 .calendar-nav-btn {
     background-color: rgba(255, 255, 255, 0.2);
-    color: white;
     border: none;
-    padding: 5px 15px;
+    color: white;
+    padding: 5px 12px;
     border-radius: 4px;
     cursor: pointer;
-    text-decoration: none;
-    transition: background-color 0.3s;
+    transition: all 0.3s ease;
 }
 
 .calendar-nav-btn:hover {
     background-color: rgba(255, 255, 255, 0.3);
-    color: white;
 }
 
 .calendar-table {
@@ -91,23 +95,18 @@ body {
 }
 
 .calendar-table th {
-    padding: 10px;
-    text-align: center;
-    background-color: #f8f9fa;
-    border-bottom: 1px solid #dee2e6;
+    background-color: var(--primary-light);
+    color: var(--primary-dark);
+    padding: 10px 0;
+    font-weight: 500;
 }
 
 .calendar-table td {
-    height: 100px;
+    border: 1px solid #e0e0e0;
+    height: 80px;
     vertical-align: top;
-    padding: 10px;
-    border: 1px solid #dee2e6;
     cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.calendar-table td:hover {
-    background-color: #f8f9fa;
+    transition: background-color 0.2s;
 }
 
 .calendar-table .other-month {
@@ -116,7 +115,7 @@ body {
 }
 
 .calendar-table .today {
-    background-color: rgba(52, 144, 220, 0.1);
+    background-color: var(--background-light);
     font-weight: bold;
 }
 
@@ -124,18 +123,22 @@ body {
     position: relative;
 }
 
-.day-number {
-    font-weight: bold;
-    margin-bottom: 5px;
-}
-
 .event-indicator {
-    font-size: 0.8rem;
-    color: var(--primary-color);
-    background-color: rgba(52, 144, 220, 0.1);
-    padding: 2px 5px;
-    border-radius: 3px;
-    display: inline-block;
+    position: absolute;
+    bottom: 5px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--primary);
+    background-color: rgba(79, 149, 157, 0.1);
+    border-radius: 4px;
+    margin: 0 5px;
+    padding: 2px 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
 }
 
 /* Event card styles */
@@ -195,3 +198,25 @@ body {
 body {
             padding-top: 84px; 
     }
+
+/* Button hover styles */
+.btn:hover,
+.btn-primary:hover,
+.btn-secondary:hover,
+.btn-success:hover,
+.btn-danger:hover,
+.btn-warning:hover,
+.btn-info:hover {
+    background-color: var(--hover-bg) !important;
+    color: var(--white) !important;
+    transform: translateX(5px);
+    box-shadow: 0 2px 8px rgba(79, 149, 157, 0.3);
+    transition: var(--hover-transition);
+}
+
+
+
+
+
+
+

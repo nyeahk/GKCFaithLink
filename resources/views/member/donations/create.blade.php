@@ -64,7 +64,7 @@
                             </select>
                         </div>
 
-                        <div id="payment_details" class="mb-3" style="{{ old('payment_method') ? '' : 'display: none;' }}">
+                        <div id="payment_details" class="mb-3 {{ old('payment_method') ? 'd-block' : 'd-none' }}">
                             <div class="card mb-3">
                                 <div class="card-body">
                                     <h6 class="card-title">Payment Instructions</h6>
@@ -110,8 +110,8 @@
                         <input type="hidden" name="transaction_date" value="{{ now()->format('Y-m-d H:i:s') }}">
                         
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                            <a href="{{ route('member.donations.index') }}" class="btn btn-secondary me-md-2">Cancel</a>
-                            <button type="submit" class="btn btn-primary">Submit Donation</button>
+                            <a href="{{ route('member.donations.index') }}" class="btn btn-secondary me-md-2 custom-btn">Cancel</a>
+                            <button type="submit" class="btn btn-primary custom-btn">Submit Donation</button>
                         </div>
                     </form>
                 </div>
@@ -120,6 +120,26 @@
     </div>
 </div>
 @endsection
+
+@push('styles')
+<style>
+    .custom-btn {
+        transition: all 0.3s ease;
+    }
+    
+    .btn-secondary.custom-btn:hover {
+        background-color: #5a6268 !important;
+        border-color: #545b62 !important;
+        color: white !important;
+    }
+    
+    .btn-primary.custom-btn:hover {
+        background-color: #0056b3 !important;
+        border-color: #0056b3 !important;
+        color: white !important;
+    }
+</style>
+@endpush
 
 @push('scripts')
 <script>

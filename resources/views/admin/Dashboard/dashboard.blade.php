@@ -9,15 +9,19 @@
         <div class="col-12">
             <div class="calendar-container">
                 <div class="calendar-header">
-    <div class="calendar-title">
-        {{ $currentDate->format('F Y') }}
+    <div class="calendar-title text-white">
+        @php
+            $today = \Carbon\Carbon::now('Asia/Manila');
+            $dayName = $today->format('l'); // Full day name
+            $dayNumber = $today->format('j'); // Day of month without leading zeros
+            $month = $today->format('F'); // Full month name
+            $year = $today->format('Y');
+        @endphp
+        {{ $dayName }}, {{ $month }} {{ $dayNumber }}, {{ $year }}
     </div>
     <div class="calendar-nav">
         <a href="{{ route('admin.dashboard', ['timestamp' => $lastMonthTimestamp]) }}" class="calendar-nav-btn">
             <i class="bi bi-chevron-left"></i> Prev
-        </a>
-        <a href="{{ route('admin.dashboard', ['timestamp' => $todayTimestamp]) }}" class="calendar-nav-btn">
-            Today
         </a>
         <a href="{{ route('admin.dashboard', ['timestamp' => $nextMonthTimestamp]) }}" class="calendar-nav-btn">
             Next <i class="bi bi-chevron-right"></i>
@@ -44,7 +48,8 @@
                                     <td class="{{ !$day['isCurrentMonth'] ? 'other-month' : '' }} 
                                              {{ $day['isToday'] ? 'today' : '' }}
                                              {{ isset($day['events']) && count($day['events']) > 0 ? 'has-events' : '' }}" 
-                                        onclick="showEventsForDate('{{ $day['date']->format('Y-m-d') }}')">
+                                        data-date="{{ $day['date']->format('Y-m-d') }}"
+                                        onclick="showEventsForDate('{{ $day['date']->format('Y-m-d') }}')"
                                         <div class="day-number">{{ $day['day'] }}</div>
                                         @if(isset($day['events']) && count($day['events']) > 0)
                                             <div class="event-indicator">
@@ -89,6 +94,97 @@
         </div>
     </div>
 </div>
+
+@if(isset($archivedEvents) && $archivedEvents->count() > 0)
+<div class="card shadow-sm mb-4">
+    <div class="card-header bg-secondary text-white">
+        <h5 class="mb-0"><i class="bi bi-archive me-2"></i> Past Events Archive</h5>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Event</th>
+                        <th>Date</th>
+                        <th>Location</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($archivedEvents as $event)
+                    <tr>
+                        <td>{{ $event->title }}</td>
+                        <td>
+                            {{ $event->start_date->format('M d, Y') }}
+                            <small class="d-block text-muted">{{ $event->start_date->format('g:i A') }} - {{ $event->end_date->format('g:i A') }}</small>
+                        </td>
+                        <td>{{ $event->location }}</td>
+                        <td><span class="badge bg-{{ $event->status == 'cancelled' ? 'danger' : 'secondary' }}">{{ ucfirst($event->status) }}</span></td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+@endif
+
+<!-- Weekly Donation Chart -->
+@if(isset($weeklyDonations) && $weeklyDonations->count() > 0)
+<div class="card shadow-sm mb-4">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0"><i class="bi bi-graph-up me-2"></i> Weekly Donation Trends</h5>
+    </div>
+    <div class="card-body">
+        <canvas id="weeklyDonationChart" height="200"></canvas>
+    </div>
+</div>
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const ctx = document.getElementById('weeklyDonationChart').getContext('2d');
+        const weeklyDonationChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: @json($donationDays),
+                datasets: [{
+                    label: 'Daily Donations (₱)',
+                    data: @json($donationAmounts),
+                    backgroundColor: 'rgba(79, 149, 157, 0.7)',
+                    borderColor: 'rgba(79, 149, 157, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return '₱' + value.toLocaleString();
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return 'Donations: ₱' + context.raw.toLocaleString();
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+@endpush
+@endif
 @endsection
 
 @push('scripts')
@@ -170,3 +266,11 @@
     }
 </script>
 @endpush
+
+
+
+
+
+
+
+

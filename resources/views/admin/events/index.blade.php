@@ -40,8 +40,8 @@
                                     <span>{{ $event->title }}</span>
                                 </div>
                             </td>
-                            <td>{{ $event->start_date->format('M d, Y h:i A') }}</td>
-                            <td>{{ $event->end_date->format('M d, Y h:i A') }}</td>
+                            <td>{{ $event->start_date->format('M d, Y g:i A') }}</td>
+                            <td>{{ $event->end_date->format('M d, Y g:i A') }}</td>
                             <td>
                                 <div class="event-location clickable" data-event-id="{{ $event->id }}">
                                     <i class="fas fa-map-marker-alt"></i>
@@ -95,3 +95,5 @@
         </div>
     </div>
 @endsection
+
+

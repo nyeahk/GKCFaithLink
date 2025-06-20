@@ -7,48 +7,152 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\Models\Event;
 use App\Models\User;
+use App\Models\Donation;
 
 class DashboardController extends Controller
 {
-public function index(Request $request)
-{
-    // Set timezone
-    date_default_timezone_set('Asia/Manila');
-    
-    // Get current date
-    $today = Carbon::now();
-    $todayTimestamp = $today->timestamp;
+    /**
+     * Get weekly donation data for the dashboard
+     * 
+     * @return array
+     */
+    protected function getWeeklyDonationData()
+    {
+        // Get the start and end of the current week
+        $startOfWeek = Carbon::now()->startOfWeek();
+        $endOfWeek = Carbon::now()->endOfWeek();
+        
+        // Get all donations for the current week
+        $weeklyDonations = Donation::whereBetween('created_at', [$startOfWeek, $endOfWeek])
+            ->get();
+        
+        // Log for debugging
+        \Log::info('Weekly donations query:', [
+            'start_date' => $startOfWeek->toDateTimeString(),
+            'end_date' => $endOfWeek->toDateTimeString(),
+            'count' => $weeklyDonations->count(),
+            'sql' => Donation::whereBetween('created_at', [$startOfWeek, $endOfWeek])->toSql()
+        ]);
+        
+        // Calculate totals
+        $totalTithes = $weeklyDonations->filter(function($donation) {
+            return strtolower($donation->purpose) === 'tithe' || 
+                   str_contains(strtolower($donation->purpose), 'tithe');
+        })->sum('amount');
+        
+        $totalOfferings = $weeklyDonations->filter(function($donation) {
+            return (strtolower($donation->purpose) === 'offering' || 
+                    str_contains(strtolower($donation->purpose), 'offering')) &&
+                   !str_contains(strtolower($donation->purpose), 'tithe') &&
+                   !str_contains(strtolower($donation->purpose), 'mission');
+        })->sum('amount');
+        
+        $totalMissionFunds = $weeklyDonations->filter(function($donation) {
+            return strtolower($donation->purpose) === 'mission' || 
+                   str_contains(strtolower($donation->purpose), 'mission');
+        })->sum('amount');
+        
+        $totalAmount = $weeklyDonations->sum('amount');
+        
+        // Get donation data by day for chart
+        $donationDays = [];
+        $donationAmounts = [];
+        
+        $currentDay = $startOfWeek->copy();
+        while ($currentDay <= $endOfWeek) {
+            $dayTotal = $weeklyDonations->filter(function($donation) use ($currentDay) {
+                return $donation->created_at->format('Y-m-d') === $currentDay->format('Y-m-d');
+            })->sum('amount');
+            
+            $donationDays[] = $currentDay->format('D');
+            $donationAmounts[] = $dayTotal;
+            
+            $currentDay->addDay();
+        }
+        
+        return [
+            'weeklyDonations' => $weeklyDonations,
+            'totalTithes' => $totalTithes,
+            'totalOfferings' => $totalOfferings,
+            'totalMissionFunds' => $totalMissionFunds,
+            'totalAmount' => $totalAmount,
+            'donationDays' => $donationDays,
+            'donationAmounts' => $donationAmounts
+        ];
+    }
 
-    // Determine current date based on timestamp from GET request
-    $currentTimestamp = $request->query('timestamp', $todayTimestamp);
-    $currentDate = Carbon::createFromTimestamp($currentTimestamp);
+    /**
+     * Display the admin dashboard.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function index(Request $request)
+    {
+        // Set timezone
+        date_default_timezone_set('Asia/Manila');
+        
+        // Get current date
+        $today = Carbon::now();
+        $todayTimestamp = $today->timestamp;
 
-    // Calculate previous and next month timestamps
-    $lastMonth = $currentDate->copy()->subMonth();
-    $nextMonth = $currentDate->copy()->addMonth();
-    
-    $lastMonthTimestamp = $lastMonth->timestamp;
-    $nextMonthTimestamp = $nextMonth->timestamp;
+        // Determine current date based on timestamp from GET request
+        $currentTimestamp = $request->query('timestamp', $todayTimestamp);
+        $currentDate = Carbon::createFromTimestamp($currentTimestamp);
 
-    // Generate calendar data
-    $calendar = $this->generateCalendarData($currentDate);
+        // Calculate previous and next month timestamps
+        $lastMonth = $currentDate->copy()->subMonth();
+        $nextMonth = $currentDate->copy()->addMonth();
+        
+        $lastMonthTimestamp = $lastMonth->timestamp;
+        $nextMonthTimestamp = $nextMonth->timestamp;
 
-    // Get counts for dashboard stats
-    $membersCount = User::where('role', 3)->count();
-    $treasurersCount = User::where('role', 2)->count();
-    $staffCount = User::where('role', 4)->count();
+        // Format current month and year for display
+        $currentMonth = $currentDate->format('F');
+        $currentYear = $currentDate->format('Y');
+        
+        // Format previous and next month/year for navigation
+        $prevMonth = $lastMonth->format('m');
+        $prevYear = $lastMonth->format('Y');
+        $nextMonthFormatted = $nextMonth->format('m'); // Renamed to avoid conflict
+        $nextYearFormatted = $nextMonth->format('Y');  // Renamed to avoid conflict
 
-    return view('admin.dashboard.dashboard', [
-        'calendar' => $calendar,
-        'currentDate' => $currentDate,
-        'todayTimestamp' => $todayTimestamp,
-        'lastMonthTimestamp' => $lastMonthTimestamp,
-        'nextMonthTimestamp' => $nextMonthTimestamp,
-        'membersCount' => $membersCount,
-        'treasurersCount' => $treasurersCount,
-        'staffCount' => $staffCount
-    ]);
-}
+        // Generate calendar data
+        $calendar = $this->generateCalendarData($currentDate);
+
+        // Get counts for dashboard stats
+        $membersCount = User::where('role', 3)->count();
+        $treasurersCount = User::where('role', 2)->count();
+        $staffCount = User::where('role', 4)->count();
+        
+        // Get archived/past events
+        $archivedEvents = Event::where('end_date', '<', $today)
+            ->orderBy('end_date', 'desc')
+            ->take(10)
+            ->get();
+        
+        // Get weekly donation data
+        $weeklyDonationData = $this->getWeeklyDonationData();
+
+        return view('admin.dashboard.dashboard', [
+            'calendar' => $calendar,
+            'currentDate' => $currentDate,
+            'todayTimestamp' => $todayTimestamp,
+            'lastMonthTimestamp' => $lastMonthTimestamp,
+            'nextMonthTimestamp' => $nextMonthTimestamp,
+            'membersCount' => $membersCount,
+            'treasurersCount' => $treasurersCount,
+            'staffCount' => $staffCount,
+            'archivedEvents' => $archivedEvents,
+            'weeklyDonations' => $weeklyDonationData['weeklyDonations'],
+            'totalTithes' => $weeklyDonationData['totalTithes'],
+            'totalOfferings' => $weeklyDonationData['totalOfferings'],
+            'totalMissionFunds' => $weeklyDonationData['totalMissionFunds'],
+            'totalAmount' => $weeklyDonationData['totalAmount'],
+            'donationDays' => $weeklyDonationData['donationDays'],
+            'donationAmounts' => $weeklyDonationData['donationAmounts']
+        ]);
+    }
     /**
      * Generate calendar data for the given month
      *
@@ -75,15 +179,11 @@ public function index(Request $request)
             $lastDayOfCalendar->addDays(6 - $lastDayOfCalendar->dayOfWeek);
         }
         
-        // Get today's date for highlighting
-        $today = Carbon::today();
+        // Get today's date for highlighting in Philippines timezone
+        $today = Carbon::now('Asia/Manila')->startOfDay();
         
-        // Get current and future events for the month (exclude past events)
-        $currentDate = Carbon::now()->startOfDay();
-        $events = Event::where(function($query) use ($currentDate) {
-                $query->whereDate('start_date', '>=', $currentDate)
-                      ->orWhereDate('end_date', '>=', $currentDate);
-            })
+        // Get ONLY current and future events for the month (exclude past events)
+        $events = Event::where('end_date', '>=', $today)
             ->whereBetween('start_date', [
                 $firstDayOfCalendar->copy()->startOfDay(),
                 $lastDayOfCalendar->copy()->endOfDay()
@@ -99,26 +199,26 @@ public function index(Request $request)
         
         while ($currentDay <= $lastDayOfCalendar) {
             $week = [];
-            
-            // Build a week
             for ($i = 0; $i < 7; $i++) {
+                $isCurrentMonth = $currentDay->month === $date->month;
+                $isToday = $currentDay->format('Y-m-d') === $today->format('Y-m-d');
+                
                 $dayData = [
                     'day' => $currentDay->day,
                     'date' => $currentDay->copy(),
-                    'isCurrentMonth' => $currentDay->month === $date->month,
-                    'isToday' => $currentDay->isSameDay($today)
+                    'isCurrentMonth' => $isCurrentMonth,
+                    'isToday' => $isToday
                 ];
                 
-                // Add events for this day if any
-                $dayKey = $currentDay->format('Y-m-d');
-                if (isset($events[$dayKey])) {
-                    $dayData['events'] = $events[$dayKey];
+                // Add events for this day if any exist
+                $dateKey = $currentDay->format('Y-m-d');
+                if (isset($events[$dateKey])) {
+                    $dayData['events'] = $events[$dateKey];
                 }
                 
                 $week[] = $dayData;
                 $currentDay->addDay();
             }
-            
             $calendar[] = $week;
         }
         
@@ -142,8 +242,8 @@ public function index(Request $request)
                 return [
                     'id' => $event->id,
                     'title' => $event->title,
-                    'start_time' => Carbon::parse($event->start_date)->format('h:i A'),
-                    'end_time' => Carbon::parse($event->end_date)->format('h:i A'),
+                    'start_time' => Carbon::parse($event->start_date)->format('g:i A'), // 12-hour format with AM/PM
+                    'end_time' => Carbon::parse($event->end_date)->format('g:i A'),     // 12-hour format with AM/PM
                     'location' => $event->location,
                     'status' => ucfirst($event->status),
                     'status_class' => $this->getStatusClass($event->status),
@@ -170,6 +270,12 @@ public function index(Request $request)
         }
     }
 }
+
+
+
+
+
+
 
 
 
