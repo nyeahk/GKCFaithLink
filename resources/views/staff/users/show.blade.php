@@ -100,8 +100,8 @@
                     </div>
                     
                     <div class="mt-4">
-                        <a href="{{ route('staff.users.index') }}" class="btn btn-secondary">
-                            <i class="bi bi-arrow-left"></i> Back to Users
+                        <a href="{{ url()->previous() !== url()->current() ? url()->previous() : route('staff.users.index') }}" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Back
                         </a>
                     </div>
                 </div>

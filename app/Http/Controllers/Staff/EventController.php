@@ -64,7 +64,14 @@ class EventController extends Controller
             $validated['image_path'] = $path;
         }
 
-        Event::create($validated);
+        $event = Event::create($validated);
+
+        // Notify admin, staff, and member roles
+        $rolesToNotify = [1, 3, 4]; // 1=Admin, 3=Member, 4=Staff
+        $usersToNotify = \App\Models\User::whereIn('role', $rolesToNotify)->get();
+        foreach ($usersToNotify as $user) {
+            $user->notify(new \App\Notifications\EventCreatedNotification($event));
+        }
 
         return redirect()->route('staff.events.index')
             ->with('success', 'Event created successfully.');

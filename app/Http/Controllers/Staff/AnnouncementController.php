@@ -62,6 +62,13 @@ class AnnouncementController extends Controller
 
             $announcement->save();
 
+            // Notify admin, staff, and member roles
+            $rolesToNotify = [1, 3, 4]; // 1=Admin, 3=Member, 4=Staff
+            $usersToNotify = \App\Models\User::whereIn('role', $rolesToNotify)->get();
+            foreach ($usersToNotify as $user) {
+                $user->notify(new \App\Notifications\AnnouncementCreatedNotification($announcement));
+            }
+
             return redirect()->route('staff.announcements.index')
                 ->with('success', 'Announcement created successfully.');
         } catch (\Exception $e) {

@@ -78,8 +78,8 @@
                     </div>
                     
                     <div class="mt-4 d-flex">
-                        <a href="{{ route('admin.users.index') }}" class="btn btn-secondary me-2 rounded-pill d-flex align-items-center justify-content-center" style="height: 38px;">
-                            <i class="bi bi-arrow-left me-1"></i> Back to Users
+                        <a href="{{ url()->previous() !== url()->current() ? url()->previous() : route('admin.users.index') }}" class="btn btn-secondary me-2 rounded-pill d-flex align-items-center justify-content-center" style="height: 38px;">
+                            <i class="bi bi-arrow-left me-1"></i> Back
                         </a>
                         <form action="{{ route('admin.users.toggle', $user->id) }}" method="POST" class="me-2">
                             @csrf
@@ -110,4 +110,16 @@
         </div>
     </div>
 </div>
+@endsection
+
+@section('scripts')
+<script>
+    // Push the current page into history
+    history.pushState(null, '', location.href);
+
+    window.addEventListener('popstate', function(event) {
+        // When the user tries to go back, redirect to dashboard
+        window.location.href = '/dashboard';  // Adjust this URL to your actual dashboard route
+    });
+</script>
 @endsection

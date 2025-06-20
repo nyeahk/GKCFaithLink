@@ -9,7 +9,7 @@
         <div class="container">
             <div class="header-content">
                 <div class="header-left">
-                    <button onclick="goBack()" class="back-btn">
+                    <button onclick="goBack('{{ route('dashboard') }}')" class="back-btn">
                         <i class="fas fa-arrow-left"></i>
                     </button>
                     <div class="header-info">
@@ -976,8 +976,8 @@
         initializeNotificationPage();
     });
 
-    function goBack() {
-        window.history.back();
+    function goBack(route) {
+        window.location.href = route;
     }
 
     function initializeNotificationPage() {

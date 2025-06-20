@@ -291,7 +291,7 @@
         }
 
         .treasurer-sidebar-icon {
-            font-size: 1.1rem;
+            font-size: 1rem;
             width: 20px;
             text-align: center;
             transition: var(--treasurer-transition);

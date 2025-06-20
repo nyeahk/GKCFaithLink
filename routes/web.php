@@ -22,6 +22,8 @@ use App\Http\Controllers\Treasurer\DashboardController as TreasurerDashboardCont
 use App\Http\Controllers\Treasurer\DonationController as TreasurerDonationController;
 use App\Http\Controllers\Treasurer\ProfileController as TreasurerProfileController;
 use App\Http\Controllers\Staff\DashboardController as StaffDashboardController;
+use App\Http\Controllers\Staff\EventController as StaffEventController;
+use App\Http\Controllers\NotificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -174,6 +176,8 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('staff')->name('staff.')->middleware([CheckUserActive::class, RoleMiddleware::class.':4'])->group(function () {
         // Dashboard
         Route::get('dashboard', [App\Http\Controllers\Staff\DashboardController::class, 'index'])->name('dashboard');
+        // Real-time counts endpoint
+        Route::get('dashboard/counts', [App\Http\Controllers\Staff\DashboardController::class, 'counts'])->name('dashboard.counts');
         
         // Events - full CRUD for staff
         Route::get('events', [App\Http\Controllers\Staff\EventController::class, 'index'])->name('events.index');
@@ -270,3 +274,10 @@ Route::middleware(['auth', 'verified', CheckUserActive::class, RoleMiddleware::c
     Route::get('/reports/weekly/download', [App\Http\Controllers\Treasurer\ReportsController::class, 'downloadWeeklyReport'])->name('reports.weekly.download');
     Route::get('/reports/monthly/download', [App\Http\Controllers\Treasurer\ReportsController::class, 'downloadMonthlyReport'])->name('reports.monthly.download');
 });
+
+// Dashboard route
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+// notification
+Route::get('/staff/notifications', [NotificationController::class, 'index'])->name('staff.notifications');
+Route::get('/staff/notifications/{notification}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('staff.notifications.mark-as-read');

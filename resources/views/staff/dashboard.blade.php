@@ -182,7 +182,7 @@
             </div>
             <div class="stat-info">
                 <h3>Announcements</h3>
-                <p class="stat-number">{{ $announcementsCount ?? 0 }}</p>
+                <p class="stat-number" id="announcements-count">{{ $announcementsCount ?? 0 }}</p>
                 <p class="stat-label">Total Announcements</p>
             </div>
         </div>
@@ -192,7 +192,7 @@
             </div>
             <div class="stat-info">
                 <h3>Events</h3>
-                <p class="stat-number">{{ $eventsCount ?? 0 }}</p>
+                <p class="stat-number" id="events-count">{{ $eventsCount ?? 0 }}</p>
                 <p class="stat-label">Upcoming Events</p>
             </div>
         </div>
@@ -202,7 +202,7 @@
             </div>
             <div class="stat-info">
                 <h3>Members</h3>
-                <p class="stat-number">{{ $membersCount ?? 0 }}</p>
+                <p class="stat-number" id="members-count">{{ $membersCount ?? 0 }}</p>
                 <p class="stat-label">Total Members</p>
             </div>
         </div>
@@ -347,15 +347,19 @@
         </div>
     </div>
     @endif
+</div>
 @endsection
 
 @push('scripts')
 <script>
-    // Function to show events for a selected date
-    window.showEventsForDate = function(date) {
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize Bootstrap modal
+        window.eventsModal = new bootstrap.Modal(document.getElementById('eventsModal'));
+    });
+    
+    function showEventsForDate(date) {
         const modalDate = document.getElementById('modalDate');
         const eventsContainer = document.getElementById('eventsContainer');
-        const createEventBtn = document.getElementById('createEventBtn');
         
         // Set loading state
         modalDate.textContent = 'Loading...';
@@ -367,27 +371,16 @@
             </div>
         `;
         
-        // Update create event button with the selected date
-        createEventBtn.href = `/staff/events/create?date=${date}`;
-        
         // Show modal
         window.eventsModal.show();
         
         // Fetch events for the selected date
-        fetch(`/staff/dashboard/events?date=${date}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                return response.json();
-            })
+        fetch(`/admin/events/date/${date}`)
+            .then(response => response.json())
             .then(data => {
-                console.log('Response data:', data); // Debug log
+                modalDate.textContent = data.date;
                 
-                modalDate.textContent = data.date || 'Unknown Date';
-                
-                // Check if events property exists and is an array
-                if (data.events && Array.isArray(data.events) && data.events.length > 0) {
+                if (data.hasEvents) {
                     let eventsHtml = '';
                     
                     data.events.forEach(event => {
@@ -395,30 +388,22 @@
                             <div class="card event-card mb-3">
                                 <div class="card-body">
                                     <h5 class="card-title">
-                                        <i class="fas fa-calendar-alt me-2"></i>
+                                        <i class="bi bi-calendar-event me-2"></i>
                                         ${event.title}
                                     </h5>
                                     <div class="event-time mb-2">
-                                        <i class="fas fa-clock me-1"></i> ${event.time}
+                                        <i class="bi bi-clock me-1"></i> ${event.start_time} - ${event.end_time}
                                     </div>
                                     <div class="event-location mb-2">
-                                        <i class="fas fa-map-marker-alt me-1"></i> ${event.location}
+                                        <i class="bi bi-geo-alt me-1"></i> ${event.location}
                                     </div>
                                     <div class="mb-3">
-                                        <span class="badge bg-${event.status === 'Published' ? 'success' : 
-                                                              event.status === 'Draft' ? 'secondary' : 
-                                                              event.status === 'Cancelled' ? 'danger' : 'primary'}">
-                                            ${event.status}
-                                        </span>
+                                        <span class="badge ${event.status_class}">${event.status}</span>
                                     </div>
-                                    <div class="d-flex gap-2">
-                                        <a href="${event.url}" class="btn btn-sm btn-primary">
-                                            <i class="fas fa-eye me-1"></i> View
-                                        </a>
-                                        <a href="/staff/events/${event.id}/edit" class="btn btn-sm btn-secondary">
-                                            <i class="fas fa-edit me-1"></i> Edit
-                                        </a>
-                                    </div>
+                                    <p class="card-text">${event.description}</p>
+                                    <a href="/admin/events/${event.id}" class="btn btn-sm btn-primary">
+                                        <i class="bi bi-eye me-1"></i> View Details
+                                    </a>
                                 </div>
                             </div>
                         `;
@@ -429,7 +414,6 @@
                     eventsContainer.innerHTML = `
                         <div class="text-center py-4">
                             <p class="text-muted">No events scheduled for this date.</p>
-                            <p>Click the "Create Event" button below to add a new event.</p>
                         </div>
                     `;
                 }
@@ -439,18 +423,23 @@
                 eventsContainer.innerHTML = `
                     <div class="text-center py-4 text-danger">
                         <p>Error loading events. Please try again.</p>
-                        <p class="text-sm">${error.message}</p>
                     </div>
                 `;
-                
-                // Still show the create event button even if there's an error
-                modalDate.textContent = 'Events for ' + new Date(date).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                });
+            });
+        }
+    
+
+    function updateStaffDashboardCounts() {
+        fetch("{{ route('staff.dashboard.counts') }}")
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('announcements-count').textContent = data.announcements;
+                document.getElementById('events-count').textContent = data.events;
+                document.getElementById('members-count').textContent = data.members;
             });
     }
+    setInterval(updateStaffDashboardCounts, 10000); // every 10 seconds
+    updateStaffDashboardCounts(); // initial load
 </script>
 @endpush
 

@@ -43,6 +43,11 @@ class DashboardController extends Controller
         
         // Generate calendar data
         $calendar = $this->generateCalendarData($currentDate);
+
+        // Real-time counts
+        $announcementsCount = Announcement::count();
+        $eventsCount = Event::count();
+        $membersCount = User::where('role', 3)->where('is_active', true)->count();
         
         // Return view with data
         return view('staff.dashboard', compact(
@@ -50,7 +55,10 @@ class DashboardController extends Controller
             'currentMonth',
             'currentYear',
             'lastMonthTimestamp',
-            'nextMonthTimestamp'
+            'nextMonthTimestamp',
+            'announcementsCount',
+            'eventsCount',
+            'membersCount'
         ));
     }
     
@@ -187,6 +195,16 @@ class DashboardController extends Controller
                 'events' => []
             ], 500);
         }
+    }
+
+    // Add this method for AJAX polling
+    public function counts()
+    {
+        return response()->json([
+            'announcements' => Announcement::count(),
+            'events' => Event::count(),
+            'members' => User::where('role', 3)->where('is_active', true)->count(),
+        ]);
     }
 }
 

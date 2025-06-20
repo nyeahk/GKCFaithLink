@@ -128,18 +128,7 @@
         </div>
     </div>
 </div>
-@endif
 
-<!-- Weekly Donation Chart -->
-@if(isset($weeklyDonations) && $weeklyDonations->count() > 0)
-<div class="card shadow-sm mb-4">
-    <div class="card-header bg-primary text-white">
-        <h5 class="mb-0"><i class="bi bi-graph-up me-2"></i> Weekly Donation Trends</h5>
-    </div>
-    <div class="card-body">
-        <canvas id="weeklyDonationChart" height="200"></canvas>
-    </div>
-</div>
 
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
