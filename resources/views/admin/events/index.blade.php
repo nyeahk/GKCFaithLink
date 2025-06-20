@@ -40,8 +40,8 @@
                                     <span>{{ $event->title }}</span>
                                 </div>
                             </td>
-                            <td>{{ $event->start_date->format('M d, Y h:i A') }}</td>
-                            <td>{{ $event->end_date->format('M d, Y h:i A') }}</td>
+                            <td>{{ $event->start_date->format('M d, Y g:i A') }}</td>
+                            <td>{{ $event->end_date->format('M d, Y g:i A') }}</td>
                             <td>
                                 <div class="event-location clickable" data-event-id="{{ $event->id }}">
                                     <i class="fas fa-map-marker-alt"></i>
@@ -126,53 +126,6 @@
             </div>
         </div>
     </div>
-
-    <style>
-    .modal-content {
-        border-radius: 10px;
-        box-shadow: 0 0 16px rgba(0,0,0,0.08);
-        max-width: 400px;
-        margin: auto;
-    }
-    .event-title {
-        color: #2d3748;
-        font-weight: 600;
-        font-size: 1.2rem;
-    }
-    .event-description {
-        color: #4a5568;
-        line-height: 1.5;
-    }
-    .event-status.badge {
-        font-size: 0.9em;
-        padding: 0.4em 0.8em;
-    }
-    .badge.bg-secondary {
-        background: #6c757d !important;
-    }
-    .status-upcoming {
-        background-color: #ebf8ff !important;
-        color: #2b6cb0 !important;
-    }
-    .status-ongoing {
-        background-color: #f0fff4 !important;
-        color: #2f855a !important;
-    }
-    .status-completed {
-        background-color: #f7fafc !important;
-        color: #4a5568 !important;
-    }
-    .status-cancelled {
-        background-color: #fff5f5 !important;
-        color: #c53030 !important;
-    }
-    </style>
-
-    <script>
-    function fetchEventDetails(eventId) {
-        fetch(`/admin/events/${eventId}`)
-            .then(response => response.json())
-            .then(event => showEventDetails(event));
-    }
-    </script>
 @endsection
+
+

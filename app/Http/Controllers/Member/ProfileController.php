@@ -47,33 +47,16 @@ class ProfileController extends Controller
 
             // Handle image upload
             if ($request->hasFile('image')) {
-                try {
-                    // Delete old image if exists
-                    if ($user->image_path) {
-                        try {
-                            Storage::disk('public')->delete($user->image_path);
-                        } catch (\Exception $e) {
-                            Log::error('Failed to delete old image: ' . $e->getMessage());
-                        }
-                    }
-                    
-                    // Store new image
-                    $path = $request->file('image')->store('profile-photos', 'public');
-                    
-                    // Log the path for debugging
-                    Log::info('Image stored at: ' . $path);
-                    
-                    // Update user with new image path
-                    $user->image_path = $path;
-                    
-                    // Verify the image exists
-                    if (!Storage::disk('public')->exists($path)) {
-                        Log::error('Image was saved but file does not exist at: ' . $path);
-                    }
-                } catch (\Exception $e) {
-                    Log::error('Failed to store new image: ' . $e->getMessage());
-                    return back()->withErrors(['image' => 'Failed to upload image. Please try again.']);
+                // Delete old image if exists
+                if ($user->image_path) {
+                    Storage::disk('public')->delete($user->image_path);
                 }
+                
+                // Store new image
+                $path = $request->file('image')->store('profile-photos', 'public');
+                
+                // Update user with new image path
+                $user->image_path = $path;
             }
 
             $user->save();
@@ -81,7 +64,6 @@ class ProfileController extends Controller
             return redirect()->route('member.profile.index')->with('success', 'Profile updated successfully.');
         } catch (\Exception $e) {
             Log::error('Profile update error: ' . $e->getMessage());
-            // Show the actual error message for debugging
             return back()->withErrors(['error' => 'Error: ' . $e->getMessage()]);
         }
     }
@@ -110,3 +92,4 @@ class ProfileController extends Controller
         }
     }
 }
+

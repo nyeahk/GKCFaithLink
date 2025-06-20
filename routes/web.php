@@ -61,6 +61,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/notifications', [App\Http\Controllers\NotificationController::class, 'index'])->name('notifications.index');
     Route::get('/notifications/{id}', [App\Http\Controllers\NotificationController::class, 'show'])->name('notifications.show');
     Route::post('/notifications/mark-all-read', [App\Http\Controllers\NotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-read');
+    Route::post('/notifications/{id}/mark-as-read', [App\Http\Controllers\NotificationController::class, 'markAsRead'])->name('notifications.mark-as-read');
     Route::get('/notifications/count', [App\Http\Controllers\NotificationController::class, 'getUnreadCount'])->name('notifications.count');
 
 
@@ -272,17 +273,3 @@ Route::middleware(['auth', 'verified', CheckUserActive::class, RoleMiddleware::c
     Route::get('/reports/weekly/download', [App\Http\Controllers\Treasurer\ReportsController::class, 'downloadWeeklyReport'])->name('reports.weekly.download');
     Route::get('/reports/monthly/download', [App\Http\Controllers\Treasurer\ReportsController::class, 'downloadMonthlyReport'])->name('reports.monthly.download');
 });
-
-// Admin User Routes
-Route::prefix('admin')->name('admin.')->middleware(['auth', RoleMiddleware::class . ':1'])->group(function () {
-    // Users management
-    Route::get('/users', [App\Http\Controllers\Admin\UserController::class, 'index'])->name('users.index');
-    Route::get('/users/create', [App\Http\Controllers\Admin\UserController::class, 'create'])->name('users.create');
-    Route::post('/users', [App\Http\Controllers\Admin\UserController::class, 'store'])->name('users.store');
-    Route::get('/users/{user}/edit', [App\Http\Controllers\Admin\UserController::class, 'edit'])->name('users.edit');
-    Route::put('/users/{user}', [App\Http\Controllers\Admin\UserController::class, 'update'])->name('users.update');
-    Route::delete('/users/{user}', [App\Http\Controllers\Admin\UserController::class, 'destroy'])->name('users.destroy');
-    Route::get('/users/role/{role}', [App\Http\Controllers\Admin\UserController::class, 'byRole'])->name('users.by-role');
-});
-
-

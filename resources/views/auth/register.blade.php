@@ -30,7 +30,7 @@
 
         /* Left Side - Logo Section */
         .auth-logo-section {
-            background: linear-gradient(135deg, #205781 0%, #4f959d 100%);
+            background: linear-gradient(135deg, #367588 0%, #4F959D 100%);
             color: #ffffff;
             padding: 3rem;
             display: flex;
@@ -110,14 +110,14 @@
         }
 
         .auth-header h2 {
-            color: #205781;
+            color: #367588;
             font-size: 2rem;
             font-weight: 600;
             margin: 0 0 0.5rem;
         }
 
         .auth-header p {
-            color: #4f959d;
+            color: #4F959D;
             margin: 0;
             font-size: 1rem;
         }
@@ -137,13 +137,13 @@
             align-items: center;
             gap: 0.5rem;
             margin-bottom: 0.75rem;
-            color: #4f959d;
+            color: #367588;
             font-weight: 500;
             font-size: 0.95rem;
         }
 
         .form-label i {
-            color: #4f959d;
+            color: #367588;
             width: 16px;
         }
 
@@ -155,13 +155,13 @@
             font-size: 1rem;
             background-color: #f8f9fa;
             transition: all 0.3s ease;
-            color: #205781;
+            color: #367588;
             box-sizing: border-box;
         }
 
         .form-input:focus {
             outline: none;
-            border-color: #4f959d;
+            border-color: #4F959D;
             background-color: #ffffff;
             box-shadow: 0 0 0 3px rgba(79, 149, 157, 0.1);
         }
@@ -192,7 +192,7 @@
             gap: 0.5rem;
             cursor: pointer;
             font-size: 0.95rem;
-            color: #205781;
+            color: #367588;
         }
 
         .btn {
@@ -231,19 +231,19 @@
         }
 
         .auth-footer p {
-            color: #205781;
+            color: #367588;
             margin: 0;
         }
 
         .auth-link {
-            color: #4f959d;
+            color: #4F959D;
             text-decoration: none;
             font-weight: 600;
             transition: all 0.3s ease;
         }
 
         .auth-link:hover {
-            color: #205781;
+            color: #367588 !important;
             text-decoration: underline;
         }
 

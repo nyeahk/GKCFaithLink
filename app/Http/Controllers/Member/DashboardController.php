@@ -30,6 +30,16 @@ class DashboardController extends Controller
         $lastMonthTimestamp = $lastMonth->timestamp;
         $nextMonthTimestamp = $nextMonth->timestamp;
 
+        // Format current month and year for display
+        $currentMonth = $currentDate->format('F');
+        $currentYear = $currentDate->format('Y');
+        
+        // Format previous and next month/year for navigation
+        $prevMonth = $lastMonth->format('m');
+        $prevYear = $lastMonth->format('Y');
+        $nextMonthFormatted = $nextMonth->format('m'); // Renamed to avoid conflict
+        $nextYearFormatted = $nextMonth->format('Y');  // Renamed to avoid conflict
+
         // Generate calendar data
         $calendar = $this->generateCalendarData($currentDate);
         
@@ -46,15 +56,21 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
-        return view('member.dashboard', [
-            'calendar' => $calendar,
-            'currentDate' => $currentDate,
-            'todayTimestamp' => $todayTimestamp,
-            'lastMonthTimestamp' => $lastMonthTimestamp,
-            'nextMonthTimestamp' => $nextMonthTimestamp,
-            'upcomingEvents' => $upcomingEvents,
-            'recentAnnouncements' => $recentAnnouncements
-        ]);
+        return view('member.dashboard', compact(
+            'currentMonth',
+            'currentYear',
+            'prevMonth',
+            'prevYear',
+            'nextMonthFormatted', // Use renamed variable
+            'nextYearFormatted',  // Use renamed variable
+            'calendar',
+            'currentDate',
+            'todayTimestamp',
+            'lastMonthTimestamp',
+            'nextMonthTimestamp',
+            'upcomingEvents',
+            'recentAnnouncements'
+        ));
     }
     
     public function getEventsForDate($date)
@@ -76,8 +92,8 @@ class DashboardController extends Controller
                     'id' => $event->id,
                     'title' => $event->title,
                     'description' => $event->description,
-                    'start_time' => $event->start_date->format('h:i A'),
-                    'end_time' => $event->end_date->format('h:i A'),
+                    'start_time' => $event->start_date->format('g:i A'), // 12-hour format
+                    'end_time' => $event->end_date->format('g:i A'),     // 12-hour format
                     'location' => $event->location
                 ];
             });
@@ -110,7 +126,7 @@ class DashboardController extends Controller
         }
         
         // Get today's date for comparison
-        $today = Carbon::today();
+        $today = Carbon::now();
         
         // Get current and future events for this month (exclude past events)
         $currentDate = Carbon::now()->startOfDay();
@@ -163,5 +179,12 @@ class DashboardController extends Controller
         return $calendar;
     }
 }
+
+
+
+
+
+
+
 
 

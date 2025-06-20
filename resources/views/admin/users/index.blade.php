@@ -3,17 +3,17 @@
 @section('title', 'Users')
 
 @section('content')
-<div class="container py-4">
-    <h1 class="mb-4">Users</h1>
+<div class="container py-2">
+    <h1 class="mb-3">Users</h1>
     
     @if(session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
     
     <!-- Search and Filters -->
-    <div class="card mb-4">
+    <div class="card mb-4 admin-filter-section">
         <div class="card-body">
-            <form action="{{ route('admin.users.index') }}" method="GET" id="userSearchForm" class="row g-3">
+            <form action="{{ route('admin.users.index') }}" method="GET" class="row g-3 align-items-end">
                 <!-- Search -->
                 <div class="col-md-4">
                     <div class="input-group">
@@ -48,8 +48,8 @@
                 <!-- Filter Button -->
                 <div class="col-md-2">
                     <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                        <button type="submit" class="btn btn-primary" id="filterButton">
-                            <i class="bi bi-filter"></i> Filter
+                        <button type="submit" class="btn btn-primary filter-button">
+                            <i class="bi bi-funnel-fill me-1"></i> Filter
                         </button>
                         @if(request()->anyFilled(['search', 'role', 'status']))
                             <a href="{{ route('admin.users.index') }}" class="btn btn-outline-secondary">
@@ -169,7 +169,7 @@
             </div>
             
             <!-- Enhanced Pagination -->
-            @if($users->hasPages())
+            @if(isset($users) && method_exists($users, 'hasPages') && $users->hasPages())
             <div class="d-flex justify-content-between align-items-center mt-4">
                 <div>
                     Showing {{ $users->firstItem() }} to {{ $users->lastItem() }} of {{ $users->total() }} users
@@ -184,40 +184,6 @@
 </div>
 @endsection
 
-@push('scripts')
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Handle search form submission
-        const searchForm = document.getElementById('userSearchForm');
-        const searchInput = document.getElementById('searchInput');
-        const searchButton = document.getElementById('searchButton');
-        
-        // Submit form when search button is clicked
-        searchButton.addEventListener('click', function(e) {
-            e.preventDefault();
-            searchForm.submit();
-        });
-        
-        // Submit form when Enter key is pressed in search input
-        searchInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                searchForm.submit();
-            }
-        });
-        
-        // Auto-submit form when select filters change
-        const roleFilter = document.getElementById('roleFilter');
-        const statusFilter = document.getElementById('statusFilter');
-        
-        roleFilter.addEventListener('change', function() {
-            searchForm.submit();
-        });
-        
-        statusFilter.addEventListener('change', function() {
-            searchForm.submit();
-        });
-    });
-</script>
-@endpush
+
+
 

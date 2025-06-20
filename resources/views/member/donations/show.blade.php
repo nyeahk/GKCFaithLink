@@ -176,14 +176,17 @@
                             
                             <!-- Verified notification -->
                             @if($donation->status == 'verified')
-                            <div class="alert alert-success">
+                            <div class="alert alert-success mt-3">
                                 <div class="d-flex">
                                     <div class="me-3">
                                         <i class="bi bi-check-circle-fill fs-4"></i>
                                     </div>
                                     <div>
-                                        <h6 class="alert-heading">Donation Verified</h6>
+                                        <h6 class="alert-heading">Donation Verified by {{ $donation->verified_by }}</h6>
                                         <p class="mb-0">Thank you for your generous contribution! Your donation has been verified and recorded.</p>
+                                        @if($donation->verification_notes)
+                                            <p class="mt-2 mb-0"><strong>Note:</strong> {{ $donation->verification_notes }}</p>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
@@ -270,4 +273,5 @@
     }
 </style>
 @endpush
+
 

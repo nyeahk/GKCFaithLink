@@ -69,9 +69,7 @@
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-save"></i> Save Announcement
                     </button>
-                    <a href="{{ route('staff.announcements.index') }}" class="btn btn-secondary">
-                        <i class="fas fa-times"></i> Cancel
-                    </a>
+                    <a href="{{ route('staff.announcements.index') }}" class="btn btn-primary">Cancel</a>
                 </div>
             </form>
         </div>
@@ -102,15 +100,19 @@
         align-items: center;
         gap: 0.5rem;
         padding: 0.5rem 1rem;
-        background-color: #e2e8f0;
-        color: #4a5568;
+        background-color: #fff;
+        color: #367588;
+        border: 1px solid #367588;
         border-radius: 0.375rem;
         text-decoration: none;
         transition: all 0.2s;
     }
 
     .btn-back:hover {
-        background-color: #cbd5e0;
+        background-color: #367588;
+        color: #000;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 
     .announcement-form-card {

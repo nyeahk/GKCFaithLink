@@ -60,8 +60,10 @@
             </div>
 
             <div class="form-actions">
-                <a href="{{ route('staff.events.index') }}" class="btn btn-secondary">Cancel</a>
-                <button type="submit" class="btn btn-primary">Create Event</button>
+                <a href="{{ route('staff.events.index') }}" class="btn btn-primary">Cancel</a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Create Event
+                </button>
             </div>
         </form>
     </div>
@@ -199,6 +201,7 @@
         font-weight: 500;
         transition: all 0.2s;
         cursor: pointer;
+        text-decoration: none;
     }
 
     .btn-primary {
@@ -212,13 +215,13 @@
     }
 
     .btn-secondary {
-        background-color: #e2e8f0;
-        color: #4a5568;
+        background-color: #2b6cb0;
+        color: white;
         border: none;
     }
 
     .btn-secondary:hover {
-        background-color: #cbd5e0;
+        background-color: #2c5282;
     }
 
     @media (max-width: 768px) {

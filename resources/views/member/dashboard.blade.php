@@ -14,15 +14,10 @@
                 <div class="card-body">
                     <div class="calendar-container">
                         <div class="calendar-header">
-                            <div class="calendar-title">
-                                {{ $currentDate->format('F Y') }}
-                            </div>
+                            <div class="calendar-title text-white">{{ $currentMonth }} {{ $currentYear }}</div>
                             <div class="calendar-nav">
                                 <a href="{{ route('member.dashboard', ['timestamp' => $lastMonthTimestamp]) }}" class="calendar-nav-btn">
                                     <i class="bi bi-chevron-left"></i> Prev
-                                </a>
-                                <a href="{{ route('member.dashboard', ['timestamp' => $todayTimestamp]) }}" class="calendar-nav-btn">
-                                    Today
                                 </a>
                                 <a href="{{ route('member.dashboard', ['timestamp' => $nextMonthTimestamp]) }}" class="calendar-nav-btn">
                                     Next <i class="bi bi-chevron-right"></i>
@@ -244,3 +239,78 @@
     }
 </script>
 @endpush
+
+@push('styles')
+<style>
+    /* Enhanced dashboard styles using app color scheme */
+    .calendar-container {
+        background-color: var(--white);
+        border-radius: 8px;
+        box-shadow: 0 2px 8px var(--shadow);
+    }
+    
+    .calendar-header {
+        background-color: var(--primary);
+        color: var(--white);
+    }
+    
+    .calendar-title {
+        font-weight: 600;
+    }
+    
+    .calendar-nav-btn {
+        background-color: var(--primary-light);
+        color: var(--white);
+        border: none;
+        transition: var(--hover-transition);
+    }
+    
+    .calendar-nav-btn:hover {
+        background-color: var(--primary-dark);
+        transform: var(--hover-scale);
+    }
+    
+    .calendar-table th {
+        background-color: var(--primary-light);
+        color: var(--primary-dark);
+    }
+    
+    .today {
+        background-color: var(--background-light);
+    }
+    
+    .event-indicator {
+        background-color: var(--primary-light);
+        color: var(--primary-dark);
+    }
+    
+    .card {
+        transition: var(--hover-transition);
+    }
+    
+    .card:hover {
+        transform: var(--hover-scale);
+        box-shadow: var(--hover-shadow);
+    }
+    
+    /* Change card headers from blue to #4F959D */
+    .card-header {
+        background-color: #4F959D !important;
+        color: var(--white);
+    }
+    
+    .btn-primary {
+        background-color: var(--primary);
+        border-color: var(--primary);
+    }
+    
+    .btn-primary:hover {
+        background-color: var(--primary-dark);
+        border-color: var(--primary-dark);
+    }
+</style>
+@endpush
+
+
+
+

@@ -18,16 +18,17 @@
     --background-light: #F6F8D5;
     --white: #ffffff;
     --text-dark: #333333;
+    --text-darker: #111111; /* Added darker text color */
     --text-light: #666666;
     --error: #dc3545;
     --success: #28a745;
     --warning: #ffc107;
-    /* Unified Hover Styles */
-    --hover-bg: var(--primary-light);
+    /* Updated hover styles to match member panel */
+    --hover-bg: var(--sidebar-hover, rgba(255, 255, 255, 0.15));
     --hover-color: var(--white);
     --hover-transition: all 0.3s ease;
-    --hover-scale: scale(1.02);
-    --hover-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    --hover-scale: translateX(5px);
+    --hover-shadow: 0 2px 8px rgba(79, 149, 157, 0.3);
     /* Form Hover Styles */
     --form-hover-bg: var(--background-light);
     --form-hover-border: var(--primary);
@@ -48,7 +49,7 @@ body {
 
 /* Top Navigation */
 .top-navigation {
-    background-color: var(--primary-dark);
+    background-color: #367588;
     color: var(--white);
     padding: 1rem 2rem;
     position: fixed;
@@ -101,12 +102,14 @@ body {
     gap: 0.5rem;
     padding: 0.5rem 1rem;
     border-radius: 4px;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    font-weight: 500;
 }
 
 .nav-menu a:hover,
 .nav-menu a.active {
-    background-color: var(--primary);
+    background-color: var(--primary-dark);
+    color: var(--white);
 }
 
 .nav-user {
@@ -210,20 +213,21 @@ body {
 }
 
 .menu-section a {
-    color: var(--text-dark);
+    color: var(--text-darker);
     text-decoration: none;
     display: flex;
     align-items: center;
     gap: 0.5rem;
     padding: 0.5rem;
     border-radius: 4px;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    font-weight: 500;
 }
 
 .menu-section a:hover,
 .menu-section a.active {
-    background-color: var(--background-light);
-    color: var(--primary-dark);
+    background-color: var(--primary-dark);
+    color: var(--white);
 }
 
 .sidebar-footer {
@@ -295,7 +299,7 @@ body {
     }
 }
 
-/* Unified Hover Effects */
+/* Unified Hover Effects - Modified to match member panel */
 a:hover,
 button:hover,
 .nav-menu a:hover,
@@ -313,17 +317,51 @@ button:hover,
 .close:hover,
 .submit-button:hover,
 .qr-button:hover {
-    color: var(--hover-color);
+    color: var(--white) !important;
+    background-color: var(--sidebar-hover, rgba(255, 255, 255, 0.15)) !important;
     transform: var(--hover-scale);
     box-shadow: var(--hover-shadow);
     transition: var(--hover-transition);
 }
 
-/* Table Row Hover */
+/* Table Row Hover - Updated to match member panel */
 tr:hover,
 .members-table tr:hover {
-    color: var(--hover-color);
-    transform: var(--hover-scale);
+    background-color: var(--sidebar-hover, rgba(255, 255, 255, 0.15)) !important;
+    color: var(--text-dark) !important;
+    transition: var(--hover-transition);
+}
+
+/* Make sure table cell text changes color on hover */
+tr:hover td,
+.members-table tr:hover td {
+    color: var(--text-dark) !important;
+}
+
+/* Ensure links inside table rows are visible when row is hovered */
+tr:hover a,
+.members-table tr:hover a {
+    color: var(--white) !important;
+}
+
+/* Preserve original text color for non-hovered elements */
+a, button, .nav-menu a, .menu-section a, .dropdown-menu a, 
+.dropdown-menu button, .btn, .btn-submit, .btn-cancel, 
+.nav-icons a, .nav-brand a, .user-button, .close, 
+.submit-button, .qr-button {
+    color: inherit;
+    transition: var(--hover-transition);
+}
+
+/* Preserve original table text color */
+tr td, .members-table tr td {
+    color: var(--text-dark);
+    transition: var(--hover-transition);
+}
+
+/* Preserve original link color in tables */
+tr a, .members-table tr a {
+    color: var(--primary);
     transition: var(--hover-transition);
 }
 
@@ -444,46 +482,34 @@ label:hover {
 
 /* Notification Styles */
 .notification-dropdown {
+    padding: 0.5rem;
     width: 320px;
-    padding: 0;
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-    border: none;
-    border-radius: 0.5rem;
+    max-height: 500px;
+    overflow-y: auto;
 }
 
-.notification-dropdown .dropdown-item {
-    padding: 0.75rem 1rem;
-    border-bottom: 1px solid #f1f1f1;
+.notification-card {
+    transition: all 0.2s ease;
+    margin-bottom: 0.5rem;
 }
 
-.notification-dropdown .dropdown-item:last-child {
-    border-bottom: none;
+.notification-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.notification-dropdown .dropdown-item:hover {
-    background-color: rgba(0, 123, 255, 0.05);
+.notification-card.border-primary {
+    border-left: 3px solid var(--primary) !important;
+    background-color: rgba(79, 149, 157, 0.05);
 }
 
 .notification-icon {
-    width: 36px;
-    height: 36px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-}
-
-.notification-icon-large .icon-circle {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.notification-icon-large i {
-    font-size: 1.25rem;
 }
 
 .bg-success-light {
@@ -495,7 +521,7 @@ label:hover {
 }
 
 .bg-primary-light {
-    background-color: rgba(13, 110, 253, 0.15);
+    background-color: rgba(79, 149, 157, 0.15);
 }
 
 .bg-warning-light {
@@ -506,22 +532,9 @@ label:hover {
     background-color: rgba(108, 117, 125, 0.15);
 }
 
-.notification-list .list-group-item {
-    padding: 1rem;
-    transition: all 0.2s ease;
-}
-
-.notification-list .list-group-item:hover {
-    background-color: rgba(0, 123, 255, 0.05);
-}
-
-.notification-list .list-group-item.unread {
-    background-color: rgba(0, 123, 255, 0.05);
-    border-left: 4px solid #0d6efd !important;
-}
-
-.notification-message {
-    color: #495057;
+.unread-notification {
+    font-weight: 600;
+    background-color: rgba(79, 149, 157, 0.05);
 }
 
 .empty-state {
@@ -529,18 +542,28 @@ label:hover {
     text-align: center;
 }
 
-/* Adjust this value to match your navbar height */
-#sidebar {
-    position: fixed;
-    top: var(--navbar-height);
-    left: 0;
-    width: 250px; /* or your sidebar width */
-    height: calc(100vh - var(--navbar-height));
-    background: #5483B3;
-    color: #fff;
-    z-index: 1030;
-    /* Remove overflow-y if you don't want the sidebar to scroll */
-    /* overflow-y: auto; */
+/* Calendar styles */
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background-color: var(--primary);
+    color: var(--white);
 }
+
+.calendar-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--white);
+}
+
+
+
+
+
+
+
+
 
 

@@ -10,10 +10,33 @@ use Carbon\Carbon;
 
 class EventController extends Controller
 {
-    public function index()
+    /**
+     * Display a listing of the events.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index(Request $request)
     {
-        $events = Event::latest()->paginate(10);
-        return view('staff.events.index', compact('events'));
+        $filter = $request->input('filter', 'upcoming');
+        
+        $query = Event::query();
+        
+        // Apply filters
+        if ($filter === 'past') {
+            $query->where('end_date', '<', now())
+                  ->orderBy('start_date', 'desc');
+        } else if ($filter === 'all') {
+            $query->orderBy('start_date', 'asc');
+        } else {
+            // Default: upcoming events
+            $query->where('end_date', '>=', now())
+                  ->orderBy('start_date', 'asc');
+        }
+        
+        // Paginate the results instead of getting all at once
+        $events = $query->paginate(10);
+        
+        return view('staff.events.index', compact('events', 'filter'));
     }
 
     public function create()
@@ -32,6 +55,9 @@ class EventController extends Controller
             'status' => 'required|in:draft,published,cancelled',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
+
+        // Add the authenticated user's ID
+        $validated['created_by'] = auth()->id();
 
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('events', 'public');
@@ -82,6 +108,11 @@ class EventController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
 
+        // Preserve the created_by field if it already exists
+        if (!$event->created_by) {
+            $validated['created_by'] = auth()->id();
+        }
+
         if ($request->hasFile('image')) {
             // Delete old image if exists
             if ($event->image_path) {
@@ -119,3 +150,5 @@ class EventController extends Controller
         };
     }
 }
+
+

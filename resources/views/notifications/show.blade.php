@@ -76,7 +76,7 @@
                     </h3>
                     
                     <div class="notification-time">
-                        <i class="bi bi-clock me-1"></i> {{ $notification->created_at->format('F d, Y h:i A') }}
+                        <i class="bi bi-clock me-1"></i> {{ $notification->created_at->format('F d, Y g:i A') }}
                     </div>
                 </div>
                 
@@ -150,20 +150,81 @@
 
 @push('styles')
 <style>
-    body {
-        background: #C1E8FF !important;
+    /* Comprehensive override for all buttons and links */
+    .btn,
+    .btn-primary,
+    .btn-lg,
+    .notification-action a,
+    .notification-action .btn,
+    a.btn,
+    button.btn,
+    .action-btn,
+    .view-details,
+    .btn-view-details,
+    .btn-action {
+        background-color: var(--primary) !important;
+        border-color: var(--primary) !important;
+        color: white !important;
+        transition: all 0.3s ease !important;
     }
+    
+    /* Hover states for all buttons */
+    .btn:hover,
+    .btn-primary:hover,
+    .btn-lg:hover,
+    .notification-action a:hover,
+    .notification-action .btn:hover,
+    a.btn:hover,
+    button.btn:hover,
+    .action-btn:hover,
+    .view-details:hover,
+    .btn-view-details:hover,
+    .btn-action:hover {
+        background-color: var(--primary-dark) !important;
+        border-color: var(--primary-dark) !important;
+        color: white !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 4px 8px rgba(79, 149, 157, 0.3) !important;
+        background-image: none !important;
+    }
+    
+    /* Target the specific action button in notification detail */
+    .notification-action .btn-primary,
+    .notification-action .btn-lg,
+    .notification-body .btn-primary,
+    .notification-body .btn-lg {
+        background-color: var(--primary) !important;
+        border-color: var(--primary) !important;
+    }
+    
+    .notification-action .btn-primary:hover,
+    .notification-action .btn-lg:hover,
+    .notification-body .btn-primary:hover,
+    .notification-body .btn-lg:hover {
+        background-color: var(--primary-dark) !important;
+        border-color: var(--primary-dark) !important;
+    }
+    
+    /* Override any Bootstrap or custom styles that might be causing purple */
+    a:hover,
+    button:hover {
+        background-color: var(--primary-dark) !important;
+        background-image: none !important;
+        border-color: var(--primary-dark) !important;
+    }
+    
+    /* Card styles */
     .notification-detail-card {
-        background-color: #fff;
-        border-radius: 18px;
-        box-shadow: 0 4px 24px rgba(5, 38, 89, 0.10);
+        background-color: var(--white);
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
         overflow: hidden;
         margin-bottom: 30px;
         border: 1.5px solid #7DA0CA;
     }
     .notification-header {
-        background: linear-gradient(90deg, #5483B3 0%, #7DA0CA 100%);
-        padding: 36px 30px 24px 30px;
+        background-color: var(--background-light);
+        padding: 30px;
         text-align: center;
         border-bottom: 1px solid #e3f0fa;
     }
@@ -185,17 +246,13 @@
         font-size: 2.8rem;
     }
     .notification-title {
-        margin-bottom: 8px;
-        font-weight: 700;
-        color: #fff;
-        font-size: 1.6rem;
-        letter-spacing: 0.5px;
-        text-shadow: 0 2px 8px rgba(5, 38, 89, 0.10);
+        margin-bottom: 10px;
+        font-weight: 600;
+        color: var(--text-darker);
     }
     .notification-time {
-        color: #e3f0fa;
-        font-size: 1rem;
-        margin-bottom: 0;
+        color: var(--text-light);
+        font-size: 0.9rem;
     }
     .notification-body {
         padding: 32px 30px 30px 30px;
@@ -213,52 +270,94 @@
     .section-title {
         font-size: 1.05rem;
         font-weight: 600;
-        color: #052659;
-        margin-bottom: 10px;
+        color: var(--text-dark);
+        margin-bottom: 12px;
     }
     .section-content {
-        background-color: #f8f9fa;
-        padding: 18px;
+        background-color: var(--background-light);
+        padding: 20px;
         border-radius: 10px;
         font-size: 1.08rem;
         line-height: 1.6;
-        color: #343a40;
+        color: var(--text-dark);
     }
     .section-content.amount {
         font-size: 1.5rem;
-        font-weight: 700;
-        color: #0d6efd;
-        background: #e3f0fa;
+        font-weight: 600;
+        color: var(--primary);
     }
     .notification-action {
         text-align: center;
         margin-top: 28px;
     }
-    .btn-outline-primary {
-        border-color: #7DA0CA;
-        color: #7DA0CA;
-        padding: 8px 18px;
-        font-weight: 600;
-        border-radius: 6px;
-        transition: background 0.2s, color 0.2s;
+    
+    .btn-back {
+        background-color: var(--background-light);
+        color: var(--text-dark);
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-weight: 500;
+        transition: var(--hover-transition);
     }
-    .btn-outline-primary:hover {
-        background-color: #7DA0CA;
-        color: #fff;
-        border-color: #7DA0CA;
+    
+    .btn-back:hover {
+        background-color: var(--primary-light);
+        color: var(--text-darker);
+        transform: var(--hover-scale);
     }
-    .btn-primary, .btn-primary:focus, .btn-primary:active, .btn-primary:hover {
-        background: #7DA0CA !important;
-        border-color: #7DA0CA !important;
-        color: #fff !important;
-        box-shadow: none !important;
+    
+    .btn-primary {
+        background-color: var(--primary);
+        border-color: var(--primary);
     }
-    /* Responsive adjustments */
-    @media (max-width: 575.98px) {
-        .notification-header, .notification-body {
-            padding: 18px 8px;
-        }
+    
+    .btn-primary:hover {
+        background-color: var(--primary-dark);
+        border-color: var(--primary-dark);
+        transform: var(--hover-scale);
+    }
+    
+    /* Icon colors */
+    .bg-success {
+        background-color: var(--success);
+    }
+    
+    .bg-danger {
+        background-color: var(--error);
+    }
+    
+    .bg-warning {
+        background-color: var(--warning);
+    }
+    
+    .bg-primary {
+        background-color: var(--primary);
+    }
+    
+    /* Back button */
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        color: var(--text-light);
+        text-decoration: none;
+        margin-bottom: 20px;
+        font-weight: 500;
+        transition: all 0.2s ease;
+    }
+    
+    .back-link:hover {
+        color: var(--primary);
+        transform: translateX(-3px);
+    }
+    
+    .back-link i {
+        margin-right: 5px;
     }
 </style>
 @endpush
+
+
+
+
 

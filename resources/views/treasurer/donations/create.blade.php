@@ -128,9 +128,7 @@
                             <button type="submit" class="btn btn-primary">
                                 <i class="fas fa-save"></i> Save Donation
                             </button>
-                            <a href="{{ route('treasurer.donations.index') }}" class="btn btn-secondary">
-                                <i class="fas fa-times"></i> Cancel
-                            </a>
+                            <a href="{{ route('treasurer.donations.index') }}" class="btn btn-primary">Cancel</a>
                         </div>
                     </form>
                 </div>
