@@ -71,7 +71,6 @@ class User extends Authenticatable
         }
     }
 
-<<<<<<< HEAD
     /**
      * Get the registrations for the user.
      */
@@ -89,40 +88,6 @@ class User extends Authenticatable
             return asset('storage/' . ltrim($this->image_path, '/'));
         }
         return asset('images/default-avatar.png');
-=======
-    public function roles(): BelongsToMany
-    {
-        return $this->belongsToMany(Role::class);
-    }
-
-    public function hasRole($role): bool
-    {
-        return $this->roles()->where('slug', $role)->exists();
-    }
-
-    public function hasAnyRole($roles): bool
-    {
-        return $this->roles()->whereIn('slug', (array) $roles)->exists();
-    }
-
-    public function hasPermission($permission): bool
-    {
-        return $this->roles()
-            ->whereHas('permissions', function ($query) use ($permission) {
-                $query->where('slug', $permission);
-            })
-            ->exists();
-    }
-
-    public function notifications()
-    {
-        return $this->morphMany(DatabaseNotification::class, 'notifiable')->orderBy('created_at', 'desc');
-    }
-
-    public function unreadNotifications()
-    {
-        return $this->morphMany(DatabaseNotification::class, 'notifiable')->whereNull('read_at');
->>>>>>> dcc4ddb01e197c1848dab4334c14c76217405647
     }
 }
 
