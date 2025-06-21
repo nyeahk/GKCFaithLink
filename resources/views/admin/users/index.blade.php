@@ -9,59 +9,7 @@
     @if(session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
-    
-    <!-- Search and Filters -->
-    <div class="card mb-4 admin-filter-section">
-        <div class="card-body">
-            <form action="{{ route('admin.users.index') }}" method="GET" class="row g-3 align-items-end">
-                <!-- Search -->
-                <div class="col-md-4">
-                    <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Search by name, email or username" 
-                               name="search" value="{{ request('search') }}">
-                        <button class="btn btn-outline-secondary" type="submit">
-                            <i class="bi bi-search"></i>
-                        </button>
-                    </div>
-                </div>
-                
-                <!-- Role Filter -->
-                <div class="col-md-3">
-                    <select name="role" class="form-select">
-                        <option value="">All Roles</option>
-                        <option value="1" {{ request('role') == '1' ? 'selected' : '' }}>Administrator</option>
-                        <option value="2" {{ request('role') == '2' ? 'selected' : '' }}>Treasurer</option>
-                        <option value="3" {{ request('role') == '3' ? 'selected' : '' }}>Member</option>
-                        <option value="4" {{ request('role') == '4' ? 'selected' : '' }}>Staff</option>
-                    </select>
-                </div>
-                
-                <!-- Status Filter -->
-                <div class="col-md-3">
-                    <select name="status" class="form-select">
-                        <option value="">All Status</option>
-                        <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Active</option>
-                        <option value="disabled" {{ request('status') == 'disabled' ? 'selected' : '' }}>Disabled</option>
-                    </select>
-                </div>
-                
-                <!-- Filter Button -->
-                <div class="col-md-2">
-                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                        <button type="submit" class="btn btn-primary filter-button">
-                            <i class="bi bi-funnel-fill me-1"></i> Filter
-                        </button>
-                        @if(request()->anyFilled(['search', 'role', 'status']))
-                            <a href="{{ route('admin.users.index') }}" class="btn btn-outline-secondary">
-                                <i class="bi bi-x-circle"></i> Clear
-                            </a>
-                        @endif
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-    
+  <br>
     <div class="card">
         <div class="card-body">
             <div class="table-responsive">

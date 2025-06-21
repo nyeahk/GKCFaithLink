@@ -31,7 +31,7 @@ class EventCreatedNotification extends Notification implements ShouldQueue
             ->greeting('Hello!')
             ->line('A new event has been created: ' . $this->event->title)
             ->line($this->event->description)
-            ->action('View Event', route('staff.events.show', $this->event->id))
+            ->action('View Event', route('member.events.show', $this->event->id))
             ->line('Thank you for staying connected!');
     }
 
@@ -42,7 +42,7 @@ class EventCreatedNotification extends Notification implements ShouldQueue
             'message' => 'A new event has been created: ' . $this->event->title,
             'description' => $this->event->description,
             'event_id' => $this->event->id,
-            'url' => route('staff.events.show', $this->event->id),
+            'url' => route('member.events.show', $this->event->id),
         ];
     }
 } 

@@ -47,6 +47,8 @@
                     @elseif(auth()->user()->role == 1)
                         <form action="{{ route('admin.profile.password.update') }}" method="POST">
                     @elseif(auth()->user()->role == 2)
+                        <form action="{{ route('treasurer.profile.password.update') }}" method="POST">
+                    @elseif(auth()->user()->role == 4)
                         <form action="{{ route('staff.profile.password.update') }}" method="POST">
                     @endif
                         @csrf

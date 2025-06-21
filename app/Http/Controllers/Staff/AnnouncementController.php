@@ -62,8 +62,8 @@ class AnnouncementController extends Controller
 
             $announcement->save();
 
-            // Notify admin, staff, and member roles
-            $rolesToNotify = [1, 3, 4]; // 1=Admin, 3=Member, 4=Staff
+            // Notify all roles that have access to announcements: admin, staff, treasurer, member
+            $rolesToNotify = [1, 2, 3, 4]; // 1=Admin, 2=Treasurer, 3=Member, 4=Staff
             $usersToNotify = \App\Models\User::whereIn('role', $rolesToNotify)->get();
             foreach ($usersToNotify as $user) {
                 $user->notify(new \App\Notifications\AnnouncementCreatedNotification($announcement));

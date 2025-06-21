@@ -249,8 +249,8 @@
                                     <td class="{{ !$day['isCurrentMonth'] ? 'other-month' : '' }} 
                                              {{ $day['isToday'] ? 'today' : '' }}
                                              {{ isset($day['events']) && count($day['events']) > 0 ? 'has-events' : '' }}"
-                                        data-date="{{ $day['date'] }}"
-                                        onclick="showEventsForDate('{{ $day['date'] }}')">
+                                        data-date="{{ $day['date']->format('Y-m-d') }}"
+                                        onclick="showEventsForDate('{{ $day['date']->format('Y-m-d') }}')">
                                         <div class="day-number">{{ $day['day'] }}</div>
                                         @if(isset($day['events']) && count($day['events']) > 0)
                                             <div class="event-indicator">
@@ -375,7 +375,7 @@
         window.eventsModal.show();
         
         // Fetch events for the selected date
-        fetch(`/admin/events/date/${date}`)
+        fetch(`/staff/events/date/${date}`)
             .then(response => response.json())
             .then(data => {
                 modalDate.textContent = data.date;
@@ -401,7 +401,7 @@
                                         <span class="badge ${event.status_class}">${event.status}</span>
                                     </div>
                                     <p class="card-text">${event.description}</p>
-                                    <a href="/admin/events/${event.id}" class="btn btn-sm btn-primary">
+                                    <a href="/staff/events/${event.id}" class="btn btn-sm btn-primary">
                                         <i class="bi bi-eye me-1"></i> View Details
                                     </a>
                                 </div>

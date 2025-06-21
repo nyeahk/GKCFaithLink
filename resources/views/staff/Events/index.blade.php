@@ -46,7 +46,7 @@
                         <th>End Date</th>
                         <th>Location</th>
                         <th>Status</th>
-                        <th>Actions</th>
+                        <th class="text-center">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -73,7 +73,7 @@
                                 </span>
                             </td>
                             <td class="actions">
-                                <button class="btn btn-action btn-view" title="View Event" data-event-id="{{ $event->id }}">
+                                <button class="btn btn-action btn-view"  title="View Event" data-event-id="{{ $event->id }}">
                                     <i class="fas fa-eye"></i>
                                 </button>
                                 <a href="{{ route('staff.events.edit', $event->id) }}" class="btn btn-action btn-edit" title="Edit Event">
@@ -149,10 +149,6 @@
                         <h4>Description</h4>
                         <p id="eventDetailsDescription">-</p>
                     </div>
-                    <div class="event-location-map">
-                        <h4>Location</h4>
-                        <div id="eventMap" style="height: 300px; width: 100%; margin-top: 1rem;"></div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -160,7 +156,6 @@
 @endsection
 
 @push('styles')
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <style>
     .events-container {
         padding: 2rem;
@@ -222,6 +217,10 @@
         border-bottom: 1px solid #e2e8f0;
     }
 
+    th.text-center {
+        text-align: center;
+    }
+
     td {
         padding: 1rem;
         border-bottom: 1px solid #e2e8f0;
@@ -267,9 +266,18 @@
         color: #991b1b;
     }
 
+    /* Align actions with status */
+    td:last-child {
+        vertical-align: middle;
+    }
+
     .actions {
         display: flex;
         gap: 0.5rem;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        min-height: 2.5rem;
     }
 
     .btn-action {
@@ -279,34 +287,55 @@
         width: 2.5rem;
         height: 2.5rem;
         border-radius: 0.375rem;
-        transition: all 0.2s;
+        border: none;
+        background: transparent;
+        transition: all 0.2s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-action i {
+        transition: all 0.2s ease;
+        font-size: 1rem;
     }
 
     .btn-view {
-        background-color: #ebf8ff;
         color: #2b6cb0;
     }
 
     .btn-view:hover {
-        background-color: #bee3f8;
+        background-color: transparent;
+    }
+
+    .btn-view:hover i {
+        color: #1e40af;
+        transform: scale(1.1);
     }
 
     .btn-edit {
-        background-color: #ebf8ff;
         color: #2b6cb0;
     }
 
     .btn-edit:hover {
-        background-color: #bee3f8;
+        background-color: transparent;
+    }
+
+    .btn-edit:hover i {
+        color: #1e40af;
+        transform: scale(1.1);
     }
 
     .btn-delete {
-        background-color: #fff5f5;
         color: #c53030;
     }
 
     .btn-delete:hover {
-        background-color: #fed7d7;
+        background-color: transparent;
+    }
+
+    .btn-delete:hover i {
+        color: #991b1b;
+        transform: scale(1.1);
     }
 
     .empty-state {
@@ -479,26 +508,6 @@
         white-space: pre-wrap;
     }
 
-    .event-location-map {
-        margin-top: 1.5rem;
-        padding: 1rem;
-        background-color: #f7fafc;
-        border-radius: 0.5rem;
-    }
-
-    .event-location-map h4 {
-        color: #2d3748;
-        margin-bottom: 0.5rem;
-    }
-
-    #eventMap {
-        height: 300px;
-        width: 100%;
-        margin-top: 1rem;
-        border-radius: 0.5rem;
-        z-index: 1;
-    }
-
     .event-image {
         margin-bottom: 1.5rem;
         text-align: center;
@@ -544,27 +553,7 @@
 @endpush
 
 @push('scripts')
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-let map;
-let marker;
-
-function initMap() {
-    const mapContainer = document.getElementById('eventMap');
-    if (!mapContainer) {
-        console.error('Map container not found');
-        return;
-    }
-
-    // Initialize map with default center (Manila)
-    map = L.map(mapContainer).setView([14.5995, 120.9842], 13);
-    
-    // Add OpenStreetMap tiles
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(map);
-}
-
 document.addEventListener('DOMContentLoaded', function() {
     const eventDetailsModal = document.getElementById('eventDetailsModal');
     const modalContent = document.querySelector('.modal-content');
@@ -620,18 +609,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 <h4>Description</h4>
                 <p id="eventDetailsDescription">-</p>
             </div>
-            <div class="event-location-map">
-                <h4>Location</h4>
-                <div id="eventMap" style="height: 300px; width: 100%; margin-top: 1rem;"></div>
-            </div>
         `;
         eventDetailsModal.style.display = 'block';
         modalContent.style.display = 'block';
-
-        // Initialize map if not already done
-        if (!map) {
-            initMap();
-        }
 
         // Fetch event details
         fetch(`/staff/events/${eventId}`, {
@@ -681,35 +661,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     };
                     imageContainer.appendChild(image);
                     eventDetailsContent.insertBefore(imageContainer, eventDetailsContent.firstChild);
-                }
-
-                // Update map with event location
-                if (data.location && map) {
-                    // Use OpenStreetMap Nominatim for geocoding
-                    fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(data.location)}&countrycodes=ph`)
-                        .then(response => response.json())
-                        .then(results => {
-                            if (results && results.length > 0) {
-                                const location = results[0];
-                                
-                                // Remove existing marker if any
-                                if (marker) {
-                                    map.removeLayer(marker);
-                                }
-                                
-                                // Center map on the location
-                                map.setView([location.lat, location.lon], 15);
-                                
-                                // Add marker
-                                marker = L.marker([location.lat, location.lon])
-                                    .addTo(map)
-                                    .bindPopup(data.title)
-                                    .openPopup();
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error geocoding location:', error);
-                        });
                 }
             })
             .catch(error => {

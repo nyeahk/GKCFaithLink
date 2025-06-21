@@ -71,9 +71,19 @@
                         <button type="submit" class="btn btn-primary">
                             <i class="bi bi-search me-1"></i>Apply Filters
                         </button>
-                        <a href="{{ route('admin.reports.weekly') }}" class="btn btn-outline-secondary">
-                            <i class="bi bi-arrow-clockwise me-1"></i>Reset
-                        </a>
+                        @if(auth()->user()->role_id == 1)
+                            <a href="{{ route('admin.reports.weekly') }}" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-clockwise me-1"></i>Reset
+                            </a>
+                        @elseif(auth()->user()->role_id == 2)
+                            <a href="{{ route('treasurer.reports.weekly') }}" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-clockwise me-1"></i>Reset
+                            </a>
+                        @else
+                            <a href="{{ route('reports.weekly') }}" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-clockwise me-1"></i>Reset
+                            </a>
+                        @endif
                     </div>
                 </div>
             </form>

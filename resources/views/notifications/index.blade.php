@@ -3,13 +3,28 @@
 @section('title', 'Notifications - GKC FaithLink')
 
 @section('content')
+@php
+    // Determine the appropriate back route based on user role
+    $user = auth()->user();
+    $backRoute = match($user->role) {
+        1 => 'admin.dashboard',
+        2 => 'treasurer.dashboard',
+        3 => 'member.dashboard', 
+        4 => 'staff.dashboard',
+        default => 'dashboard'
+    };
+@endphp
+
+<!-- Include role-aware navigation -->
+@include('layouts.navigation')
+
 <div class="notifications-page">
     <!-- Header Section -->
     <div class="notifications-header">
         <div class="container">
             <div class="header-content">
                 <div class="header-left">
-                    <button onclick="goBack('{{ route('dashboard') }}')" class="back-btn">
+                    <button onclick="goBack('{{ route($backRoute) }}')" class="back-btn">
                         <i class="fas fa-arrow-left"></i>
                     </button>
                     <div class="header-info">
@@ -112,6 +127,10 @@
                                             return ['icon' => 'fas fa-calendar-check', 'class' => 'info'];
                                         } elseif ($type == 'App\Notifications\EventVolunteerNotification') {
                                             return ['icon' => 'fas fa-users', 'class' => 'primary'];
+                                        } elseif ($type == 'App\Notifications\EventCreatedNotification') {
+                                            return ['icon' => 'fas fa-calendar-plus', 'class' => 'success'];
+                                        } elseif ($type == 'App\Notifications\AnnouncementCreatedNotification') {
+                                            return ['icon' => 'fas fa-bullhorn', 'class' => 'info'];
                                         } else {
                                             return ['icon' => 'fas fa-bell', 'class' => 'secondary'];
                                         }
@@ -131,6 +150,10 @@
                                             return 'Event Registration';
                                         } elseif ($type == 'App\Notifications\EventVolunteerNotification') {
                                             return 'Volunteer Opportunity';
+                                        } elseif ($type == 'App\Notifications\EventCreatedNotification') {
+                                            return 'New Event Created';
+                                        } elseif ($type == 'App\Notifications\AnnouncementCreatedNotification') {
+                                            return 'New Announcement';
                                         } else {
                                             return 'Notification';
                                         }
@@ -722,16 +745,34 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 1.5rem;
-        background: white;
-        border-radius: var(--border-radius);
-        box-shadow: var(--shadow-sm);
+        padding: 1.5rem 0;
         margin-top: 2rem;
+        border-top: 1px solid #e9ecef;
     }
-
     .pagination-info {
-        color: var(--text-light);
-        font-size: 0.875rem;
+        font-size: 0.9rem;
+        color: #6c757d;
+    }
+    .pagination-controls .pagination {
+        margin: 0;
+    }
+    .pagination-controls .page-item .page-link {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        height: 38px !important;
+        min-width: 38px !important;
+        padding: 0.25rem 0.75rem !important;
+        line-height: 1 !important; /* Aligns text vertically */
+    }
+    .pagination .page-item.active .page-link {
+        font-weight: 600;
+    }
+    .pagination .page-item.disabled .page-link {
+        color: #adb5bd;
+    }
+    .pagination .page-link:focus {
+        box-shadow: none;
     }
 
     /* Loading State */
@@ -759,7 +800,12 @@
         border-top: 4px solid var(--primary);
         border-radius: 50%;
         animation: spin 1s linear infinite;
-        margin: 0 auto 1rem;
+    }
+
+    .loading-state p {
+        margin-top: 1rem;
+        font-size: 1rem;
+        color: #6c757d;
     }
 
     @keyframes spin {
@@ -965,6 +1011,19 @@
     .filter-dropdown-menu a:hover {
         background-color: var(--background-light);
         color: var(--primary);
+    }
+</style>
+
+{{-- Force override for pagination button size --}}
+<style>
+    .pagination-controls .page-item .page-link {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        height: 38px !important;
+        min-width: 38px !important;
+        padding: 0.25rem 0.75rem !important;
+        line-height: 1 !important; /* Aligns text vertically */
     }
 </style>
 @endsection

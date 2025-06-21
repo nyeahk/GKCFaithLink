@@ -1,118 +1,93 @@
-@extends('layouts.staff')
+@php
+    // Determine the appropriate layout and routes based on user role
+    $user = auth()->user();
+    $role = $user->role;
+    
+    // Set layout based on role
+    $layout = match($role) {
+        1 => 'layouts.admin',
+        2 => 'layouts.treasurer',
+        3 => 'layouts.member',
+        4 => 'layouts.staff',
+        default => 'layouts.app'
+    };
+    
+    // Set back button route based on role
+    $notificationsRoute = match($role) {
+        1 => 'notifications.index',
+        2 => 'notifications.index',
+        3 => 'notifications.index',
+        4 => 'staff.notifications',
+        default => 'notifications.index'
+    };
+    
+    // Helper to get notification icon and color
+    function getNotificationAppearance($type) {
+        return match (true) {
+            str_contains($type, 'DonationApproved') => ['icon' => 'fas fa-check-circle', 'color' => 'text-success'],
+            str_contains($type, 'DonationDeclined') => ['icon' => 'fas fa-times-circle', 'color' => 'text-danger'],
+            str_contains($type, 'NewDonation') => ['icon' => 'fas fa-hand-holding-usd', 'color' => 'text-warning'],
+            str_contains($type, 'EventCreated') => ['icon' => 'fas fa-calendar-plus', 'color' => 'text-info'],
+            str_contains($type, 'EventRegistration') => ['icon' => 'fas fa-calendar-check', 'color' => 'text-primary'],
+            str_contains($type, 'AnnouncementCreated') => ['icon' => 'fas fa-bullhorn', 'color' => 'text-info'],
+            default => ['icon' => 'fas fa-bell', 'color' => 'text-secondary'],
+        };
+    }
 
-@section('title', 'Notifications - GKC FaithLink')
+    $appearance = getNotificationAppearance($notification->type);
+@endphp
+
+@extends($layout)
+
+@section('title', 'Notification Details')
 
 @section('content')
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-12">
-            <div class="card shadow-sm mb-4">
-                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0"><i class="bi bi-bell-fill me-2"></i> {{ $notification->title }}</h5>
-                    <a href="{{ route('staff.notifications') }}" class="btn btn-sm btn-light">
-                        <i class="bi bi-arrow-left me-1"></i> Back to Notifications
-                     </a>
-                </div>
-
-                <div class="card-body">
-                    @if(session('success'))
-                        <div class="alert alert-success">
-                            <i class="bi bi-check-circle me-2"></i> {{ session('success') }}
-                        </div>
-                    @endif
-                    
-                    @if(session('error'))
-                        <div class="alert alert-danger">
-                            <i class="bi bi-exclamation-circle me-2"></i> {{ session('error') }}
-                        </div>
-                    @endif
-                    
-                    <div class="row">
-                        <div class="col-md-6">
-                            @if($notification->image_path)
-                            <img src="{{ asset('storage/' . $notification->image_path) }}" alt="{{ $notification->title }}" class="img-fluid rounded mb-4">
-                            @endif
-                        </div>
-
-                            
-                            <h4>Event Details</h4>
-                            <div class="mb-3">
-                                <div class="d-flex align-items-center mb-2">
-                                    <div class="icon-box bg-primary text-white me-3">
-                                        <i class="bi bi-calendar3"></i>
-                                    </div>
-                                    <div>
-                                        <strong>Date:</strong><br>
-                                            @if($notification->event && $notification->event->start_date)
-                                                {{ $notification->event->start_date->format('F j, Y') }}
-                                                @if($notification->event->end_date && !$notification->event->start_date->isSameDay($notification->event->end_date))
-                                                 - {{ $notification->event->end_date->format('F j, Y') }}
-                                                @endif
-                                            @elseif($notification->created_at)
-                                                {{ $notification->created_at->format('F j, Y') }}
-                                             @else
-                                                <em>No date available</em>
-                                            @endif
-                                    </div>
-
-
-                                </div>
-                                
-                                <div class="d-flex align-items-center mb-2">
-                                    <div class="icon-box bg-primary text-white me-3">
-                                        <i class="bi bi-clock"></i>
-                                    </div>
-                                    <div>
-                                        <strong>Time:</strong><br>
-                                        @if($notification->event && $notification->event->start_date)
-                                            {{ $notification->event->start_date->format('g:i A') }}
-                                            @if($notification->event->end_date)
-                                                - {{ $notification->event->end_date->format('g:i A') }}
-                                            @endif
-                                        @elseif($notification->created_at)
-                                            {{ $notification->created_at->format('g:i A') }}
-                                        @else
-                                            <em>No time available</em>
-                                        @endif
-                                    </div>
-
-                                </div>
-                                
-                                <div class="d-flex align-items-center mb-2">
-                                    <div class="icon-box bg-primary text-white me-3">
-                                        <i class="bi bi-geo-alt"></i>
-                                    </div>
-                                    <div>
-                                        <strong>Location:</strong><br>
-                                        @if($notification->event && $notification->event->location)
-                                            {{ $notification->event->location }}
-                                        @else
-                                            <em>No location provided</em>
-                                        @endif
-                                    </div>
- 
-                                  
-    <div class="col-md-6 d-flex align-items-start justify-content-end mb-2">
-        <div class="text-end w-100" style="margin-top: -24px;">
-            <h5>Description</h5>
-            @if($notification->event && $notification->event->description)
-                {!! nl2br(e($notification->event->description)) !!}
-            @else
-                <em>No description available</em>
-            @endif
+<div class="notification-details-container">
+    <div class="notification-card">
+        <div class="card-header">
+            <a href="{{ route($notificationsRoute) }}" class="back-link">
+                <i class="fas fa-arrow-left"></i>
+                <span>Back to Notifications</span>
+            </a>
         </div>
-    </div>
+        <div class="card-body">
+            <div class="notification-icon">
+                <i class="{{ $appearance['icon'] }} {{ $appearance['color'] }}"></i>
+            </div>
+            <h1 class="notification-title">
+                {{ $notification->data['title'] ?? 'Notification' }}
+            </h1>
+            <p class="notification-message">
+                {{ $notification->data['message'] ?? 'No message provided.' }}
+            </p>
+            <div class="notification-meta">
+                <i class="fas fa-clock"></i>
+                <span id="notification-time" data-time="{{ $notification->created_at->toIso8601String() }}">
+                    {{ $notification->created_at->format('F d, Y, g:i A') }} ({{ $notification->created_at->diffForHumans() }})
+                </span>
+            </div>
 
+            <hr class="notification-divider">
 
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-                        
-                        
+            <div class="details-list">
+                @if(isset($notification->data['amount']))
+                    <div class="detail-item">
+                        <span class="item-label">Amount</span>
+                        <span class="item-value font-weight-bold">₱{{ number_format($notification->data['amount'], 2) }}</span>
                     </div>
-                </div>
+                @endif
+                @if(isset($notification->data['description']))
+                    <div class="detail-item">
+                        <span class="item-label">Description</span>
+                        <span class="item-value">{{ $notification->data['description'] }}</span>
+                    </div>
+                @endif
+                @if(isset($notification->data['notes']))
+                    <div class="detail-item">
+                        <span class="item-label">Notes</span>
+                        <span class="item-value">{{ $notification->data['notes'] }}</span>
+                    </div>
+                @endif
             </div>
         </div>
     </div>
@@ -121,18 +96,113 @@
 
 @push('styles')
 <style>
-    .icon-box {
-        width: 40px;
-        height: 40px;
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.2rem;
+    .notification-details-container {
+        padding: 2rem 1rem;
+        background-color: #f8f9fa;
     }
+    .notification-card {
+        max-width: 700px;
+        margin: 0 auto;
+        background-color: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        overflow: hidden;
+    }
+    .card-header {
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid #e9ecef;
+    }
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #6c757d;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s;
+    }
+    .back-link:hover {
+        color: #343a40;
+    }
+    .card-body {
+        padding: 2.5rem;
+        text-align: center;
+    }
+    .notification-icon {
+        font-size: 3.5rem;
+        margin-bottom: 1.5rem;
+    }
+    .notification-icon .text-success { color: #28a745 !important; }
+    .notification-icon .text-danger { color: #dc3545 !important; }
+    .notification-icon .text-warning { color: #ffc107 !important; }
+    .notification-icon .text-info { color: #17a2b8 !important; }
+    .notification-icon .text-primary { color: #007bff !important; }
     
-    .event-description {
-        white-space: pre-line;
+    .notification-title {
+        font-size: 1.75rem;
+        font-weight: 600;
+        color: #343a40;
+        margin-bottom: 0.5rem;
+    }
+    .notification-message {
+        font-size: 1.1rem;
+        color: #6c757d;
+        margin-bottom: 1.5rem;
+    }
+    .notification-meta {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #6c757d;
+        font-size: 0.9rem;
+        background-color: #f8f9fa;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+    }
+    .notification-divider {
+        margin: 2rem auto;
+        border-color: #e9ecef;
+        width: 80%;
+    }
+    .details-list {
+        text-align: left;
+        margin-bottom: 2rem;
+    }
+    .detail-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 1rem;
+        border-bottom: 1px solid #e9ecef;
+    }
+    .detail-item:last-child {
+        border-bottom: none;
+    }
+    .item-label {
+        font-weight: 600;
+        color: #495057;
+    }
+    .item-value {
+        color: #6c757d;
+    }
+    .notification-actions {
+        margin-top: 1rem;
     }
 </style>
+@endpush
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/timeago.js@4.0.2/dist/timeago.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var timeElem = document.getElementById('notification-time');
+        if (timeElem) {
+            var time = timeElem.getAttribute('data-time');
+            function updateTimeago() {
+                timeElem.innerHTML = timeago.format(time);
+            }
+            updateTimeago();
+            setInterval(updateTimeago, 60000); // update every minute
+        }
+    });
+</script>
 @endpush

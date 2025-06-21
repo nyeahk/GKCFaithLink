@@ -137,19 +137,17 @@ class DashboardController extends Controller
     /**
      * Get events for a specific date (AJAX request)
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  string  $date
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getEventsForDate(Request $request)
+    public function getEventsForDate($date)
     {
         try {
-            // Get the date from the request
-            $date = $request->input('date');
-            
             if (!$date) {
                 \Log::warning('Date parameter is missing in events request');
                 return response()->json([
                     'date' => 'Unknown Date',
+                    'hasEvents' => false,
                     'events' => []
                 ]);
             }
@@ -176,25 +174,43 @@ class DashboardController extends Controller
                 return [
                     'id' => $event->id,
                     'title' => $event->title,
-                    'time' => $event->start_date->format('g:i A') . ' - ' . $event->end_date->format('g:i A'), // 12-hour format
+                    'start_time' => $event->start_date->format('g:i A'),
+                    'end_time' => $event->end_date->format('g:i A'),
                     'location' => $event->location ?? 'No location specified',
                     'status' => ucfirst($event->status ?? 'unknown'),
+                    'status_class' => $this->getStatusClass($event->status),
+                    'description' => $event->description ?? 'No description available',
                     'url' => route('staff.events.show', $event->id)
                 ];
             });
             
             return response()->json([
                 'date' => $parsedDate->format('F d, Y'),
+                'hasEvents' => $events->count() > 0,
                 'events' => $mappedEvents
             ]);
         } catch (\Exception $e) {
             \Log::error('Error in getEventsForDate: ' . $e->getMessage() . "\n" . $e->getTraceAsString());
             
             return response()->json([
-                'date' => $request->input('date') ? Carbon::parse($request->input('date'))->format('F d, Y') : 'Unknown Date',
+                'date' => $date ? Carbon::parse($date)->format('F d, Y') : 'Unknown Date',
+                'hasEvents' => false,
                 'events' => []
             ], 500);
         }
+    }
+
+    /**
+     * Get status class for badge styling
+     */
+    private function getStatusClass($status)
+    {
+        return match($status) {
+            'draft' => 'bg-secondary',
+            'published' => 'bg-success',
+            'cancelled' => 'bg-danger',
+            default => 'bg-secondary'
+        };
     }
 
     // Add this method for AJAX polling

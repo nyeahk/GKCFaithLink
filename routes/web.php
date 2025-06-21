@@ -65,6 +65,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/notifications/mark-all-read', [App\Http\Controllers\NotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-read');
     Route::post('/notifications/{id}/mark-as-read', [App\Http\Controllers\NotificationController::class, 'markAsRead'])->name('notifications.mark-as-read');
     Route::get('/notifications/count', [App\Http\Controllers\NotificationController::class, 'getUnreadCount'])->name('notifications.count');
+    Route::get('/notifications/check-new', [App\Http\Controllers\NotificationController::class, 'checkNew'])->name('notifications.check-new');
 
 
     // Admin routes - only accessible by users with role 1 (admin)

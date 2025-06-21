@@ -7,6 +7,7 @@ use App\Models\Event;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
+use App\Events\EventCreated;
 
 class EventController extends Controller
 {
@@ -66,11 +67,37 @@ class EventController extends Controller
 
         $event = Event::create($validated);
 
-        // Notify admin, staff, and member roles
-        $rolesToNotify = [1, 3, 4]; // 1=Admin, 3=Member, 4=Staff
-        $usersToNotify = \App\Models\User::whereIn('role', $rolesToNotify)->get();
+        // Notify members and other roles that should be aware of new events
+        // Members (role 3) - primary audience for event notifications
+        // Admins (role 1) and Treasurers (role 2) - for oversight
+        $rolesToNotify = [1, 2, 3]; // 1=Admin, 2=Treasurer, 3=Member
+        $usersToNotify = \App\Models\User::whereIn('role', $rolesToNotify)
+            ->where('is_active', true) // Only notify active users
+            ->get();
+        
+        // Debug: Log the number of users to notify
+        \Log::info('Event created: ' . $event->title . ' - Notifying ' . $usersToNotify->count() . ' users');
+        
         foreach ($usersToNotify as $user) {
-            $user->notify(new \App\Notifications\EventCreatedNotification($event));
+            try {
+                $user->notify(new \App\Notifications\EventCreatedNotification($event));
+                \Log::info('Notification sent to user: ' . $user->email . ' (Role: ' . $user->role . ')');
+            } catch (\Exception $e) {
+                \Log::error('Failed to send notification to user ' . $user->email . ': ' . $e->getMessage());
+            }
+        }
+        
+        // Broadcast the event for real-time notifications (once for all users)
+        try {
+            broadcast(new EventCreated($event, [
+                'title' => 'New Event Created',
+                'message' => 'A new event has been created: ' . $event->title,
+                'event_id' => $event->id,
+                'url' => route('member.events.show', $event->id),
+            ]))->toOthers();
+            \Log::info('Event broadcasted successfully');
+        } catch (\Exception $e) {
+            \Log::error('Failed to broadcast event: ' . $e->getMessage());
         }
 
         return redirect()->route('staff.events.index')

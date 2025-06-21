@@ -90,6 +90,14 @@
                                                     <div class="icon-circle bg-primary">
                                                         <i class="fas fa-hands-helping text-white"></i>
                                                     </div>
+                                                @elseif($notification->type == 'App\Notifications\EventCreatedNotification')
+                                                    <div class="icon-circle bg-success">
+                                                        <i class="fas fa-calendar-plus text-white"></i>
+                                                    </div>
+                                                @elseif($notification->type == 'App\Notifications\AnnouncementCreatedNotification')
+                                                    <div class="icon-circle bg-info">
+                                                        <i class="fas fa-bullhorn text-white"></i>
+                                                    </div>
                                                 @else
                                                     <div class="icon-circle bg-secondary">
                                                         <i class="fas fa-bell text-white"></i>
@@ -115,6 +123,10 @@
                                                             Event Registration
                                                         @elseif($notification->type == 'App\Notifications\EventVolunteerNotification')
                                                             Event Volunteer
+                                                        @elseif($notification->type == 'App\Notifications\EventCreatedNotification')
+                                                            New Event Created
+                                                        @elseif($notification->type == 'App\Notifications\AnnouncementCreatedNotification')
+                                                            New Announcement
                                                         @else
                                                             Notification
                                                         @endif
@@ -142,7 +154,15 @@
                             
                             <!-- Footer with view all link -->
                             <div class="dropdown-footer text-center p-2 border-top">
-                                <a href="{{ route('notifications.index') }}" class="btn btn-link text-decoration-none w-100">
+                                @php
+                                    // Determine the appropriate notifications route based on user role
+                                    $user = auth()->user();
+                                    $notificationsRoute = match($user->role) {
+                                        4 => 'staff.notifications', // Staff
+                                        default => 'notifications.index' // Admin, Treasurer, Member
+                                    };
+                                @endphp
+                                <a href="{{ route($notificationsRoute) }}" class="btn btn-link text-decoration-none w-100">
                                     View all notifications <i class="fas fa-arrow-right ms-1"></i>
                                 </a>
                             </div>

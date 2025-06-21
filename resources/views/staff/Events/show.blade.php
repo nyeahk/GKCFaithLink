@@ -61,14 +61,6 @@
                         {!! nl2br(e($event->description)) !!}
                     </div>
                 </div>
-
-                <div class="detail-section">
-                    <h3><i class="fas fa-map-marker-alt"></i> Location Details</h3>
-                    <div class="location-content">
-                        <p>{{ $event->location }}</p>
-                        <div id="eventMap" class="event-map"></div>
-                    </div>
-                </div>
             </div>
         </div>
 
@@ -228,27 +220,10 @@
         white-space: pre-wrap;
     }
 
-    .location-content {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-    }
-
-    .location-content p {
-        color: var(--text-secondary);
-        margin: 0;
-    }
-
-    .event-map {
-        height: 300px;
-        border-radius: 8px;
-        overflow: hidden;
-    }
-
     .event-footer {
         margin-top: 2rem;
         display: flex;
-        justify-content: flex-end;
+        justify-content: flex-start;
     }
 
     .btn {
@@ -325,36 +300,7 @@
 @endpush
 
 @push('scripts')
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize map if element exists
-    const mapElement = document.getElementById('eventMap');
-    if (mapElement) {
-        const map = L.map('eventMap').setView([0, 0], 2);
-        
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
-
-        // Geocode the location
-        const location = "{{ $event->location }}";
-        fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(location)}`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.length > 0) {
-                    const lat = parseFloat(data[0].lat);
-                    const lon = parseFloat(data[0].lon);
-                    map.setView([lat, lon], 15);
-                    L.marker([lat, lon]).addTo(map)
-                        .bindPopup(location)
-                        .openPopup();
-                }
-            })
-            .catch(error => {
-                console.error('Error geocoding location:', error);
-            });
-    }
-});
+    // No script needed for this view anymore
 </script>
 @endpush 

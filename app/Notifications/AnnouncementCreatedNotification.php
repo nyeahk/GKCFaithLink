@@ -31,7 +31,7 @@ class AnnouncementCreatedNotification extends Notification implements ShouldQueu
             ->greeting('Hello!')
             ->line('A new announcement has been posted: ' . $this->announcement->title)
             ->line($this->announcement->content)
-            ->action('View Announcement', route('staff.announcements.show', $this->announcement->id))
+            ->action('View Announcement', route('member.announcements.show', $this->announcement->id))
             ->line('Thank you for staying connected!');
     }
 
@@ -42,7 +42,7 @@ class AnnouncementCreatedNotification extends Notification implements ShouldQueu
             'message' => 'A new announcement has been posted: ' . $this->announcement->title,
             'description' => $this->announcement->content,
             'announcement_id' => $this->announcement->id,
-            'url' => route('staff.announcements.show', $this->announcement->id),
+            'url' => route('member.announcements.show', $this->announcement->id),
         ];
     }
 } 

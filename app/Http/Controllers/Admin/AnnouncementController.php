@@ -49,7 +49,14 @@ class AnnouncementController extends Controller
         }
         
         // Create the announcement
-        Announcement::create($validated);
+        $announcement = Announcement::create($validated);
+
+        // Notify all roles that have access to announcements: admin, staff, treasurer, member
+        $rolesToNotify = [1, 2, 3, 4]; // 1=Admin, 2=Treasurer, 3=Member, 4=Staff
+        $usersToNotify = \App\Models\User::whereIn('role', $rolesToNotify)->get();
+        foreach ($usersToNotify as $user) {
+            $user->notify(new \App\Notifications\AnnouncementCreatedNotification($announcement));
+        }
         
         return redirect()->route('announcements.index')->with('success', 'Announcement created successfully.');
     }
