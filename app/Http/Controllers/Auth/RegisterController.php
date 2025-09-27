@@ -19,20 +19,29 @@ class RegisterController extends Controller
     public function register(Request $request)
     {
         $request->validate([
-            'username' => 'required|string|max:255|unique:users',
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => ['required', 'confirmed', Password::min(8)],
         ]);
 
         $user = User::create([
-            'username' => $request->username,
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => 3,
+            'is_approved' => false,
         ]);
-        
+
+        // Notify all admins
+        $admins = User::where('role', 1)->get();
+        foreach ($admins as $admin) {
+            $admin->notify(new \App\Notifications\NewUserRegisteredNotification($user));
+        }
+
         // Instead of logging in the user immediately, redirect to login with success message
         return redirect()->route('login')
-            ->with('success', 'Registration successful! Please login with your credentials.');
+            ->with('success', 'Registration successful! Please wait for administrator approval.');
     }
 }

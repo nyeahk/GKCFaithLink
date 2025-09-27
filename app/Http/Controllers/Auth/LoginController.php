@@ -46,6 +46,16 @@ class LoginController extends Controller
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
             
+            // Block unapproved users
+            if (!$user->is_approved) {
+                Auth::logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+                return back()->withErrors([
+                    'email' => 'Your account is pending approval. Please wait for an administrator to approve your registration.'
+                ])->onlyInput('email');
+            }
+            
             // Check if the user is active
             if (!$user->is_active) {
                 Auth::logout();

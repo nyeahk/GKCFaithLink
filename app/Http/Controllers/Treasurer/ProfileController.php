@@ -11,48 +11,28 @@ use Illuminate\Support\Facades\Log;
 
 class ProfileController extends Controller
 {
-    /**
-     * Display the user's profile.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
         return view('profile.index');
     }
 
-    /**
-     * Show the form for editing the user's profile.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function edit()
     {
         return view('profile.edit');
     }
 
-    /**
-     * Show the form for changing the user's password.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function password()
     {
         return view('profile.password');
     }
 
-    /**
-     * Update the user's profile information.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request)
     {
         $user = auth()->user();
 
         $request->validate([
-            'name' => ['required', 'string', 'max:255'],
+            'first_name' => ['required', 'string', 'max:255'],
+            'last_name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
             'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
             'contact_number' => ['nullable', 'digits_between:10,11', 'regex:/^[0-9]+$/'],
@@ -60,40 +40,24 @@ class ProfileController extends Controller
         ]);
 
         try {
-            $user->name = $request->name;
-            $user->email = $request->email;
-            $user->contact_number = $request->contact_number;
-            $user->address = $request->address;
+            // Update basic info
+            $user->first_name = $request->input('first_name');
+            $user->last_name = $request->input('last_name');
+            $user->contact_number = $request->input('contact_number');
+            $user->address = $request->input('address');
 
             // Handle image upload
             if ($request->hasFile('image')) {
-                try {
-                    // Delete old image if exists
-                    if ($user->image_path) {
-                        try {
-                            Storage::disk('public')->delete($user->image_path);
-                        } catch (\Exception $e) {
-                            Log::error('Failed to delete old image: ' . $e->getMessage());
-                        }
-                    }
-                    
-                    // Store new image
-                    $path = $request->file('image')->store('profile-photos', 'public');
-                    
-                    // Log the path for debugging
-                    Log::info('Image stored at: ' . $path);
-                    
-                    // Update user with new image path
-                    $user->image_path = $path;
-                    
-                    // Verify the image exists
-                    if (!Storage::disk('public')->exists($path)) {
-                        Log::error('Image was saved but file does not exist at: ' . $path);
-                    }
-                } catch (\Exception $e) {
-                    Log::error('Failed to store new image: ' . $e->getMessage());
-                    return back()->withErrors(['image' => 'Failed to upload image. Please try again.']);
+                // Delete old image if exists
+                if ($user->image_path) {
+                    Storage::disk('public')->delete($user->image_path);
                 }
+                
+                // Store new image
+                $path = $request->file('image')->store('profile-photos', 'public');
+                
+                // Update user with new image path
+                $user->image_path = $path;
             }
 
             $user->save();
@@ -105,12 +69,6 @@ class ProfileController extends Controller
         }
     }
 
-    /**
-     * Update the user's password.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function updatePassword(Request $request)
     {
         $user = auth()->user();
@@ -135,3 +93,4 @@ class ProfileController extends Controller
         }
     }
 }
+

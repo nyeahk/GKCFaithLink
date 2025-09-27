@@ -333,10 +333,21 @@
                 <div class="form-group">
                     <label for="name" class="form-label">
                         <i class="fas fa-user"></i>
-                        Username
+                        First Name
                     </label>
-                    <input id="username" type="text" class="form-input @error('username') is-invalid @enderror" name="username" value="{{ old('username') }}" autocomplete="username" autofocus placeholder="Enter your username">
-                    @error('username')
+                    <input id="first_name" type="text" class="form-input @error('first_name') is-invalid @enderror" name="first_name" value="{{ old('first_name') }}" autocomplete="first_name" autofocus placeholder="Enter your first name">
+                    @error('first_name')
+                        <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div class="form-group">
+                    <label for="name" class="form-label">
+                        <i class="fas fa-user"></i>
+                        Last Name
+                    </label>
+                    <input id="last_name" type="text" class="form-input @error('last_name') is-invalid @enderror" name="last_name" value="{{ old('last_name') }}" autocomplete="last_name" autofocus placeholder="Enter your last name">
+                    @error('last_name')
                         <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>

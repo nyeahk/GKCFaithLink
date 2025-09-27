@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\Admin\AnnouncementController;
 use App\Http\Controllers\Admin\DonationController as AdminDonationController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\ReportsController;
 use App\Http\Controllers\Member\DashboardController as MemberDashboardController;
 use App\Http\Controllers\Member\DonationController as MemberDonationController;  
@@ -22,6 +23,7 @@ use App\Http\Controllers\Treasurer\DashboardController as TreasurerDashboardCont
 use App\Http\Controllers\Treasurer\DonationController as TreasurerDonationController;
 use App\Http\Controllers\Treasurer\ProfileController as TreasurerProfileController;
 use App\Http\Controllers\Staff\DashboardController as StaffDashboardController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -46,7 +48,7 @@ Route::post('/logout', [LogoutController::class, 'logout'])->name('logout');
 Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
 Route::post('/register', [RegisterController::class, 'register'])->name('register.store');
 
-Route::patch('users/{user}/toggle', [UserController::class, 'toggle'])->name('users.toggle');
+//Route::patch('users/{user}/toggle', [UserController::class, 'toggle'])->name('users.toggle');
 
 // Protected Routes
 Route::middleware(['auth'])->group(function () {
@@ -93,10 +95,11 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/reports/weekly', [ReportsController::class, 'weekly'])->name('reports.weekly');
         Route::get('/reports/monthly', [ReportsController::class, 'monthly'])->name('reports.monthly');
         // user management
-        Route::get('users', [UserController::class, 'index'])->name('users.index');
-        Route::get('users/{user}', [UserController::class, 'show'])->name('users.show');
-        Route::patch('users/{user}/toggle', [UserController::class, 'toggle'])->name('users.toggle');
-        Route::patch('users/{user}/assign-role', [UserController::class, 'assignRole'])->name('users.assignRole');
+    Route::get('users', [AdminUserController::class, 'index'])->name('users.index');
+    Route::get('users/{user}', [AdminUserController::class, 'show'])->name('users.show');
+    Route::patch('users/{user}/toggle', [AdminUserController::class, 'toggle'])->name('users.toggle');
+    Route::patch('users/{user}/assign-role', [AdminUserController::class, 'assignRole'])->name('users.assignRole');
+    Route::patch('users/{user}/approve', [AdminUserController::class, 'approve'])->name('users.approve');
 
         Route::get('reports/weekly', [ReportsController::class, 'weekly'])->name('reports.weekly');
         Route::get('reports/monthly', [ReportsController::class, 'monthly'])->name('reports.monthly');
@@ -269,18 +272,6 @@ Route::middleware(['auth', 'verified', CheckUserActive::class, RoleMiddleware::c
     Route::get('/reports/monthly', [App\Http\Controllers\Treasurer\ReportsController::class, 'monthly'])->name('reports.monthly');
     Route::get('/reports/weekly/download', [App\Http\Controllers\Treasurer\ReportsController::class, 'downloadWeeklyReport'])->name('reports.weekly.download');
     Route::get('/reports/monthly/download', [App\Http\Controllers\Treasurer\ReportsController::class, 'downloadMonthlyReport'])->name('reports.monthly.download');
-});
-
-// Admin User Routes
-Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
-    // Users management
-    Route::get('/users', [App\Http\Controllers\Admin\UserController::class, 'index'])->name('users.index');
-    Route::get('/users/create', [App\Http\Controllers\Admin\UserController::class, 'create'])->name('users.create');
-    Route::post('/users', [App\Http\Controllers\Admin\UserController::class, 'store'])->name('users.store');
-    Route::get('/users/{user}/edit', [App\Http\Controllers\Admin\UserController::class, 'edit'])->name('users.edit');
-    Route::put('/users/{user}', [App\Http\Controllers\Admin\UserController::class, 'update'])->name('users.update');
-    Route::delete('/users/{user}', [App\Http\Controllers\Admin\UserController::class, 'destroy'])->name('users.destroy');
-    Route::get('/users/role/{role}', [App\Http\Controllers\Admin\UserController::class, 'byRole'])->name('users.by-role');
 });
 
 

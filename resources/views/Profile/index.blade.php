@@ -94,7 +94,7 @@
                                     <hr>
                                     <div class="row mb-3">
                                         <div class="col-md-4 fw-bold">Name:</div>
-                                        <div class="col-md-8">{{ auth()->user()->name }}</div>
+                                        <div class="col-md-8">{{ auth()->user()->first_name }} {{ auth()->user()->last_name }}</div>
                                     </div>
                                     <div class="row mb-3">
                                         <div class="col-md-4 fw-bold">Email:</div>

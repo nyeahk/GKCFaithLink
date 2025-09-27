@@ -201,7 +201,7 @@
     
     /* Card styles */
     .notification-detail-card {
-        background-color: var(--white);
+        background-color: #ffffff;
         border-radius: 16px;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
         overflow: hidden;
@@ -210,10 +210,10 @@
     
     /* Header styles */
     .notification-header {
-        background-color: var(--background-light);
+        background-color: #ffffff; /* pure white header */
         padding: 30px;
         text-align: center;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        border-bottom: 1px solid #e5e7eb; /* subtle divider */
     }
     
     .notification-icon-large {
@@ -270,9 +270,10 @@
     }
     
     .section-content {
-        background-color: var(--background-light);
+        background-color: #ffffff; /* white sections */
         padding: 20px;
         border-radius: 10px;
+        border: 1px solid #eef2f7; /* soft border for structure */
         font-size: 1.05rem;
         line-height: 1.6;
         color: var(--text-dark);
@@ -291,9 +292,9 @@
     }
     
     .btn-back {
-        background-color: var(--background-light);
+        background-color: #ffffff;
         color: var(--text-dark);
-        border: none;
+        border: 1px solid #e5e7eb;
         padding: 10px 20px;
         border-radius: 8px;
         font-weight: 500;
@@ -301,7 +302,7 @@
     }
     
     .btn-back:hover {
-        background-color: var(--primary-light);
+        background-color: #f8fafc;
         color: var(--text-darker);
         transform: var(--hover-scale);
     }
@@ -353,6 +354,57 @@
     .back-link i {
         margin-right: 5px;
     }
+
+    /* Layout refinements for fixed-looking content */
+    .notification-detail-card { padding: 0; }
+    .notification-header { padding: 28px 32px; }
+    .notification-title { font-size: 1.25rem; letter-spacing: -0.01em; }
+    .notification-body { padding: 24px 24px; }
+
+    .notification-section { margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #eef2f7; }
+    .notification-section:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+
+    .section-title { margin-bottom: 10px; font-size: 0.95rem; }
+    .section-content { padding: 16px 18px; border-radius: 12px; border: 1px solid #eaeef5; box-shadow: 0 1px 2px rgba(16,24,40,0.03); }
+    .section-content.amount { font-size: 1.375rem; }
+
+    /* Text handling to avoid jank */
+    .section-content, .notification-message, .notification-time { word-break: break-word; overflow-wrap: anywhere; }
+
+    /* Button spacing */
+    .notification-action { margin-top: 22px; }
+    .notification-action .btn { padding: 10px 18px; border-radius: 10px; }
+
+    /* Palette accents from dashboard */
+    .notification-detail-card {
+        border: 1px solid var(--primary-light, #cfe9e2);
+    }
+
+    .notification-header {
+        background-color: #ffffff; /* keep white */
+        border-bottom: 1px solid var(--primary-light, #cfe9e2);
+    }
+
+    .notification-icon-large .icon-circle {
+        background-color: var(--primary, #4F959D);
+    }
+
+    .notification-title { color: var(--text-darker, #0f172a); }
+    .notification-time { color: var(--text-light, #64748b); }
+
+    .notification-section { border-bottom: 1px solid var(--primary-light, #e6f2ef); }
+
+    .section-title { color: var(--primary-dark, #205781); }
+
+    .section-content {
+        border: 1px solid var(--primary-light, #e6f2ef);
+        box-shadow: 0 1px 2px rgba(79, 149, 157, 0.06);
+    }
+
+    .section-content.amount { color: var(--primary-dark, #205781); }
+
+    .btn-primary { background-color: var(--primary, #4F959D); border-color: var(--primary, #4F959D); }
+    .btn-primary:hover { background-color: var(--primary-dark, #205781); border-color: var(--primary-dark, #205781); }
 </style>
 @endpush
 

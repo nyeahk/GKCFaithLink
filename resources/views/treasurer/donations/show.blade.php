@@ -127,12 +127,24 @@
                                     <i class="bi bi-person-circle me-2"></i>Donor Information
                                 </h6>
                                 
-                                @if($donation->user_id)
+                                @if($donation->anonymous)
+                                <div class="donor-profile d-flex align-items-center mb-3">
+                                    <div class="donor-avatar me-3">
+                                        <div class="avatar-placeholder rounded-circle bg-light d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                            <i class="bi bi-person-fill" style="font-size: 1.5rem; color: #6c757d;"></i>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1">Anonymous</h6>
+                                        <p class="text-muted mb-0 small">Anonymous donation</p>
+                                    </div>
+                                </div>
+                                @elseif($donation->user_id)
                                 <div class="donor-profile d-flex align-items-center mb-3">
                                     <div class="donor-avatar me-3">
                                         @if($donation->user->image_path)
                                             <img src="{{ asset('storage/' . $donation->user->image_path) }}" 
-                                                alt="{{ $donation->user->name }}" 
+                                                alt="{{ $donation->user->getFullNameAttribute() }}" 
                                                 class="rounded-circle" width="60" height="60">
                                         @else
                                             <div class="avatar-placeholder rounded-circle bg-light d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
@@ -141,7 +153,7 @@
                                         @endif
                                     </div>
                                     <div>
-                                        <h6 class="mb-1">{{ $donation->user->name }}</h6>
+                                        <h6 class="mb-1">{{ $donation->user->getFullNameAttribute() }}</h6>
                                         <p class="text-muted mb-0 small">Member since {{ $donation->user->created_at->format('M Y') }}</p>
                                     </div>
                                 </div>

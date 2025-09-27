@@ -33,8 +33,15 @@ class DonationController extends Controller
             'amount' => 'required|numeric|min:0',
             'payment_method' => 'required|in:gcash',
             'transaction_date' => 'required|date',
+            'anonymous' => 'nullable|boolean',
         ]);
-
+        $validated['anonymous'] = $request->has('anonymous') ? true : false;
+        // Set donor_name automatically
+        if ($validated['anonymous']) {
+            $validated['donor_name'] = null; // or 'Anonymous' if you prefer
+        } else {
+            $validated['donor_name'] = auth()->user()->getFullName();
+        }
         $donation = Donation::create($validated);
 
         // Notify admin about new donation
@@ -64,8 +71,9 @@ class DonationController extends Controller
             'transaction_date' => 'required|date',
             'status' => 'required|in:pending,verified',
             'verification_notes' => 'required_if:status,verified|nullable|string',
+            'anonymous' => 'nullable|boolean',
         ]);
-
+        $validated['anonymous'] = $request->has('anonymous') ? true : false;
         $donation = Donation::create($validated);
 
         if ($validated['status'] === 'verified') {

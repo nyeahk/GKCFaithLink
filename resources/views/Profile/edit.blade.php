@@ -82,17 +82,16 @@
                             </div>
                             <div class="col-md-8">
             <div class="mb-3">
-                <label for="name" class="form-label">Name</label>
-                <input type="text" class="form-control" id="name" name="name" value="{{ old('name', auth()->user()->name) }}" required>
+                <label for="first_name" class="form-label">First Name</label>
+                <input type="text" class="form-control" id="first_name" name="first_name" value="{{ old('first_name', auth()->user()->first_name) }}" required>
+            </div>
+            <div class="mb-3">
+                <label for="last_name" class="form-label">Last Name</label>
+                <input type="text" class="form-control" id="last_name" name="last_name" value="{{ old('last_name', auth()->user()->last_name) }}" required>
             </div>
             <div class="mb-3">
                 <label for="email" class="form-label">Email</label>
-                <input type="email" class="form-control" id="email" name="email" value="{{ old('email', auth()->user()->email) }}" required>
-            </div>
-            <div class="mb-3">
-                <label for="username" class="form-label">Username</label>
-                <input type="text" class="form-control" id="username" value="{{ auth()->user()->username }}" disabled>
-                <small class="text-muted">Username cannot be changed.</small>
+                <input type="email" class="form-control" id="email" name="email" value="{{ old('email', auth()->user()->email) }}" readonly>
             </div>
             <div class="mb-3">
                 <label for="contact_number" class="form-label">Contact Number</label>

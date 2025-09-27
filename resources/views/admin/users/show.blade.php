@@ -18,7 +18,7 @@
                             </div>
                         @endif
                     </div>
-                    <h4>{{ $user->name ?? $user->username }}</h4>
+                    <h4>{{ $user->full_name }}</h4>
                     <p class="text-muted">
                         @php
                             $roleNames = [
@@ -43,17 +43,24 @@
                     <h5 class="card-title">Personal Information</h5>
                     <hr>
                     <div class="row mb-3">
-                        <div class="col-md-4 fw-bold">Username:</div>
-                        <div class="col-md-8">{{ $user->username }}</div>
+                        <div class="col-md-4 fw-bold">Full Name:</div>
+                        <div class="col-md-8">{{ $user->full_name }}</div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-4 fw-bold">Email:</div>
                         <div class="col-md-8">{{ $user->email }}</div>
                     </div>
-                    @if($user->name)
+                    @if($user->name && ($user->first_name || $user->last_name))
                     <div class="row mb-3">
-                        <div class="col-md-4 fw-bold">Name:</div>
-                        <div class="col-md-8">{{ $user->name }}</div>
+                        <div class="col-md-4 fw-bold">Individual Names:</div>
+                        <div class="col-md-8">
+                            @if($user->first_name)
+                                <strong>First:</strong> {{ $user->first_name }}<br>
+                            @endif
+                            @if($user->last_name)
+                                <strong>Last:</strong> {{ $user->last_name }}
+                            @endif
+                        </div>
                     </div>
                     @endif
                     @if($user->contact_number)
@@ -81,6 +88,16 @@
                         <a href="{{ route('admin.users.index') }}" class="btn btn-secondary me-2 rounded-pill d-flex align-items-center justify-content-center" style="height: 38px;">
                             <i class="bi bi-arrow-left me-1"></i> Back to Users
                         </a>
+                        @if(!$user->is_approved)
+                        <form action="{{ route('admin.users.approve', $user->id) }}" method="POST" class="me-2">
+                            @csrf
+                            @method('PATCH')
+                            <button type="submit" class="btn btn-success rounded-pill d-flex align-items-center justify-content-center" style="height: 38px;">
+                                <i class="bi bi-check2-circle me-1"></i>
+                                Approve
+                            </button>
+                        </form>
+                        @endif
                         <form action="{{ route('admin.users.toggle', $user->id) }}" method="POST" class="me-2">
                             @csrf
                             @method('PATCH')

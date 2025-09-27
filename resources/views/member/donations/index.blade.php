@@ -55,7 +55,12 @@
                                             <td>{{ $donation->payment_method }}</td>
                                             <td>{{ $donation->reference_number ?? 'N/A' }}</td>
                                             <td>
-                                                <span class="badge bg-{{ $donation->status == 'approved' ? 'success' : ($donation->status == 'pending' ? 'warning' : 'danger') }}">
+                                                <span class="badge"
+                                                    @if($donation->status == 'declined') style="background-color:#e74a3b;color:white;"
+                                                    @elseif($donation->status == 'verified') style="background-color:#28a745;color:white;"
+                                                    @elseif($donation->status == 'pending') style="background-color:#ffc107;color:#212529;"
+                                                    @else style="background-color:#4F959D;color:white;"
+                                                    @endif>
                                                     {{ ucfirst($donation->status) }}
                                                 </span>
                                             </td>
@@ -74,7 +79,7 @@
                         </div>
                     @else
                         <div class="text-center py-4">
-                            <img src="{{ asset('images/no-data.svg') }}" alt="No Donations" class="img-fluid mb-3" style="max-height: 150px;">
+                           
                             <h5>No Donations Yet</h5>
                             <p class="text-muted">You haven't made any donations yet.</p>
                             <a href="{{ route('member.donations.create') }}" class="btn btn-primary mt-2">

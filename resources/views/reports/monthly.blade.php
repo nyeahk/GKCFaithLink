@@ -25,37 +25,87 @@
         </div>
     </div>
 
-    <!-- Filter Section -->
-    <div class="card mb-4">
-        <div class="card-header">
-            <h5 class="card-title mb-0">
-                <i class="bi bi-funnel me-2"></i>Filter Report
-            </h5>
+    <!-- Enhanced Filter Section -->
+    <div class="card mb-4 shadow-sm border-0">
+        <div class="card-header bg-light border-0">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-funnel me-2 text-primary"></i>
+                <h6 class="mb-0 fw-semibold">Filter Monthly Report</h6>
+            </div>
         </div>
-        <div class="card-body">
-            <form method="GET" action="{{ route('reports.monthly') }}" class="row g-3">
-                <div class="col-md-4">
-                    <label for="statusFilter" class="form-label">Filter by Status</label>
-                    <select name="status" id="statusFilter" class="form-select">
-                        <option value="">All Statuses</option>
-                        <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
-                        <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>Completed</option>
-                        <option value="failed" {{ request('status') == 'failed' ? 'selected' : '' }}>Failed</option>
-                    </select>
+        <div class="card-body p-4">
+            <form method="GET" action="{{ route('reports.monthly') }}" id="monthlyFilterForm">
+                <div class="row g-4">
+                    <!-- Status Filter -->
+                    <div class="col-lg-4 col-md-6">
+                        <div class="form-floating">
+                            <select name="status" id="statusFilter" class="form-select" onchange="document.getElementById('monthlyFilterForm').submit();" style="border-radius: 10px;">
+                                <option value="">All Statuses</option>
+                                <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>
+                                    <i class="bi bi-clock me-1"></i>Pending
+                                </option>
+                                <option value="approved" {{ request('status') == 'approved' ? 'selected' : '' }}>
+                                    <i class="bi bi-check-circle me-1"></i>Approved
+                                </option>
+                                <option value="declined" {{ request('status') == 'declined' ? 'selected' : '' }}>
+                                    <i class="bi bi-x-circle me-1"></i>Declined
+                                </option>
+                            </select>
+                            <label for="statusFilter">
+                                <i class=""></i>Filter by Status
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- Month Filter -->
+                    <div class="col-lg-4 col-md-6">
+                        <div class="form-floating">
+                            <input type="month" name="date" id="dateFilter" class="form-control"
+                                   value="{{ request('date', $startDate->format('Y-m')) }}"
+                                   onchange="document.getElementById('monthlyFilterForm').submit();"
+                                   style="border-radius: 10px;">
+                            <label for="dateFilter">
+                                <i class="bi bi-calendar-month me-1"></i>Select Month
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="col-lg-4 col-md-6">
+                        <div class="d-flex flex-column gap-2 h-100">
+                            <button type="submit" class="btn btn-primary filter-button" style="border-radius: 10px; height: 58px;">
+                                <i class="bi bi-funnel-fill me-1"></i>Apply Filters
+                            </button>
+                            @if(request()->anyFilled(['status', 'date']))
+                                <a href="{{ route('reports.monthly') }}" class="btn btn-outline-secondary" style="border-radius: 10px;">
+                                    <i class="bi bi-arrow-clockwise me-1"></i>Clear All
+                                </a>
+                            @endif
+                        </div>
+                    </div>
                 </div>
-                <div class="col-md-4">
-                    <label for="dateFilter" class="form-label">Filter by Month</label>
-                    <input type="month" name="date" id="dateFilter" class="form-control"
-                           value="{{ request('date', $startDate->format('Y-m')) }}">
+                
+                <!-- Active Filters Display -->
+                @if(request()->anyFilled(['status', 'date']))
+                <div class="mt-4 pt-3 border-top">
+                    <div class="d-flex align-items-center flex-wrap gap-2">
+                        <span class="text-muted small me-2">Active filters:</span>
+                        @if(request('status'))
+                            <span class="badge bg-{{ request('status') == 'approved' || request('status') == 'verified' ? 'success' : (request('status') == 'declined' ? 'danger' : 'warning') }}">
+                                <i class="bi bi-toggle-{{ request('status') == 'approved' || request('status') == 'verified' ? 'on' : (request('status') == 'declined' ? 'off' : 'on') }} me-1"></i>
+                                Status: {{ ucfirst(request('status')) }}
+                                <a href="{{ request()->fullUrlWithQuery(['status' => null]) }}" class="text-white ms-1" style="text-decoration: none;">×</a>
+                            </span>
+                        @endif
+                        @if(request('date'))
+                            <span class="badge bg-info">
+                                <i class="bi bi-calendar-month me-1"></i>Month: {{ \Carbon\Carbon::createFromFormat('Y-m', request('date'))->format('F Y') }}
+                                <a href="{{ request()->fullUrlWithQuery(['date' => null]) }}" class="text-white ms-1" style="text-decoration: none;">×</a>
+                            </span>
+                        @endif
+                    </div>
                 </div>
-                <div class="col-md-6 d-flex align-items-end">
-                    <button type="submit" class="btn btn-primary me-2">
-                        <i class="bi bi-filter me-1"></i>Apply Filter
-                    </button>
-                    <a href="{{ route('reports.monthly') }}" class="btn btn-outline-secondary">
-                        <i class="bi bi-arrow-counterclockwise me-1"></i>Reset
-                    </a>
-                </div>
+                @endif
             </form>
         </div>
     </div>
@@ -217,8 +267,10 @@
                             <tr>
                                 <td>{{ $donation->created_at->format('M d, Y') }}</td>
                                 <td>
-                                    @if($donation->user)
-                                        {{ $donation->user->name }}
+                                    @if($donation->anonymous)
+                                        Anonymous
+                                    @elseif($donation->user)
+                                        {{ $donation->user->getFullNameAttribute() }}
                                     @elseif($donation->donor_name)
                                         {{ $donation->donor_name }}
                                     @else
@@ -231,7 +283,7 @@
                                     @if($donation->status == 'pending')
                                         <span class="badge bg-warning text-dark">Pending</span>
                                     @elseif($donation->status == 'verified' || $donation->status == 'approved')
-                                        <span class="badge bg-success">Verified</span>
+                                        <span class="badge bg-success">Approved</span>
                                     @elseif($donation->status == 'declined')
                                         <span class="badge bg-danger">Declined</span>
                                     @else
@@ -298,6 +350,48 @@
         100% { opacity: 1; }
     }
 
+    /* Enhanced Filter Styles */
+    .form-floating > .form-control:focus ~ label,
+    .form-floating > .form-control:not(:placeholder-shown) ~ label {
+        opacity: 0.65;
+        transform: scale(0.85) translateY(-0.5rem) translateX(0.15rem);
+    }
+
+    .card {
+        border-radius: 12px;
+    }
+
+    .btn {
+        border-radius: 8px;
+        font-weight: 500;
+        transition: all 0.2s ease;
+    }
+
+    .btn:hover {
+        transform: translateY(-1px);
+    }
+
+    .badge {
+        border-radius: 6px;
+        font-weight: 500;
+    }
+
+    .form-select:focus,
+    .form-control:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+    }
+
+    .filter-button {
+        background: linear-gradient(135deg, #0d6efd 0%, #0b5ed7 100%);
+        border: none;
+    }
+
+    .filter-button:hover {
+        background: linear-gradient(135deg, #0b5ed7 0%, #0a58ca 100%);
+        transform: translateY(-1px);
+    }
+
     /* Styles for monthly breakdown labels */
     .monthly-breakdown-label {
         background-color: transparent !important;
@@ -356,6 +450,30 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Auto-submit form when filters change
+        const statusFilter = document.getElementById('statusFilter');
+        const dateFilter = document.getElementById('dateFilter');
+        
+        if (statusFilter) {
+            statusFilter.addEventListener('change', function() {
+                document.getElementById('monthlyFilterForm').submit();
+            });
+        }
+        
+        if (dateFilter) {
+            dateFilter.addEventListener('change', function() {
+                document.getElementById('monthlyFilterForm').submit();
+            });
+        }
+        
+        // Add loading state to filter button
+        const filterButton = document.querySelector('.filter-button');
+        if (filterButton) {
+            filterButton.addEventListener('click', function() {
+                this.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>Filtering...';
+            });
+        }
+
         // Bar chart for weekly donations
         const ctx = document.getElementById('donationsChart').getContext('2d');
         

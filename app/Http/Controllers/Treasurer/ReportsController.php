@@ -45,9 +45,22 @@ class ReportsController extends Controller
         // Calculate end date (end of month)
         $endDate = $startDate->copy()->endOfMonth();
 
+        // Get status filter from request
+        $statusFilter = $request->input('status');
+        
+        // Build base query with date range
+        $baseQuery = Donation::whereBetween('created_at', [$startDate, $endDate]);
+        
+        // Apply status filter if provided
+        if ($statusFilter && $statusFilter !== '') {
+            $baseQuery->where('status', $statusFilter);
+        } else {
+            // Default to approved if no filter is applied
+            $baseQuery->where('status', 'approved');
+        }
+
         // Get total tithes for the month
-        $totalTithes = Donation::whereBetween('created_at', [$startDate, $endDate])
-            ->where('status', 'approved')
+        $totalTithes = (clone $baseQuery)
             ->where(function($query) {
                 $query->where('purpose', 'tithe')
                       ->orWhere('purpose', 'like', '%tithe%')
@@ -56,8 +69,7 @@ class ReportsController extends Controller
             ->sum('amount');
 
         // Get total offerings for the month
-        $totalOfferings = Donation::whereBetween('created_at', [$startDate, $endDate])
-            ->where('status', 'approved')
+        $totalOfferings = (clone $baseQuery)
             ->where(function($query) {
                 $query->where('purpose', 'offering')
                       ->orWhere('purpose', 'like', '%offering%')
@@ -71,8 +83,7 @@ class ReportsController extends Controller
             ->sum('amount');
 
         // Get total mission funds for the month
-        $totalMissionFunds = Donation::whereBetween('created_at', [$startDate, $endDate])
-            ->where('status', 'approved')
+        $totalMissionFunds = (clone $baseQuery)
             ->where(function($query) {
                 $query->where('purpose', 'mission')
                       ->orWhere('purpose', 'like', '%mission%')
@@ -82,7 +93,7 @@ class ReportsController extends Controller
             ->sum('amount');
 
         // Get recent donations for the month
-        $recentDonations = Donation::whereBetween('created_at', [$startDate, $endDate])
+        $recentDonations = (clone $baseQuery)
             ->orderBy('created_at', 'desc')
             ->take(10)
             ->get();
@@ -99,9 +110,16 @@ class ReportsController extends Controller
                 $weekEnd = $endDate;
             }
             
-            $weekTotal = Donation::whereBetween('created_at', [$currentWeek, $weekEnd])
-                ->where('status', 'approved')
-                ->sum('amount');
+            $weekQuery = Donation::whereBetween('created_at', [$currentWeek, $weekEnd]);
+            
+            // Apply same status filter to weekly totals
+            if ($statusFilter && $statusFilter !== '') {
+                $weekQuery->where('status', $statusFilter);
+            } else {
+                $weekQuery->where('status', 'approved');
+            }
+            
+            $weekTotal = $weekQuery->sum('amount');
             
             $donationWeeks[] = 'Week ' . ceil($currentWeek->day / 7);
             $donationAmounts[] = $weekTotal;
@@ -173,16 +191,38 @@ class ReportsController extends Controller
     public function weekly(Request $request)
     {
         // Get the start date from request or default to current week
-        $startDate = $request->input('date') 
-            ? Carbon::parse($request->input('date'))
-            : Carbon::now()->startOfWeek();
+        if ($request->has('date') && !empty($request->date)) {
+            // Handle week format (YYYY-WW) or regular date format
+            if (preg_match('/^\d{4}-W\d{2}$/', $request->date)) {
+                // Week format: 2024-W01
+                $startDate = Carbon::createFromFormat('Y-\WW', $request->date)->startOfWeek();
+            } else {
+                // Regular date format
+                $startDate = Carbon::parse($request->date)->startOfWeek();
+            }
+        } else {
+            $startDate = Carbon::now()->startOfWeek();
+        }
 
         // Calculate end date (end of week)
         $endDate = $startDate->copy()->endOfWeek();
 
+        // Get status filter from request
+        $statusFilter = $request->input('status');
+        
+        // Build base query with date range
+        $baseQuery = Donation::whereBetween('created_at', [$startDate, $endDate]);
+        
+        // Apply status filter if provided
+        if ($statusFilter && $statusFilter !== '') {
+            $baseQuery->where('status', $statusFilter);
+        } else {
+            // Default to approved if no filter is applied
+            $baseQuery->where('status', 'approved');
+        }
+
         // Get total tithes for the week
-        $totalTithes = Donation::whereBetween('created_at', [$startDate, $endDate])
-            ->where('status', 'approved')
+        $totalTithes = (clone $baseQuery)
             ->where(function($query) {
                 $query->where('purpose', 'tithe')
                       ->orWhere('purpose', 'like', '%tithe%')
@@ -191,8 +231,7 @@ class ReportsController extends Controller
             ->sum('amount');
 
         // Get total offerings for the week
-        $totalOfferings = Donation::whereBetween('created_at', [$startDate, $endDate])
-            ->where('status', 'approved')
+        $totalOfferings = (clone $baseQuery)
             ->where(function($query) {
                 $query->where('purpose', 'offering')
                       ->orWhere('purpose', 'like', '%offering%')
@@ -202,8 +241,7 @@ class ReportsController extends Controller
             ->sum('amount');
 
         // Get total mission funds for the week
-        $totalMissionFunds = Donation::whereBetween('created_at', [$startDate, $endDate])
-            ->where('status', 'approved')
+        $totalMissionFunds = (clone $baseQuery)
             ->where(function($query) {
                 $query->where('purpose', 'mission')
                       ->orWhere('purpose', 'like', '%mission%');
@@ -211,7 +249,7 @@ class ReportsController extends Controller
             ->sum('amount');
 
         // Get recent donations for the week
-        $recentDonations = Donation::whereBetween('created_at', [$startDate, $endDate])
+        $recentDonations = (clone $baseQuery)
             ->orderBy('created_at', 'desc')
             ->take(10)
             ->get();
@@ -223,11 +261,16 @@ class ReportsController extends Controller
         // Get donations for each day of the week
         $currentDay = $startDate->copy();
         while ($currentDay <= $endDate) {
-            $dayEnd = $currentDay->copy()->endOfDay();
+            $dayQuery = Donation::whereDate('created_at', $currentDay);
             
-            $dayTotal = Donation::whereBetween('created_at', [$currentDay, $dayEnd])
-                ->where('status', 'approved')
-                ->sum('amount');
+            // Apply same status filter to daily totals
+            if ($statusFilter && $statusFilter !== '') {
+                $dayQuery->where('status', $statusFilter);
+            } else {
+                $dayQuery->whereIn('status', ['approved', 'verified']);
+            }
+            
+            $dayTotal = $dayQuery->sum('amount');
             
             $donationDays[] = $currentDay->format('D');
             $donationAmounts[] = $dayTotal;

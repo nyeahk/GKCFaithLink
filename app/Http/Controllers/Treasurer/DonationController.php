@@ -17,12 +17,29 @@ class DonationController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $donations = Donation::with('user')
-            ->orderBy('created_at', 'desc')
-            ->paginate(10);
-            
+        $query = Donation::with('user')->orderBy('created_at', 'desc');
+
+        // Status filter
+        if ($request->filled('status')) {
+            $query->where('status', $request->input('status'));
+        }
+
+        // Month filter (YYYY-MM)
+        if ($request->filled('date')) {
+            try {
+                $start = \Carbon\Carbon::createFromFormat('Y-m', $request->input('date'))->startOfMonth();
+                $end = (clone $start)->endOfMonth();
+                $query->whereBetween('created_at', [$start, $end]);
+            } catch (\Exception $e) {
+                // Ignore invalid date format; fallback to no date filtering
+            }
+        }
+
+        $donations = $query->paginate(10);
+        $donations->appends($request->query());
+        
         return view('treasurer.donations.index', compact('donations'));
     }
 
@@ -45,13 +62,13 @@ class DonationController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'donor_name' => 'required|string|max:255',
             'amount' => 'required|numeric|min:0',
             'purpose' => 'required|in:tithes,offering,mission',
             'payment_method' => 'required|in:cash,check',
             'notes' => 'nullable|string',
+            'anonymous' => 'nullable|boolean',
         ]);
-        
+
         // If payment method is check, validate check details
         if ($request->payment_method === 'check') {
             $checkValidation = $request->validate([
@@ -59,13 +76,20 @@ class DonationController extends Controller
                 'bank_name' => 'required|string|max:255',
                 'check_date' => 'required|date',
             ]);
-            
             $data = array_merge($data, $checkValidation);
         }
-        
+
+        // Set donor_name automatically
+        $data['anonymous'] = $request->has('anonymous') ? true : false;
+        if ($data['anonymous']) {
+            $data['donor_name'] = null; // or 'Anonymous' if you prefer
+        } else {
+            $data['donor_name'] = auth()->user()->getFullName();
+        }
+
         // Set transaction_date to current time
         $data['transaction_date'] = now();
-        
+
         // For manual donations, automatically set status to verified
         $data['status'] = 'verified';
         $data['verified_by'] = auth()->user()->name;

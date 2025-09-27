@@ -78,7 +78,17 @@
             @forelse($donations as $donation)
             <tr>
                 <td>{{ $donation->created_at->format('M d, Y') }}</td>
-                <td>{{ $donation->donor_name ?? 'Anonymous' }}</td>
+                <td>
+                    @if($donation->anonymous)
+                        Anonymous
+                    @elseif($donation->user)
+                        {{ $donation->user->getFullNameAttribute() }}
+                    @elseif($donation->donor_name)
+                        {{ $donation->donor_name }}
+                    @else
+                        Anonymous
+                    @endif
+                </td>
                 <td>{{ $donation->purpose }}</td>
                 <td>₱{{ number_format($donation->amount, 2) }}</td>
                 <td>{{ ucfirst($donation->status) }}</td>

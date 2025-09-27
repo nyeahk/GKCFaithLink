@@ -51,6 +51,7 @@ class DonationController extends Controller
             'notes' => 'nullable|string',
             'screenshot' => 'required|image|max:2048',
             'reference_number' => 'required|string',
+            'anonymous' => 'nullable|boolean',
         ];
         
         $validated = $request->validate($rules);
@@ -61,6 +62,14 @@ class DonationController extends Controller
         $donation->payment_method = $validated['payment_method'];
         $donation->purpose = $validated['purpose'];
         $donation->reference_number = $validated['reference_number'];
+        
+        // Handle anonymous field
+        $donation->anonymous = $request->has('anonymous') ? true : false;
+        if ($donation->anonymous) {
+            $donation->donor_name = null;
+        } else {
+            $donation->donor_name = auth()->user()->getFullNameAttribute();
+        }
         
         // Set transaction_date to current time
         $donation->transaction_date = now();
@@ -86,22 +95,11 @@ class DonationController extends Controller
         if ($treasurers->isNotEmpty()) {
             foreach ($treasurers as $treasurer) {
                 try {
-                    // Log before sending notification
-                    \Illuminate\Support\Facades\Log::info('Attempting to notify treasurer: ' . $treasurer->id . ' - ' . $treasurer->name);
-                    
-                    // Send notification immediately
-                    $treasurer->notifyNow(new \App\Notifications\NewDonationNotification($donation));
-                    
-                    // Log success
-                    \Illuminate\Support\Facades\Log::info('Successfully sent notification to treasurer: ' . $treasurer->id);
+                    $treasurer->notify(new NewDonationNotification($donation));
                 } catch (\Exception $e) {
-                    // Log the error but continue execution
-                    \Illuminate\Support\Facades\Log::error('Failed to send notification to treasurer ' . $treasurer->id . ': ' . $e->getMessage());
+                    \Illuminate\Support\Facades\Log::error('Failed to notify treasurer ID ' . $treasurer->id . ': ' . $e->getMessage());
                 }
             }
-        } else {
-            // If no treasurers found, log this issue
-            \Illuminate\Support\Facades\Log::warning('No treasurers found to notify about donation #' . $donation->id);
         }
 
         return redirect()->route('member.donations.index')

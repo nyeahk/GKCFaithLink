@@ -174,9 +174,22 @@ class ReportController extends Controller
         // Calculate end date (end of month)
         $endDate = $startDate->copy()->endOfMonth();
 
-        // Get total tithes for the month - Only include approved/verified donations
-        $totalTithes = Donation::whereBetween('created_at', [$startDate, $endDate])
-            ->whereIn('status', ['approved', 'verified', 'completed'])
+        // Get status filter from request
+        $statusFilter = $request->input('status');
+        
+        // Build base query with date range
+        $baseQuery = Donation::whereBetween('created_at', [$startDate, $endDate]);
+        
+        // Apply status filter if provided
+        if ($statusFilter && $statusFilter !== '') {
+            $baseQuery->where('status', $statusFilter);
+        } else {
+            // Default to approved/verified if no filter is applied
+            $baseQuery->whereIn('status', ['approved', 'verified']);
+        }
+
+        // Get total tithes for the month
+        $totalTithes = (clone $baseQuery)
             ->where(function($query) {
                 $query->where('purpose', 'tithe')
                       ->orWhere('purpose', 'like', '%tithe%')
@@ -184,9 +197,8 @@ class ReportController extends Controller
             })
             ->sum('amount');
 
-        // Get total offerings for the month - Only include approved/verified donations
-        $totalOfferings = Donation::whereBetween('created_at', [$startDate, $endDate])
-            ->whereIn('status', ['approved', 'verified', 'completed'])
+        // Get total offerings for the month
+        $totalOfferings = (clone $baseQuery)
             ->where(function($query) {
                 $query->where('purpose', 'offering')
                       ->orWhere('purpose', 'like', '%offering%')
@@ -195,23 +207,22 @@ class ReportController extends Controller
             ->whereRaw("(purpose NOT LIKE '%tithe%' AND purpose NOT LIKE '%mission%')")
             ->sum('amount');
 
-        // Get total mission funds for the month - Only include approved/verified donations
-        $totalMissionFunds = Donation::whereBetween('created_at', [$startDate, $endDate])
-            ->whereIn('status', ['approved', 'verified', 'completed'])
+        // Get total mission funds for the month
+        $totalMissionFunds = (clone $baseQuery)
             ->where(function($query) {
                 $query->where('purpose', 'mission')
                       ->orWhere('purpose', 'like', '%mission%');
             })
             ->sum('amount');
 
-        // Get recent donations for the month - REMOVE status filter and ensure we're loading the user relationship
-        $recentDonations = Donation::with('user')
-            ->whereBetween('created_at', [$startDate, $endDate])
+        // Get recent donations for the month
+        $recentDonations = (clone $baseQuery)
+            ->with('user')
             ->orderBy('created_at', 'desc')
             ->take(10)
             ->get();
 
-        // Prepare data for the donations chart by week - REMOVE status filter
+        // Prepare data for the donations chart by week
         $donationWeeks = [];
         $donationAmounts = [];
         
@@ -223,8 +234,16 @@ class ReportController extends Controller
                 $weekEnd = $endDate;
             }
             
-            $weekTotal = Donation::whereBetween('created_at', [$currentWeek, $weekEnd])
-                ->sum('amount');
+            $weekQuery = Donation::whereBetween('created_at', [$currentWeek, $weekEnd]);
+            
+            // Apply same status filter to weekly totals
+            if ($statusFilter && $statusFilter !== '') {
+                $weekQuery->where('status', $statusFilter);
+            } else {
+                $weekQuery->whereIn('status', ['approved', 'verified', 'completed']);
+            }
+            
+            $weekTotal = $weekQuery->sum('amount');
             
             $donationWeeks[] = 'Week ' . ceil($currentWeek->day / 7);
             $donationAmounts[] = $weekTotal;

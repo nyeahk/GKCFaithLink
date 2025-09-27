@@ -22,12 +22,17 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
+        'first_name',
+        'last_name',
         'name',
         'email',
         'password',
         'role',
         'is_active',
         'username',
+        'is_approved',
+        'address',
+        'contact_number',
     ];
 
     /**
@@ -49,6 +54,21 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    /**
+     * Get the user's full name, combining first_name and last_name if name is not set
+     *
+     * @return string
+     */
+    public function getFullNameAttribute()
+    {
+        if ($this->name) {
+            return $this->name;
+        }
+        
+        $fullName = trim($this->first_name . ' ' . $this->last_name);
+        return $fullName ?: $this->username;
+    }
 
     /**
      * Get the dashboard route based on user role

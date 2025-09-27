@@ -27,7 +27,8 @@ class Donation extends Model
         'receipt_number',
         'verified_by',
         'verification_date',
-        'verification_notes'
+        'verification_notes',
+        'anonymous',
     ];
 
     protected $casts = [

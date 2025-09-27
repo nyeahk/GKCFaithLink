@@ -30,7 +30,8 @@ class ProfileController extends Controller
     $user = auth()->user();
 
     $request->validate([
-        'name' => ['required', 'string', 'max:255'],
+        'first_name' => ['required', 'string', 'max:255'],
+        'last_name' => ['required', 'string', 'max:255'],
         'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
         'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
         'contact_number' => ['nullable', 'digits_between:10,11', 'regex:/^[0-9]+$/'],
@@ -40,7 +41,7 @@ class ProfileController extends Controller
     try {
         // Update basic info
         $user->name = $request->input('name');
-        $user->email = $request->input('email');
+        //$user->email = $request->input('email');
         $user->contact_number = $request->input('contact_number');
         $user->address = $request->input('address');
 
