@@ -137,7 +137,7 @@
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Member</th>
+                            <th>Donor</th>
                             <th>Amount</th>
                             <th>Purpose</th>
                             <th>Status</th>
@@ -149,7 +149,17 @@
                         @forelse($recentDonations as $donation)
                         <tr>
                             <td>{{ $donation->id }}</td>
-                            <td>{{ $donation->user->username ?? $donation->donor_name }}</td>
+                            <td>
+                                @if($donation->anonymous)
+                                    Anonymous
+                                @elseif($donation->user)
+                                    {{ $donation->user->getFullNameAttribute() }}
+                                @elseif($donation->donor_name)
+                                    {{ $donation->donor_name }}
+                                @else
+                                    Anonymous
+                                @endif
+                            </td>
                             <td>₱{{ number_format($donation->amount, 2) }}</td>
                             <td>{{ ucfirst($donation->purpose) }}</td>
                             <td>

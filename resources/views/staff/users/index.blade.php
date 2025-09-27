@@ -32,7 +32,7 @@
                 <table class="table table-bordered table-striped">
                     <thead>
                         <tr>
-                            <th>Username</th>
+                            <th>Full Name</th>
                             <th>Email</th>
                             <th>Role</th>
                             <th>Status</th>
@@ -43,7 +43,19 @@
                     <tbody>
                         @foreach($users as $user)
                         <tr>
-                            <td>{{ $user->username }}</td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="me-2">
+                                        <i class="fas fa-user-circle text-muted"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-medium">{{ $user->getFullNameAttribute() }}</div>
+                                        @if($user->username)
+                                            <small class="text-muted">@{{ $user->username }}</small>
+                                        @endif
+                                    </div>
+                                </div>
+                            </td>
                             <td>{{ $user->email }}</td>
                             <td>
                                 @switch($user->role)

@@ -241,17 +241,16 @@
         </div>
     </div>
 
-    <!-- Donations Table -->
-    <div class="card shadow mb-4">
-        <div class="card-header py-3">
-            <h6 class="m-0 fw-bold text-primary">
-                <i class="bi bi-table me-2"></i>Recent Donations
-            </h6>
+    <!-- Clean Donations Table -->
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h6 class="mb-0">Recent Donations</h6>
+            <span class="badge bg-primary">{{ $recentDonations->count() }} This Week</span>
         </div>
-        <div class="card-body">
+        <div class="card-body p-0">
             <div class="table-responsive">
-                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                    <thead>
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
                         <tr>
                             <th>Date</th>
                             <th>Donor</th>
@@ -264,47 +263,54 @@
                     <tbody>
                         @forelse($recentDonations as $donation)
                             <tr>
-                                <td>{{ $donation->created_at->format('M d, Y') }}</td>
+                                <td>
+                                    <div>
+                                        <div class="fw-medium">{{ $donation->created_at->format('M d, Y') }}</div>
+                                        <small class="text-muted">{{ $donation->created_at->format('h:i A') }}</small>
+                                    </div>
+                                </td>
                                 <td>
                                     @if($donation->anonymous)
-                                        Anonymous
-                                    @elseif($donation->user)
-                                        {{ $donation->user->getFullNameAttribute() }}
-                                    @elseif($donation->donor_name)
-                                        {{ $donation->donor_name }}
+                                        <span class="text-muted">
+                                            <i class="fas fa-user-secret me-1"></i>Anonymous
+                                        </span>
                                     @else
-                                        Anonymous
+                                        @if($donation->user)
+                                            <span class="fw-medium">{{ $donation->user->getFullNameAttribute() }}</span>
+                                        @elseif($donation->donor_name)
+                                            <span class="fw-medium">{{ $donation->donor_name }}</span>
+                                        @else
+                                            <span class="text-muted">
+                                                <i class="fas fa-user-secret me-1"></i>Anonymous
+                                            </span>
+                                        @endif
                                     @endif
                                 </td>
                                 <td>
-                                    <span class="badge bg-secondary">{{ ucfirst($donation->purpose) }}</span>
+                                    <span class="badge bg-{{ $donation->purpose == 'tithe' ? 'primary' : ($donation->purpose == 'offering' ? 'success' : 'info') }}">
+                                        {{ ucfirst($donation->purpose) }}
+                                    </span>
                                 </td>
-                                <td class="fw-bold">₱{{ number_format($donation->amount, 2) }}</td>
-                                <td>{{ ucfirst($donation->payment_method ?? 'N/A') }}</td>
+                                <td class="fw-bold text-success">₱{{ number_format($donation->amount, 2) }}</td>
                                 <td>
-                                    @if($donation->status == 'completed' || $donation->status == 'approved' || $donation->status == 'verified')
-                                        <span class="badge bg-success">
-                                            <i class=""></i>Approved
-                                        </span>
-                                    @elseif($donation->status == 'pending')
-                                        <span class="badge bg-warning">
-                                            <i class=""></i>Pending
-                                        </span>
-                                    @elseif($donation->status == 'declined' || $donation->status == 'declined')
-                                        <span class="badge bg-danger">
-                                            <i class=""></i>Declined
-                                        </span>
-                                    @else
-                                        <span class="badge bg-secondary">
-                                            {{ ucfirst($donation->status) }}
-                                        </span>
-                                    @endif
+                                    <span class="badge bg-{{ $donation->payment_method == 'cash' ? 'success' : 'info' }}">
+                                        {{ ucfirst($donation->payment_method ?? 'N/A') }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-{{ $donation->status == 'completed' || $donation->status == 'approved' || $donation->status == 'verified' ? 'success' : ($donation->status == 'pending' ? 'warning' : 'danger') }}">
+                                        {{ $donation->status == 'completed' || $donation->status == 'approved' || $donation->status == 'verified' ? 'Approved' : ($donation->status == 'pending' ? 'Pending' : ($donation->status == 'declined' ? 'Declined' : ucfirst($donation->status))) }}
+                                    </span>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="text-center text-muted py-4">
-                                    <i class="bi bi-inbox me-2"></i>No donations found for this week.
+                                <td colspan="6" class="text-center py-4">
+                                    <div class="text-muted">
+                                        <i class="fas fa-inbox fa-2x mb-2"></i>
+                                        <div>No donations found for this week</div>
+                                        <small>Try selecting a different week or check back later.</small>
+                                    </div>
                                 </td>
                             </tr>
                         @endforelse
@@ -313,6 +319,88 @@
             </div>
         </div>
     </div>
+    
+    <!-- Enhanced Pagination for Reports -->
+    @if(isset($recentDonations) && $recentDonations->hasPages())
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card pagination-card">
+                <div class="card-body py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <!-- Results Info -->
+                        <div class="d-flex align-items-center">
+                            <span class="pagination-info me-3">
+                                <i class="fas fa-list me-1"></i>
+                                Showing {{ $recentDonations->firstItem() ?? 0 }} to {{ $recentDonations->lastItem() ?? 0 }} of {{ $recentDonations->total() }} donations
+                            </span>
+                            @if($recentDonations->total() > 0)
+                                <span class="page-badge">
+                                    Page {{ $recentDonations->currentPage() }} of {{ $recentDonations->lastPage() }}
+                                </span>
+                            @endif
+                        </div>
+                        
+                        <!-- Pagination Controls -->
+                        <div class="d-flex align-items-center">
+                            <!-- Previous Button -->
+                            @if($recentDonations->onFirstPage())
+                                <button class="btn btn-outline-secondary btn-sm me-2" disabled>
+                                    <i class="fas fa-chevron-left me-1"></i>Previous
+                                </button>
+                            @else
+                                <a href="{{ $recentDonations->previousPageUrl() }}" class="btn btn-outline-primary btn-sm me-2">
+                                    <i class="fas fa-chevron-left me-1"></i>Previous
+                                </a>
+                            @endif
+                            
+                            <!-- Page Numbers -->
+                            <div class="btn-group me-2" role="group">
+                                @php
+                                    $start = max($recentDonations->currentPage() - 2, 1);
+                                    $end = min($start + 4, $recentDonations->lastPage());
+                                    $start = max($end - 4, 1);
+                                @endphp
+                                
+                                @if($start > 1)
+                                    <a href="{{ $recentDonations->url(1) }}" class="btn btn-outline-secondary btn-sm">1</a>
+                                    @if($start > 2)
+                                        <span class="btn btn-outline-secondary btn-sm disabled">...</span>
+                                    @endif
+                                @endif
+                                
+                                @for($i = $start; $i <= $end; $i++)
+                                    @if($i == $recentDonations->currentPage())
+                                        <button class="btn btn-primary btn-sm active">{{ $i }}</button>
+                                    @else
+                                        <a href="{{ $recentDonations->url($i) }}" class="btn btn-outline-secondary btn-sm">{{ $i }}</a>
+                                    @endif
+                                @endfor
+                                
+                                @if($end < $recentDonations->lastPage())
+                                    @if($end < $recentDonations->lastPage() - 1)
+                                        <span class="btn btn-outline-secondary btn-sm disabled">...</span>
+                                    @endif
+                                    <a href="{{ $recentDonations->url($recentDonations->lastPage()) }}" class="btn btn-outline-secondary btn-sm">{{ $recentDonations->lastPage() }}</a>
+                                @endif
+                            </div>
+                            
+                            <!-- Next Button -->
+                            @if($recentDonations->hasMorePages())
+                                <a href="{{ $recentDonations->nextPageUrl() }}" class="btn btn-outline-primary btn-sm">
+                                    Next<i class="fas fa-chevron-right ms-1"></i>
+                                </a>
+                            @else
+                                <button class="btn btn-outline-secondary btn-sm" disabled>
+                                    Next<i class="fas fa-chevron-right ms-1"></i>
+                                </button>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
 </div>
 @endsection
 
@@ -385,6 +473,97 @@
 
     .filter-button:hover {
         background: linear-gradient(135deg, #0b5ed7 0%, #0a58ca 100%);
+        transform: translateY(-1px);
+    }
+    
+    /* Enhanced Pagination Styles */
+    .pagination-card {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+    }
+    
+    .pagination-card .card-body {
+        padding: 1rem 1.5rem;
+    }
+    
+    .btn-group .btn {
+        border-radius: 6px;
+        margin: 0 2px;
+        font-weight: 500;
+        transition: all 0.2s ease;
+    }
+    
+    .btn-group .btn:hover:not(.disabled):not(.active) {
+        background-color: #e9ecef;
+        border-color: #adb5bd;
+        transform: translateY(-1px);
+    }
+    
+    .btn-group .btn.active {
+        background-color: #0d6efd;
+        border-color: #0d6efd;
+        box-shadow: 0 2px 4px rgba(13, 110, 253, 0.3);
+    }
+    
+    .btn-group .btn.disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+    
+    .pagination-info {
+        font-size: 0.9rem;
+        color: #6c757d;
+    }
+    
+    .pagination-info i {
+        color: #0d6efd;
+    }
+    
+    .page-badge {
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        color: #495057;
+        font-weight: 600;
+        padding: 0.25rem 0.75rem;
+        border-radius: 6px;
+    }
+    
+    /* Responsive Pagination */
+    @media (max-width: 768px) {
+        .pagination-card .d-flex {
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .pagination-card .d-flex > div {
+            width: 100%;
+            justify-content: center;
+        }
+        
+        .btn-group {
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .btn-group .btn {
+            margin: 2px;
+        }
+    }
+    
+    /* Hover Effects */
+    .btn-outline-primary:hover {
+        background-color: #0d6efd;
+        border-color: #0d6efd;
+        color: white;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(13, 110, 253, 0.3);
+    }
+    
+    .btn-outline-secondary:hover:not(.disabled) {
+        background-color: #6c757d;
+        border-color: #6c757d;
+        color: white;
         transform: translateY(-1px);
     }
 </style>

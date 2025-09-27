@@ -62,11 +62,11 @@ class DonationController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
+            'donor_name' => 'required|string|max:255',
             'amount' => 'required|numeric|min:0',
             'purpose' => 'required|in:tithes,offering,mission',
             'payment_method' => 'required|in:cash,check',
             'notes' => 'nullable|string',
-            'anonymous' => 'nullable|boolean',
         ]);
 
         // If payment method is check, validate check details
@@ -79,13 +79,11 @@ class DonationController extends Controller
             $data = array_merge($data, $checkValidation);
         }
 
-        // Set donor_name automatically
-        $data['anonymous'] = $request->has('anonymous') ? true : false;
-        if ($data['anonymous']) {
-            $data['donor_name'] = null; // or 'Anonymous' if you prefer
-        } else {
-            $data['donor_name'] = auth()->user()->getFullName();
-        }
+        // For manual donations, set anonymous to false since treasurer is inputting the donor name
+        $data['anonymous'] = false;
+
+        // Debug: Log the donor_name being saved
+        \Log::info('Treasurer donation - Donor name from request: ' . $data['donor_name']);
 
         // Set transaction_date to current time
         $data['transaction_date'] = now();
@@ -95,7 +93,10 @@ class DonationController extends Controller
         $data['verified_by'] = auth()->user()->name;
         $data['verification_date'] = now();
 
-        Donation::create($data);
+        $donation = Donation::create($data);
+        
+        // Debug: Log the created donation
+        \Log::info('Treasurer donation created - ID: ' . $donation->id . ', Donor name: ' . $donation->donor_name);
 
         return redirect()->route('treasurer.donations.index')
             ->with('success', 'Donation added successfully.');

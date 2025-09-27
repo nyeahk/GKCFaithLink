@@ -8,7 +8,7 @@
     <ol class="breadcrumb mb-4">
         <li class="breadcrumb-item"><a href="{{ route('staff.dashboard') }}">Dashboard</a></li>
         <li class="breadcrumb-item"><a href="{{ route('staff.users.index') }}">Users</a></li>
-        <li class="breadcrumb-item active">{{ $user->username }}</li>
+        <li class="breadcrumb-item active">{{ $user->getFullNameAttribute() }}</li>
     </ol>
     
     @if(session('success'))
@@ -26,8 +26,18 @@
                 </div>
                 <div class="card-body">
                     <div class="row mb-3">
-                        <div class="col-md-3 fw-bold">Username:</div>
-                        <div class="col-md-9">{{ $user->username }}</div>
+                        <div class="col-md-3 fw-bold">Full Name:</div>
+                        <div class="col-md-9">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-user-circle text-muted me-2"></i>
+                                <div>
+                                    <div class="fw-medium">{{ $user->getFullNameAttribute() }}</div>
+                                    @if($user->username)
+                                        <small class="text-muted">@{{ $user->username }}</small>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     
                     <div class="row mb-3">
@@ -68,12 +78,6 @@
                         </div>
                     </div>
                     
-                    @if($user->name)
-                    <div class="row mb-3">
-                        <div class="col-md-3 fw-bold">Name:</div>
-                        <div class="col-md-9">{{ $user->name }}</div>
-                    </div>
-                    @endif
                     
                     @if($user->contact_number)
                     <div class="row mb-3">

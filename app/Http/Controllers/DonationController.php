@@ -40,7 +40,7 @@ class DonationController extends Controller
         if ($validated['anonymous']) {
             $validated['donor_name'] = null; // or 'Anonymous' if you prefer
         } else {
-            $validated['donor_name'] = auth()->user()->getFullName();
+            $validated['donor_name'] = auth()->user()->getFullNameAttribute();
         }
         $donation = Donation::create($validated);
 
