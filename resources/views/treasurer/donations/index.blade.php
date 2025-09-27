@@ -38,10 +38,10 @@
                     @forelse($donations as $donation)
                         <tr>
                             <td>
-                                @if($donation->user && $donation->user->name)
+                                @if($donation->user && $donation->user->username)
                                     <span class="donor-link">
                                         <i class="fas fa-user"></i>
-                                        {{ $donation->user->name }}
+                                        {{ $donation->user->username }}
                                     </span>
                                 @elseif($donation->donor_name)
                                     <span class="donor-link">
@@ -51,7 +51,7 @@
                                 @else
                                     <span class="text-muted">
                                         <i class="fas fa-user"></i>
-                                        Unknown Donor
+                                        Anonymous
                                     </span>
                                 @endif
                             </td>

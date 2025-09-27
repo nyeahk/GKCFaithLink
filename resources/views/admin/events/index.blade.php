@@ -58,6 +58,9 @@
                                 <button class="action-btn view-btn" onclick="viewEventDetails({{ $event->id }})" title="View Details">
                                     <i class="fas fa-eye"></i>
                                 </button>
+                                <a href="{{ route('admin.events.attendees', $event->id) }}" class="action-btn attendees-btn" title="View Attendees">
+                                    <i class="fas fa-users"></i>
+                                </a>
                             </td>
                         </tr>
                     @empty
@@ -116,6 +119,10 @@
     
     .view-btn:hover {
         color: #007bff;
+    }
+
+    .attendees-btn:hover {
+        color: #28a745;
     }
     
     /* Modal Styles */

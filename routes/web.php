@@ -67,6 +67,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/notifications/count', [App\Http\Controllers\NotificationController::class, 'getUnreadCount'])->name('notifications.count');
     Route::get('/notifications/check-new', [App\Http\Controllers\NotificationController::class, 'checkNew'])->name('notifications.check-new');
 
+    // Real-time notification routes
+    Route::get('/notifications/stream', [App\Http\Controllers\NotificationStreamController::class, 'stream'])->name('notifications.stream');
+    Route::get('/notifications/check', [App\Http\Controllers\NotificationStreamController::class, 'check'])->name('notifications.check');
+
 
     // Admin routes - only accessible by users with role 1 (admin)
     Route::prefix('admin')->name('admin.')->middleware([CheckUserActive::class, RoleMiddleware::class.':1'])->group(function () {
@@ -77,6 +81,7 @@ Route::middleware(['auth'])->group(function () {
         // Events - view only for admin
         Route::get('events', [EventController::class, 'index'])->name('events.index');
         Route::get('events/{event}', [EventController::class, 'show'])->name('events.show');
+        Route::get('events/{event}/attendees', [EventController::class, 'attendees'])->name('events.attendees');
         
         // Donations
         Route::get('donations', [AdminDonationController::class, 'index'])->name('donations.index');
@@ -189,6 +194,11 @@ Route::middleware(['auth'])->group(function () {
         Route::put('events/{event}', [App\Http\Controllers\Staff\EventController::class, 'update'])->name('events.update');
         Route::delete('events/{event}', [App\Http\Controllers\Staff\EventController::class, 'destroy'])->name('events.destroy');
         Route::get('events/date/{date}', [App\Http\Controllers\Staff\DashboardController::class, 'getEventsForDate'])->name('events.date');
+
+        // Event Attendee Management for Staff
+        Route::get('events/{event}/attendees', [App\Http\Controllers\Staff\EventController::class, 'attendees'])->name('events.attendees');
+        Route::patch('events/{event}/volunteers/{registration}/approve', [App\Http\Controllers\Staff\EventController::class, 'approveVolunteer'])->name('events.volunteers.approve');
+        Route::patch('events/{event}/volunteers/{registration}/decline', [App\Http\Controllers\Staff\EventController::class, 'declineVolunteer'])->name('events.volunteers.decline');
 
         // Announcements - full CRUD for staff
         Route::get('announcements', [App\Http\Controllers\Staff\AnnouncementController::class, 'index'])->name('announcements.index');

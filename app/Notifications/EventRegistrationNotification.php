@@ -3,10 +3,9 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use App\Models\EventRegistration;
+use App\Events\NotificationSent;
 
 class EventRegistrationNotification extends Notification
 {
@@ -29,21 +28,7 @@ class EventRegistrationNotification extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['database', 'mail'];
-    }
-
-    /**
-     * Get the mail representation of the notification.
-     */
-    public function toMail(object $notifiable): MailMessage
-    {
-        return (new MailMessage)
-                    ->subject('New Event Registration')
-                    ->line('A new member has registered for an event.')
-                    ->line('Event: ' . $this->registration->event->title)
-                    ->line('Member: ' . $this->registration->user->username)
-                    ->line('Registration Date: ' . $this->registration->registration_date->format('F j, Y, g:i a'))
-                    ->action('View Event', url('/staff/events/' . $this->registration->event_id));
+        return ['database'];
     }
 
     /**
@@ -53,14 +38,35 @@ class EventRegistrationNotification extends Notification
      */
     public function toArray(object $notifiable): array
     {
+        // Generate role-appropriate URL
+        $url = match($notifiable->role) {
+            1 => route('admin.events.attendees', $this->registration->event), // Admin
+            2 => route('staff.dashboard'), // Treasurer (limited access)
+            3 => route('member.dashboard'), // Member (shouldn't receive this notification)
+            4 => route('staff.events.attendees', $this->registration->event), // Staff
+            default => route('staff.events.attendees', $this->registration->event)
+        };
+
         return [
+            'title' => 'New Event Registration',
+            'message' => $this->registration->user->name . ' has registered for "' . $this->registration->event->title . '"',
             'event_id' => $this->registration->event_id,
             'event_title' => $this->registration->event->title,
             'user_id' => $this->registration->user_id,
-            'user_name' => $this->registration->user->username,
+            'user_name' => $this->registration->user->name,
             'registration_id' => $this->registration->id,
             'registration_date' => $this->registration->registration_date->format('Y-m-d H:i:s'),
+            'url' => $url,
             'type' => 'event_registration'
         ];
+    }
+
+    /**
+     * Handle notification after it's stored in database
+     */
+    public function afterStore($notifiable, $notification)
+    {
+        // Trigger real-time event
+        event(new NotificationSent($notification, $notifiable->id));
     }
 }

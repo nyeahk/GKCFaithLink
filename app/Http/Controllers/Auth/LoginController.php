@@ -59,18 +59,30 @@ class LoginController extends Controller
             
             $request->session()->regenerate();
 
-            // Redirect based on user role
+            // Log the login attempt for debugging
+            \Log::info('User logged in successfully', [
+                'user_id' => $user->id,
+                'user_role' => $user->role,
+                'email' => $user->email
+            ]);
+
+            // Redirect based on user role - use direct redirect to avoid intended() issues
             switch ($user->role) {
                 case 1: // Admin
-                    return redirect()->intended('admin/dashboard');
+                    \Log::info('Redirecting admin to dashboard');
+                    return redirect()->route('admin.dashboard');
                 case 2: // Treasurer
-                    return redirect()->intended('treasurer/dashboard');
+                    \Log::info('Redirecting treasurer to dashboard');
+                    return redirect()->route('treasurer.dashboard');
                 case 3: // Member
-                    return redirect()->intended('member/dashboard');
+                    \Log::info('Redirecting member to dashboard');
+                    return redirect()->route('member.dashboard');
                 case 4: // Staff
-                    return redirect()->intended('staff/dashboard');
+                    \Log::info('Redirecting staff to dashboard');
+                    return redirect()->route('staff.dashboard');
                 default:
-                    return redirect()->intended('/');
+                    \Log::info('Redirecting to default route');
+                    return redirect('/');
             }
         }
 

@@ -10,6 +10,133 @@
     @stack('styles')
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Real-time Notification Styles -->
+    <style>
+        .notification-toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            max-width: 400px;
+            min-width: 300px;
+            transform: translateX(100%);
+            transition: transform 0.3s ease-in-out;
+            margin-bottom: 10px;
+        }
+
+        .notification-toast.show {
+            transform: translateX(0);
+        }
+
+        .notification-toast.hide {
+            transform: translateX(100%);
+        }
+
+        .notification-toast-content {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            border-left: 4px solid #007bff;
+            display: flex;
+            align-items: flex-start;
+            padding: 16px;
+            gap: 12px;
+        }
+
+        .notification-toast-content.notification-success {
+            border-left-color: #28a745;
+        }
+
+        .notification-toast-content.notification-warning {
+            border-left-color: #ffc107;
+        }
+
+        .notification-toast-content.notification-info {
+            border-left-color: #17a2b8;
+        }
+
+        .notification-toast-content.notification-primary {
+            border-left-color: #007bff;
+        }
+
+        .notification-toast-icon {
+            flex-shrink: 0;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .notification-toast-icon i {
+            font-size: 20px;
+            color: #007bff;
+        }
+
+        .notification-success .notification-toast-icon i {
+            color: #28a745;
+        }
+
+        .notification-warning .notification-toast-icon i {
+            color: #ffc107;
+        }
+
+        .notification-info .notification-toast-icon i {
+            color: #17a2b8;
+        }
+
+        .notification-toast-body {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .notification-toast-title {
+            font-weight: 600;
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .notification-toast-message {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.4;
+            margin-bottom: 4px;
+        }
+
+        .notification-toast-time {
+            font-size: 11px;
+            color: #999;
+        }
+
+        .notification-toast-actions {
+            flex-shrink: 0;
+            display: flex;
+            gap: 4px;
+        }
+
+        .notification-toast-view,
+        .notification-toast-close {
+            background: none;
+            border: none;
+            padding: 4px;
+            border-radius: 4px;
+            cursor: pointer;
+            color: #666;
+            transition: all 0.2s;
+        }
+
+        .notification-toast-view:hover {
+            background: #f8f9fa;
+            color: #007bff;
+        }
+
+        .notification-toast-close:hover {
+            background: #f8f9fa;
+            color: #dc3545;
+        }
+    </style>
 </head>
 <body>
     <!-- Include navigation at the top -->
@@ -113,6 +240,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ asset('js/realtime-notifications-new.js') }}" defer></script>
     @stack('scripts')
 
     <style>

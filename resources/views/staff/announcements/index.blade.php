@@ -21,6 +21,26 @@
             </div>
         @endif
 
+        <!-- Filter tabs -->
+        <div class="announcements-filter-tabs mb-4">
+            <a href="{{ route('staff.announcements.index') }}?filter=all"
+               class="filter-tab {{ $filter === 'all' ? 'active' : '' }}">
+                <i class="fas fa-list"></i> All Announcements
+            </a>
+            <a href="{{ route('staff.announcements.index') }}?filter=current"
+               class="filter-tab {{ $filter === 'current' ? 'active' : '' }}">
+                <i class="fas fa-clock"></i> This Week
+            </a>
+            <a href="{{ route('staff.announcements.index') }}?filter=recent"
+               class="filter-tab {{ $filter === 'recent' ? 'active' : '' }}">
+                <i class="fas fa-calendar-day"></i> This Month
+            </a>
+            <a href="{{ route('staff.announcements.index') }}?filter=older"
+               class="filter-tab {{ $filter === 'older' ? 'active' : '' }}">
+                <i class="fas fa-archive"></i> Older
+            </a>
+        </div>
+
         <div class="announcements-table">
             <table>
                 <thead>
@@ -28,6 +48,7 @@
                         <th>Title</th>
                         <th>Status</th>
                         <th>Posted At</th>
+                        <th>Time Status</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -54,6 +75,11 @@
                                     {{ $announcement->posted_at->format('M d, Y') }}
                                     <span class="time">{{ $announcement->posted_at->format('h:i A') }}</span>
                                 </div>
+                            </td>
+                            <td>
+                                <span class="badge {{ $announcement->time_class ?? 'badge-secondary' }}">
+                                    {{ $announcement->time_label ?? 'Unknown' }}
+                                </span>
                             </td>
                             <td class="actions">
                                 <a href="{{ route('staff.announcements.show', $announcement->id) }}" class="btn btn-action btn-view" title="View Announcement">
@@ -294,6 +320,83 @@
         background-color: #2b6cb0;
         color: white;
         border-color: #2b6cb0;
+    }
+
+    /* Filter Tabs */
+    .announcements-filter-tabs {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+        border-bottom: 2px solid #e5e7eb;
+        padding-bottom: 0.5rem;
+    }
+
+    .filter-tab {
+        display: flex;
+        align-items: center;
+        padding: 0.5rem 1rem;
+        text-decoration: none;
+        color: #6b7280;
+        border-radius: 0.375rem 0.375rem 0 0;
+        transition: all 0.2s;
+        font-weight: 500;
+        border-bottom: 2px solid transparent;
+    }
+
+    .filter-tab:hover {
+        color: #374151;
+        background-color: #f9fafb;
+        text-decoration: none;
+    }
+
+    .filter-tab.active {
+        color: #1f2937;
+        background-color: #f3f4f6;
+        border-bottom-color: #3b82f6;
+    }
+
+    .filter-tab i {
+        margin-right: 0.5rem;
+    }
+
+    /* Time Status Badges */
+    .badge {
+        display: inline-block;
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        line-height: 1;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: baseline;
+        border-radius: 0.375rem;
+        text-transform: uppercase;
+        letter-spacing: 0.025em;
+    }
+
+    .badge-primary {
+        color: #ffffff;
+        background-color: #007bff;
+    }
+
+    .badge-success {
+        color: #ffffff;
+        background-color: #28a745;
+    }
+
+    .badge-info {
+        color: #ffffff;
+        background-color: #17a2b8;
+    }
+
+    .badge-secondary {
+        color: #ffffff;
+        background-color: #6c757d;
+    }
+
+    .badge-warning {
+        color: #212529;
+        background-color: #ffc107;
     }
 </style>
 @endpush 

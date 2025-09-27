@@ -144,6 +144,7 @@
     <style>
         /* Update admin color palette to perfectly match member panel */
         :root {
+<<<<<<< Updated upstream
             --admin-primary: #4F959D;            /* Teal - Main brand color */
             --admin-primary-dark: #3d7a80;       /* Darker teal - For hover states */
             --admin-primary-light: #98D2C0;      /* Light teal/mint - For secondary elements */
@@ -159,6 +160,25 @@
             --admin-shadow-light: 0 2px 10px rgba(79, 149, 157, 0.2);
             --admin-shadow-medium: 0 4px 20px rgba(79, 149, 157, 0.25);
             --admin-shadow-heavy: 0 8px 30px rgba(79, 149, 157, 0.3);
+=======
+            --primary-dark: #205781;
+            --primary: #4F959D;
+            --primary-light: #98D2C0;
+            --background-light: #F6F8D5;
+            --white: #ffffff;
+            --text-dark: #333333;
+            --text-darker: #111111;
+            --text-light: #666666;
+
+            --admin-sidebar-bg: var(--primary-dark);
+            --admin-sidebar-hover: var(--primary-light);
+            --admin-sidebar-active: var(--primary);
+            --admin-text-light: var(--white);
+            --admin-text-muted: rgba(255, 255, 255, 0.85);
+            --admin-shadow-light: 0 2px 10px rgba(32, 87, 129, 0.2);
+            --admin-shadow-medium: 0 4px 20px rgba(32, 87, 129, 0.25);
+            --admin-shadow-heavy: 0 8px 30px rgba(32, 87, 129, 0.3);
+>>>>>>> Stashed changes
             --admin-border-radius: 12px;
             --admin-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
@@ -600,7 +620,7 @@
             top: 0;
             height: 100%;
             width: 4px;
-            background: linear-gradient(180deg, var(--admin-text-light) 0%, rgba(255, 255, 255, 0.8) 100%);
+            background: linear-gradient(180deg, var(--primary) 0%, var(--primary-light) 100%);
             border-radius: 2px 0 0 2px;
             box-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
         }
@@ -708,12 +728,18 @@
         }
 
         .card-header {
-            background: var(--admin-primary-gradient) !important;
-            color: var(--admin-text-light) !important;
-            border: none;
+            background: var(--primary);
+            color: var(--white);
+            padding: 1rem 1.5rem;
+            font-size: 1.1rem;
             font-weight: 600;
-            padding: 1.25rem;
+            border-bottom: none;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             position: relative;
+            z-index: 2;
+            border-radius: var(--admin-border-radius) var(--admin-border-radius) 0 0;
         }
 
         .card-header::before {
@@ -723,25 +749,168 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(45deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%, rgba(255, 255, 255, 0.05) 100%);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, transparent 50%, rgba(255, 255, 255, 0.04) 100%);
             pointer-events: none;
+            z-index: 1;
         }
 
-        .card-header h5, .card-header h4, .card-header h3 {
-            margin: 0;
-            font-weight: 700;
-            position: relative;
-            z-index: 2;
-            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        .card-title {
+            color: var(--white);
+            margin-bottom: 0;
+            font-size: 1.2rem;
         }
 
         .card-body {
+            background-color: var(--white);
             padding: 1.5rem;
-            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-            position: relative;
-            z-index: 2;
+            border-radius: 0 0 var(--admin-border-radius) var(--admin-border-radius);
         }
 
+        .table {
+            --bs-table-bg: var(--white);
+            --bs-table-color: var(--text-dark);
+            --bs-table-border-color: #dee2e6;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: var(--background-light);
+            color: var(--text-darker);
+        }
+
+        .form-control,
+        .form-select {
+            border-color: #ced4da;
+            box-shadow: none;
+            transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            background-color: var(--white);
+            color: var(--text-dark);
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 0.25rem rgba(var(--primary-light-rgb), 0.25);
+        }
+
+<<<<<<< Updated upstream
+=======
+        .btn-primary {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            color: var(--white);
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(32, 87, 129, 0.2);
+        }
+
+        .btn-primary:active {
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
+            transform: translateY(0);
+            box-shadow: none;
+        }
+
+        .btn-outline-primary {
+            color: var(--primary);
+            border-color: var(--primary);
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-primary:hover {
+            background-color: var(--primary);
+            color: var(--white);
+            box-shadow: 0 4px 8px rgba(79, 149, 157, 0.2);
+        }
+
+        .text-primary {
+            color: var(--primary-dark) !important;
+        }
+
+        .page-item.active .page-link {
+            background-color: var(--primary) !important;
+            border-color: var(--primary) !important;
+            color: var(--white);
+        }
+
+        .page-link {
+            color: var(--primary);
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+
+        .alert-danger {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+
+        .alert-info {
+            background-color: #d1ecf1;
+            border-color: #bee5eb;
+            color: #0c5460;
+        }
+
+        .alert-warning {
+            background-color: #fff3cd;
+            border-color: #ffeeba;
+            color: #856404;
+        }
+
+        /* Custom switch styling */
+        .form-check-input:checked {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        /* Add custom styling for focus rings using the new palette */
+        *:focus-visible {
+            outline: 2px solid var(--primary-light);
+            outline-offset: 2px;
+            border-radius: 3px;
+        }
+
+        /* Ensuring text readability against new backgrounds */
+        body {
+            color: var(--text-dark);
+            background-color: var(--background-light);
+        }
+
+        .container-fluid {
+            background-color: var(--background-light);
+        }
+
+        /* Specific adjustments for existing elements that might need color updates */
+        .navbar {
+            background-color: var(--primary-dark);
+        }
+
+        .modal-header {
+            background-color: var(--primary-dark);
+            color: var(--white);
+        }
+
+        .modal-footer {
+            background-color: var(--background-light);
+        }
+
+        .form-label {
+            color: var(--text-darker);
+        }
+
+        .text-muted {
+            color: var(--text-light) !important;
+        }
+
+>>>>>>> Stashed changes
         /* Stats Cards Enhancement for Admin Reports */
         .admin-stats-card {
             background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);

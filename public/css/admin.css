@@ -1,22 +1,29 @@
 :root {
-    --primary-color: #3490dc;
-    --secondary-color: #6c757d;
-    --success-color: #38c172;
-    --danger-color: #e3342f;
-    --warning-color: #ffed4a;
-    --info-color: #6cb2eb;
-    --light-color: #f8f9fa;
-    --dark-color: #343a40;
-    --text-darker: #111111;
+    --primary-dark: #205781;
+    --primary: #4F959D;
+    --primary-light: #98D2C0;
+    --background-light: #F6F8D5;
     --white: #ffffff;
+<<<<<<< Updated upstream
     /* Updated hover styles to match member panel */
     --hover-bg: rgba(255, 255, 255, 0.15);
+=======
+    --text-dark: #333333;
+    --text-darker: #111111;
+    --text-light: #666666;
+    --error: #dc3545;
+    --success: #28a745;
+    --warning: #ffc107;
+
+    /* Adjusted based on new palette */
+    --hover-bg: var(--primary);
+>>>>>>> Stashed changes
     --hover-transition: all 0.3s ease;
 }
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f5f8fa;
+    background-color: var(--background-light);
     overflow-x: hidden;
     padding-top: 0; /* Remove any padding as the navbar is already accounted for */
 }
@@ -61,7 +68,11 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 15px 20px;
+<<<<<<< Updated upstream
     background: linear-gradient(180deg, #4F959D 0%, #3d7a80 100%);
+=======
+    background-color: var(--primary-dark);
+>>>>>>> Stashed changes
     color: var(--white);
 }
 
@@ -95,10 +106,17 @@ body {
 }
 
 .calendar-table th {
+<<<<<<< Updated upstream
     background-color: var(--primary-light);
     color: var(--primary-dark);
     padding: 10px 0;
     font-weight: 500;
+=======
+    padding: 10px;
+    text-align: center;
+    background-color: var(--background-light);
+    border-bottom: 1px solid #dee2e6;
+>>>>>>> Stashed changes
 }
 
 .calendar-table td {
@@ -106,21 +124,34 @@ body {
     height: 80px;
     vertical-align: top;
     cursor: pointer;
+<<<<<<< Updated upstream
     transition: background-color 0.2s;
+=======
+    transition: background-color 0.3s;
+}
+
+.calendar-table td:hover {
+    background-color: var(--primary-light);
+>>>>>>> Stashed changes
 }
 
 .calendar-table .other-month {
-    color: #adb5bd;
-    background-color: #f8f9fa;
+    color: var(--text-light);
+    background-color: var(--background-light);
 }
 
 .calendar-table .today {
+<<<<<<< Updated upstream
     background-color: var(--background-light);
+=======
+    background-color: rgba(79, 149, 157, 0.1); /* Using primary for today's background */
+>>>>>>> Stashed changes
     font-weight: bold;
 }
 
 .calendar-table .has-events {
     position: relative;
+<<<<<<< Updated upstream
 }
 
 .event-indicator {
@@ -139,11 +170,29 @@ body {
     align-items: center;
     justify-content: center;
     gap: 4px;
+=======
+    color: var(--white);
+    background-color: var(--primary); /* Using primary for events */
+}
+
+.day-number {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.event-indicator {
+    font-size: 0.8rem;
+    color: var(--primary-dark);
+    background-color: rgba(32, 87, 129, 0.1); /* Using primary-dark for indicator background */
+    padding: 2px 5px;
+    border-radius: 3px;
+    display: inline-block;
+>>>>>>> Stashed changes
 }
 
 /* Event card styles */
 .event-card {
-    border-left: 4px solid var(--primary-color);
+    border-left: 4px solid var(--primary-dark);
     transition: transform 0.3s;
 }
 

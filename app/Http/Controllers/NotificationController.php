@@ -171,7 +171,7 @@ class NotificationController extends Controller
                     'title' => $this->getNotificationTitle($notification->type, $notification->data),
                     'message' => $notification->data['message'] ?? 'New notification received',
                     'type' => $this->getNotificationType($notification->type),
-                    'url' => route('notifications.show', $notification->id),
+                    'url' => $notification->data['url'] ?? route('notifications.show', $notification->id),
                     'created_at' => $notification->created_at->diffForHumans()
                 ];
             });

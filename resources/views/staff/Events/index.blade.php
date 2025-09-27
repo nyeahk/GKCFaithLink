@@ -23,17 +23,21 @@
 
         <!-- Filter tabs -->
         <div class="events-filter-tabs mb-4">
-            <a href="{{ route('staff.events.index') }}?filter=upcoming" 
-               class="filter-tab {{ $filter === 'upcoming' ? 'active' : '' }}">
-                <i class="fas fa-calendar-day"></i> Upcoming Events
-            </a>
-            <a href="{{ route('staff.events.index') }}?filter=past" 
-               class="filter-tab {{ $filter === 'past' ? 'active' : '' }}">
-                <i class="fas fa-history"></i> Past Events
-            </a>
-            <a href="{{ route('staff.events.index') }}?filter=all" 
+            <a href="{{ route('staff.events.index') }}?filter=all"
                class="filter-tab {{ $filter === 'all' ? 'active' : '' }}">
                 <i class="fas fa-calendar-alt"></i> All Events
+            </a>
+            <a href="{{ route('staff.events.index') }}?filter=upcoming"
+               class="filter-tab {{ $filter === 'upcoming' ? 'active' : '' }}">
+                <i class="fas fa-calendar-day"></i> Upcoming
+            </a>
+            <a href="{{ route('staff.events.index') }}?filter=current"
+               class="filter-tab {{ $filter === 'current' ? 'active' : '' }}">
+                <i class="fas fa-play-circle"></i> Happening Now
+            </a>
+            <a href="{{ route('staff.events.index') }}?filter=past"
+               class="filter-tab {{ $filter === 'past' ? 'active' : '' }}">
+                <i class="fas fa-history"></i> Past Events
             </a>
         </div>
 
@@ -46,6 +50,7 @@
                         <th>End Date</th>
                         <th>Location</th>
                         <th>Status</th>
+                        <th>Time Status</th>
                         <th class="text-center">Actions</th>
                     </tr>
                 </thead>
@@ -72,10 +77,18 @@
                                     {{ ucfirst($event->status) }}
                                 </span>
                             </td>
+                            <td>
+                                <span class="badge {{ $event->time_class ?? 'badge-secondary' }}">
+                                    {{ $event->time_label ?? 'Unknown' }}
+                                </span>
+                            </td>
                             <td class="actions">
                                 <button class="btn btn-action btn-view"  title="View Event" data-event-id="{{ $event->id }}">
                                     <i class="fas fa-eye"></i>
                                 </button>
+                                <a href="{{ route('staff.events.attendees', $event->id) }}" class="btn btn-action btn-attendees" title="View Attendees">
+                                    <i class="fas fa-users"></i>
+                                </a>
                                 <a href="{{ route('staff.events.edit', $event->id) }}" class="btn btn-action btn-edit" title="Edit Event">
                                     <i class="fas fa-edit"></i>
                                 </a>
@@ -309,6 +322,19 @@
 
     .btn-view:hover i {
         color: #1e40af;
+        transform: scale(1.1);
+    }
+
+    .btn-attendees {
+        color: #059669;
+    }
+
+    .btn-attendees:hover {
+        background-color: transparent;
+    }
+
+    .btn-attendees:hover i {
+        color: #047857;
         transform: scale(1.1);
     }
 
@@ -548,6 +574,46 @@
 
     .filter-tab i {
         margin-right: 0.5rem;
+    }
+
+    /* Time Status Badges */
+    .badge {
+        display: inline-block;
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        line-height: 1;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: baseline;
+        border-radius: 0.375rem;
+        text-transform: uppercase;
+        letter-spacing: 0.025em;
+    }
+
+    .badge-primary {
+        color: #ffffff;
+        background-color: #007bff;
+    }
+
+    .badge-success {
+        color: #ffffff;
+        background-color: #28a745;
+    }
+
+    .badge-info {
+        color: #ffffff;
+        background-color: #17a2b8;
+    }
+
+    .badge-secondary {
+        color: #ffffff;
+        background-color: #6c757d;
+    }
+
+    .badge-warning {
+        color: #212529;
+        background-color: #ffc107;
     }
 </style>
 @endpush

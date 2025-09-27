@@ -16,7 +16,7 @@
 }
 
 .calendar-table th {
-    background-color: #f8f9fa;
+    background-color: var(--background-light);
     padding: 10px 0;
     font-weight: 500;
     height: auto;
@@ -28,7 +28,7 @@
 }
 
 .calendar-table td:hover {
-    background-color: #f0f0f0;
+    background-color: var(--primary-light);
 }
 
 .day-number {
@@ -39,16 +39,16 @@
 }
 
 .other-month {
-    color: #aaa;
-    background-color: #f9f9f9;
+    color: var(--text-light);
+    background-color: var(--background-light);
 }
 
 .today {
-    background-color: #e8f4ff;
+    background-color: rgba(79, 149, 157, 0.1); /* Using primary for today's background */
 }
 
 .today .day-number {
-    color: #0d6efd;
+    color: var(--primary-dark);
     font-weight: bold;
 }
 
@@ -63,8 +63,8 @@
     right: 0;
     text-align: center;
     font-size: 0.75rem;
-    color: #0d6efd;
-    background-color: rgba(13, 110, 253, 0.1);
+    color: var(--primary-dark);
+    background-color: rgba(32, 87, 129, 0.1); /* Using primary-dark for indicator background */
     border-radius: 4px;
     margin: 0 5px;
     padding: 2px 4px;
@@ -113,17 +113,17 @@
 .calendar-nav-btn {
     padding: 5px 10px;
     border-radius: 4px;
-    background-color: #fff;
-    border: 1px solid #dee2e6;
-    color: #212529;
+    background-color: var(--white);
+    border: 1px solid var(--primary-light);
+    color: var(--text-dark);
     text-decoration: none;
     font-size: 0.9rem;
     transition: all 0.2s;
 }
 
 .calendar-nav-btn:hover {
-    background-color: #f0f0f0;
-    color: #0d6efd;
+    background-color: var(--primary-light);
+    color: var(--white);
 }
 
 /* Responsive adjustments */

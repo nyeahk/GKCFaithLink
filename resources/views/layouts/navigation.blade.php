@@ -1,8 +1,12 @@
+<<<<<<< Updated upstream
 <nav class="navbar navbar-expand-lg navbar-light shadow-sm fixed-top">
+=======
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary-dark shadow-sm fixed-top">
+>>>>>>> Stashed changes
     <div class="container-fluid">
         <a class="navbar-brand d-flex align-items-center" href="{{ Auth::check() ? route(Auth::user()->getRoleDashboardRoute()) : route('login') }}">
             <img src="{{ asset('images/gkc logo new.jpeg') }}" alt="GKC FaithLink Logo" class="logo me-2" style="width: 40px; height: 40px; border-radius: 50%;">
-            <strong>GKC FaithLink</strong>
+            <strong class="text-white">GKC FaithLink</strong>
         </a>
 
         <!-- Right side: Notifications and Logout -->
@@ -34,7 +38,7 @@
                                     @if(auth()->user()->unreadNotifications->count() > 0)
                                         <form action="{{ route('notifications.mark-all-read') }}" method="POST" class="d-inline">
                                             @csrf
-                                            <button type="submit" class="btn btn-sm btn-link text-decoration-none p-0 mark-all-read-btn">
+                                            <button type="submit" class="btn btn-sm btn-link text-decoration-none p-0 mark-all-read-btn text-primary-dark">
                                                 Mark all as read
                                             </button>
                                         </form>
@@ -43,10 +47,17 @@
                             </div>
                             
                             <!-- Notification counter -->
+<<<<<<< Updated upstream
                             <div class="notification-counter p-2 border-bottom text-center" style="background-color: #e9ecef !important;">
                                 <small style="color: #000 !important; font-weight: 600 !important; display: inline-flex; align-items: center; justify-content: center;">
                                     <i class="fas fa-circle {{ auth()->user()->unreadNotifications->count() > 0 ? 'text-primary' : 'text-dark' }} me-1" style="font-size: 8px; color: #000 !important;"></i>
                                     <span style="color: #000 !important;">{{ auth()->user()->unreadNotifications->count() }} unread notifications</span>
+=======
+                            <div class="notification-counter p-2 bg-background-light border-bottom">
+                                <small class="text-muted">
+                                    <i class="fas fa-circle {{ auth()->user()->unreadNotifications->count() > 0 ? 'text-primary' : 'text-secondary' }} me-1" style="font-size: 8px;"></i>
+                                    <span>{{ auth()->user()->unreadNotifications->count() }} unread notifications</span>
+>>>>>>> Stashed changes
                                 </small>
                             </div>
                             
@@ -135,10 +146,10 @@
                                                         <span class="unread-indicator"></span>
                                                     @endif
                                                 </div>
-                                                <p class="notification-text mb-0 text-muted small">
+                                                <p class="notification-text mb-0 text-text-light small">
                                                     {{ Str::limit($notification->data['message'] ?? 'You have a new notification', 60) }}
                                                 </p>
-                                                <small class="notification-time text-muted">
+                                                <small class="notification-time text-text-light">
                                                     {{ $notification->created_at->diffForHumans() }}
                                                 </small>
                                             </div>
@@ -146,14 +157,15 @@
                                     </a>
                                 @empty
                                     <div class="dropdown-item text-center py-4">
-                                        <i class="fas fa-bell-slash text-muted mb-2" style="font-size: 1.5rem;"></i>
-                                        <p class="mb-0 text-muted">No notifications yet</p>
+                                        <i class="fas fa-bell-slash text-text-light mb-2" style="font-size: 1.5rem;"></i>
+                                        <p class="mb-0 text-text-light">No notifications yet</p>
                                     </div>
                                 @endforelse
                             </div>
                             
                             <!-- Footer with view all link -->
                             <div class="dropdown-footer text-center p-2 border-top">
+<<<<<<< Updated upstream
                                 @php
                                     // Determine the appropriate notifications route based on user role
                                     $user = auth()->user();
@@ -163,6 +175,9 @@
                                     };
                                 @endphp
                                 <a href="{{ route($notificationsRoute) }}" class="btn btn-link text-decoration-none w-100">
+=======
+                                <a href="{{ route('notifications.index') }}" class="btn btn-link text-decoration-none w-100 text-primary">
+>>>>>>> Stashed changes
                                     View all notifications <i class="fas fa-arrow-right ms-1"></i>
                                 </a>
                             </div>
@@ -170,10 +185,14 @@
                     </div>
                 </div>
                 
-                <span class="me-3 text-muted">Hi, <strong>{{ Auth::user()->username }}</strong></span>
+                <span class="me-3 text-white">Hi, <strong>{{ Auth::user()->username }}</strong></span>
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
+<<<<<<< Updated upstream
                     <button type="submit" class="btn btn-outline-light btn-sm">
+=======
+                    <button type="submit" class="btn btn-outline-white btn-sm">
+>>>>>>> Stashed changes
                         <i class="fas fa-sign-out-alt me-1"></i> Logout
                     </button>
                 </form>
@@ -273,10 +292,10 @@
         text-align: center;
         padding: 8px 0;
         margin: 0;
-        color: #6c757d;
+        color: var(--text-light);
         font-weight: 500;
         list-style: none;
-        background-color: #f8f9fa;
+        background-color: var(--background-light);
         border-bottom: 1px solid #eee;
     }
     
@@ -291,13 +310,15 @@
         border-radius: 25px;
         padding: 0.5rem 1rem;
         transition: all 0.3s ease;
+        color: var(--white);
+        border-color: var(--white);
     }
     
     /* Notification title in dropdown */
     .notification-title {
         font-size: 0.9rem;
         margin-bottom: 2px;
-        color: #333;
+        color: var(--text-dark);
     }
     
     .notification-title.unread {
@@ -305,7 +326,7 @@
     }
 
     .notification-mobile-btn:hover {
-        background-color: rgba(255, 255, 255, 0.2);
+        background-color: var(--primary-light);
         transform: translateY(-1px);
     }
 
@@ -315,13 +336,13 @@
         padding: 0.75rem 1rem;
         border-radius: 50px;
         transition: all 0.3s ease;
-        color: white !important;
+        color: var(--white) !important;
     }
 
     .notification-bell:hover {
         background-color: rgba(255, 255, 255, 0.1);
         transform: scale(1.05);
-        color: white !important;
+        color: var(--white) !important;
     }
 
     .notification-badge {
@@ -346,309 +367,108 @@
     .notification-dropdown-modern {
         width: 380px;
         max-height: 600px;
-        border: none;
-        border-radius: 15px;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
-        padding: 0;
+    }
+
+    .notification-dropdown {
+        border-radius: 0.75rem;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
         overflow: hidden;
-        backdrop-filter: blur(10px);
-        background: rgba(255, 255, 255, 0.95);
+        background-color: var(--white);
     }
 
-    /* Header Styles */
-    .dropdown-header-modern {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 1rem 1.25rem;
-        border: none;
-        margin: 0;
+    .dropdown-header {
+        background-color: var(--primary-dark);
+        color: var(--white);
     }
 
-    .notification-header-content {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 1rem;
+    .mark-all-read-btn {
+        color: var(--white) !important; /* Ensure visibility against primary-dark background */
+        font-weight: 500;
     }
 
-    .header-left {
-        flex: 1;
+    .mark-all-read-btn:hover {
+        text-decoration: underline !important;
     }
 
-    .notification-dropdown-title {
-        font-size: 1.1rem;
-        font-weight: 600;
-        margin: 0 0 0.25rem 0;
-        color: white;
+    .notification-item.unread {
+        background-color: var(--background-light);
     }
 
-    .notification-count-text {
-        font-size: 0.85rem;
-        opacity: 0.9;
-        font-weight: 400;
+    .notification-item:hover {
+        background-color: var(--primary-light);
+        transition: background-color 0.2s ease;
     }
 
-    .header-actions {
-        display: flex;
-        gap: 0.5rem;
-    }
-
-    .mark-all-btn, .view-all-btn {
-        width: 32px;
-        height: 32px;
+    .notification-icon .icon-circle {
+        width: 40px;
+        height: 40px;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 0;
-        font-size: 0.8rem;
-        transition: all 0.3s ease;
-    }
-
-    .mark-all-btn {
-        background: rgba(255, 255, 255, 0.2);
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        color: white;
-    }
-
-    .mark-all-btn:hover {
-        background: rgba(255, 255, 255, 0.3);
-        transform: scale(1.1);
-        color: white;
-    }
-
-    .view-all-btn {
-        background: rgba(255, 255, 255, 0.9);
-        border: none;
-        color: #667eea;
-    }
-
-    .view-all-btn:hover {
-        background: white;
-        transform: scale(1.1);
-        color: #667eea;
-    }
-
-    /* Notification List Styles */
-    .notification-dropdown-list {
-        max-height: 400px;
-        overflow-y: auto;
-        padding: 0;
-    }
-
-    .notification-dropdown-item {
-        list-style: none;
-        margin: 0;
-        border-bottom: 1px solid #f1f3f4;
-    }
-
-    .notification-dropdown-item:last-child {
-        border-bottom: none;
-    }
-
-    .notification-link {
-        display: block;
-        padding: 1rem 1.25rem;
-        text-decoration: none;
-        color: inherit;
-        transition: all 0.3s ease;
-        position: relative;
-    }
-
-    .notification-link:hover {
-        background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
-        color: inherit;
-        text-decoration: none;
-    }
-
-    .notification-item-content {
-        display: flex;
-        align-items: flex-start;
-        gap: 0.75rem;
-        position: relative;
-    }
-
-    .notification-icon-wrapper {
+        font-size: 1.1rem;
         flex-shrink: 0;
     }
 
-    .notification-icon {
-        width: 36px;
-        height: 36px;
+    .unread-indicator {
+        width: 8px;
+        height: 8px;
+        background-color: var(--primary);
         border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 0.9rem;
-        color: white;
+        margin-left: 0.5rem;
+        flex-shrink: 0;
     }
 
-    .notification-icon.success {
-        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-    }
-
-    .notification-icon.danger {
-        background: linear-gradient(135deg, #dc3545 0%, #e83e8c 100%);
-    }
-
-    .notification-icon.warning {
-        background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
-    }
-
-    .notification-icon.info {
-        background: linear-gradient(135deg, #17a2b8 0%, #6f42c1 100%);
-    }
-
-    .notification-icon.secondary {
-        background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
-    }
-
-    .notification-text {
-        flex: 1;
-        min-width: 0;
-    }
-
-    .notification-message {
-        font-size: 0.9rem;
-        font-weight: 500;
-        color: #2d3748;
-        margin: 0 0 0.25rem 0;
-        line-height: 1.4;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-    }
-
-    .notification-message.unread {
+    .dropdown-footer .btn-link {
+        color: var(--primary-dark);
         font-weight: 600;
-        color: #1a202c;
+    }
+
+    .dropdown-footer .btn-link:hover {
+        color: var(--primary);
+    }
+
+    /* Adjustments for text color within the dropdown */
+    .notification-text {
+        color: var(--text-dark);
     }
 
     .notification-time {
-        font-size: 0.75rem;
-        color: #718096;
-        display: flex;
-        align-items: center;
-        gap: 0.25rem;
+        color: var(--text-light);
     }
 
-    .unread-dot {
-        width: 8px;
-        height: 8px;
-        background: #667eea;
-        border-radius: 50%;
-        position: absolute;
-        top: 0.5rem;
-        right: 0.5rem;
-        animation: pulse 2s infinite;
+    /* Override Bootstrap primary for custom colors */
+    .bg-primary {
+        background-color: var(--primary) !important;
+    }
+    .btn-primary {
+        background-color: var(--primary) !important;
+        border-color: var(--primary) !important;
+    }
+    .btn-outline-primary {
+        color: var(--primary) !important;
+        border-color: var(--primary) !important;
+    }
+    .text-primary {
+        color: var(--primary-dark) !important;
     }
 
-    /* Empty State */
-    .notification-empty {
-        list-style: none;
-        padding: 2rem 1.25rem;
-        text-align: center;
+    /* Custom button for logout */
+    .btn-outline-white {
+        color: var(--white);
+        border-color: var(--white);
     }
 
-    .empty-state-mini {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 0.5rem;
-        color: #a0aec0;
+    .btn-outline-white:hover {
+        background-color: var(--white);
+        color: var(--primary-dark);
     }
 
-    .empty-state-mini i {
-        font-size: 2rem;
+    /* Ensure sufficient contrast for all text elements */
+    .text-muted {
+        color: var(--text-light) !important;
     }
-
-    .empty-state-mini span {
-        font-size: 0.9rem;
-        font-weight: 500;
-    }
-
-    /* Footer Styles */
-    .notification-dropdown-footer {
-        list-style: none;
-        margin: 0;
-        padding: 0;
-        border-top: 1px solid #f1f3f4;
-    }
-
-    .view-all-notifications-btn {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 1rem 1.25rem;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        text-decoration: none;
-        font-weight: 600;
-        font-size: 0.9rem;
-        transition: all 0.3s ease;
-        gap: 0.5rem;
-    }
-
-    .view-all-notifications-btn:hover {
-        background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
-        color: white;
-        text-decoration: none;
-        transform: translateY(-1px);
-    }
-
-    /* Custom Scrollbar for Dropdown */
-    .notification-dropdown-list::-webkit-scrollbar {
-        width: 4px;
-    }
-
-    .notification-dropdown-list::-webkit-scrollbar-track {
-        background: #f1f1f1;
-    }
-
-    .notification-dropdown-list::-webkit-scrollbar-thumb {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        border-radius: 2px;
-    }
-
-    .notification-dropdown-list::-webkit-scrollbar-thumb:hover {
-        background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
-    }
-
-    /* Responsive Design */
-    @media (max-width: 768px) {
-        .notification-dropdown-modern {
-            width: 320px;
-            max-height: 500px;
-        }
-
-        .notification-header-content {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 0.75rem;
-        }
-
-        .header-actions {
-            align-self: flex-end;
-        }
-    }
-
-    @media (max-width: 576px) {
-        .notification-dropdown-modern {
-            width: 280px;
-        }
-
-        .notification-link {
-            padding: 0.75rem 1rem;
-        }
-
-        .notification-icon {
-            width: 32px;
-            height: 32px;
-            font-size: 0.8rem;
-        }
-    }
+<<<<<<< Updated upstream
 
     /* Notification counter styles */
     .notification-counter {
@@ -667,6 +487,9 @@
     .notification-counter small span {
         color: #000 !important;
     }
+=======
+    
+>>>>>>> Stashed changes
 </style>
 @endpush
 
