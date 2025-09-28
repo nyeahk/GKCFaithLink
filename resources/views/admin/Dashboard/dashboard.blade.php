@@ -129,62 +129,6 @@
     </div>
 </div>
 @endif
-
-<!-- Weekly Donation Chart -->
-@if(isset($weeklyDonations) && $weeklyDonations->count() > 0)
-<div class="card shadow-sm mb-4">
-    <div class="card-header bg-primary text-white">
-        <h5 class="mb-0"><i class="bi bi-graph-up me-2"></i> Weekly Donation Trends</h5>
-    </div>
-    <div class="card-body">
-        <canvas id="weeklyDonationChart" height="200"></canvas>
-    </div>
-</div>
-
-@push('scripts')
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const ctx = document.getElementById('weeklyDonationChart').getContext('2d');
-        const weeklyDonationChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: @json($donationDays),
-                datasets: [{
-                    label: 'Daily Donations (₱)',
-                    data: @json($donationAmounts),
-                    backgroundColor: 'rgba(79, 149, 157, 0.7)',
-                    borderColor: 'rgba(79, 149, 157, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: function(value) {
-                                return '₱' + value.toLocaleString();
-                            }
-                        }
-                    }
-                },
-                plugins: {
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                return 'Donations: ₱' + context.raw.toLocaleString();
-                            }
-                        }
-                    }
-                }
-            }
-        });
-    });
-</script>
-@endpush
-@endif
 @endsection
 
 @push('scripts')

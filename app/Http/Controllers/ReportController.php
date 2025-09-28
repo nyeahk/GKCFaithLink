@@ -60,106 +60,87 @@ class ReportController extends Controller
     }
     
     public function weekly(Request $request)
-    {
-        // Set timezone to Asia/Manila
-        date_default_timezone_set('Asia/Manila');
-        
-        // Get the start date from request or default to current week
-        $startDate = $request->has('date') && !empty($request->date)
-            ? Carbon::parse($request->date)->startOfWeek()
-            : Carbon::now()->startOfWeek();
+{
+    date_default_timezone_set('Asia/Manila');
 
-        // Calculate end date (end of week)
-        $endDate = $startDate->copy()->endOfWeek();
+    $startDate = $request->has('date') && !empty($request->date)
+        ? Carbon::parse($request->date)->startOfWeek()
+        : Carbon::now()->startOfWeek();
+    $endDate = $startDate->copy()->endOfWeek();
 
-        // Get total tithes for the week - Only include approved/verified donations
-        $totalTithes = Donation::whereBetween('created_at', [$startDate, $endDate])
-            ->whereIn('status', ['approved', 'verified', 'completed'])
-            ->where(function($query) {
-                $query->where('purpose', 'tithe')
-                      ->orWhere('purpose', 'like', '%tithe%')
-                      ->orWhere('purpose', 'like', '%tithes%');
-            })
-            ->sum('amount');
+    // Status filter
+    $statusFilter = $request->input('status');
 
-        // Get total offerings for the week - Only include approved/verified donations
-        $totalOfferings = Donation::whereBetween('created_at', [$startDate, $endDate])
-            ->whereIn('status', ['approved', 'verified', 'completed'])
-            ->where(function($query) {
-                $query->where('purpose', 'offering')
-                      ->orWhere('purpose', 'like', '%offering%')
-                      ->orWhere('purpose', 'like', '%offerings%');
-            })
-            ->whereRaw("(purpose NOT LIKE '%tithe%' AND purpose NOT LIKE '%mission%')")
-            ->sum('amount');
+    // Build base query with date range
+    $baseQuery = Donation::whereBetween('created_at', [$startDate, $endDate]);
 
-        // Get total mission funds for the week - Only include approved/verified donations
-        $totalMissionFunds = Donation::whereBetween('created_at', [$startDate, $endDate])
-            ->whereIn('status', ['approved', 'verified', 'completed'])
-            ->where(function($query) {
-                $query->where('purpose', 'mission')
-                      ->orWhere('purpose', 'like', '%mission%');
-            })
-            ->sum('amount');
-
-        // Get recent donations for the week - REMOVE status filter and ensure we're loading the user relationship
-        $recentDonations = Donation::with('user')
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->orderBy('created_at', 'desc')
-            ->take(10)
-            ->get();
-        
-        // Prepare data for the donations chart - REMOVE status filter
-        $donationDays = [];
-        $donationAmounts = [];
-        
-        // Get donations for each day of the week
-        $currentDay = $startDate->copy();
-        while ($currentDay <= $endDate) {
-            $dayTotal = Donation::whereDate('created_at', $currentDay)
-                ->sum('amount');
-            
-            $donationDays[] = $currentDay->format('D');
-            $donationAmounts[] = $dayTotal;
-            
-            $currentDay->addDay();
-        }
-
-        // Get total amount
-        $totalAmount = $totalTithes + $totalOfferings + $totalMissionFunds;
-
-        // Get all donations for the week - REMOVE status filter
-        $donations = Donation::whereBetween('created_at', [$startDate, $endDate])
-            ->orderBy('created_at', 'desc')
-            ->get();
-        
-        // Debug information
-        $debug = [
-            'total_donations' => $donations->count(),
-            'total_amount' => $totalAmount,
-            'tithes' => $totalTithes,
-            'offerings' => $totalOfferings,
-            'missions' => $totalMissionFunds,
-            'donation_days' => $donationDays,
-            'donation_amounts' => $donationAmounts
-        ];
-        
-        return view('reports.weekly', [
-            'startDate' => $startDate,
-            'endDate' => $endDate,
-            'totalTithes' => $totalTithes,
-            'totalOfferings' => $totalOfferings,
-            'totalMissionFunds' => $totalMissionFunds,
-            'totalAmount' => $totalAmount,
-            'newMembers' => 0, // Temporarily set to 0
-            'recentDonations' => $recentDonations,
-            'donationDays' => $donationDays,
-            'donationAmounts' => $donationAmounts,
-            'donations' => $donations,
-            'debug' => $debug,
-            'layout' => $this->getLayout()
-        ]);
+    // Apply status filter if provided
+    if ($statusFilter && $statusFilter !== '') {
+        $baseQuery->where('status', $statusFilter);
+    } else {
+        // Default to approved/verified if no filter is applied
+        $baseQuery->whereIn('status', ['approved', 'verified', 'completed']);
     }
+
+    // Get total tithes for the week
+    $totalTithes = (clone $baseQuery)
+        ->where(function($query) {
+            $query->where('purpose', 'tithe')
+                  ->orWhere('purpose', 'like', '%tithe%')
+                  ->orWhere('purpose', 'like', '%tithes%');
+        })
+        ->sum('amount');
+
+    // Get total offerings for the week
+    $totalOfferings = (clone $baseQuery)
+        ->where(function($query) {
+            $query->where('purpose', 'offering')
+                  ->orWhere('purpose', 'like', '%offering%')
+                  ->orWhere('purpose', 'like', '%offerings%');
+        })
+        ->whereRaw("(purpose NOT LIKE '%tithe%' AND purpose NOT LIKE '%mission%')")
+        ->sum('amount');
+
+    // Get total mission funds for the week
+    $totalMissionFunds = (clone $baseQuery)
+        ->where(function($query) {
+            $query->where('purpose', 'mission')
+                  ->orWhere('purpose', 'like', '%mission%');
+        })
+        ->sum('amount');
+
+    // Get donations for the table (paginated)
+    $donations = (clone $baseQuery)
+        ->with('user')
+        ->orderBy('created_at', 'desc')
+        ->paginate(10);
+
+    // Prepare chart data
+    $donationDays = [];
+    $donationAmounts = [];
+    $currentDay = $startDate->copy();
+    while ($currentDay <= $endDate) {
+        $dayTotal = (clone $baseQuery)->whereDate('created_at', $currentDay)->sum('amount');
+        $donationDays[] = $currentDay->format('D');
+        $donationAmounts[] = $dayTotal;
+        $currentDay->addDay();
+    }
+
+    $totalAmount = $totalTithes + $totalOfferings + $totalMissionFunds;
+
+    return view('reports.weekly', [
+        'startDate' => $startDate,
+        'endDate' => $endDate,
+        'totalTithes' => $totalTithes,
+        'totalOfferings' => $totalOfferings,
+        'totalMissionFunds' => $totalMissionFunds,
+        'totalAmount' => $totalAmount,
+        'donationDays' => $donationDays,
+        'donationAmounts' => $donationAmounts,
+        'donations' => $donations,
+        'layout' => $this->getLayout()
+    ]);
+}
     
     public function monthly(Request $request)
     {

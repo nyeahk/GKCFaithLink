@@ -241,167 +241,65 @@
         </div>
     </div>
 
-    <!-- Clean Donations Table -->
-    <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <h6 class="mb-0">Recent Donations</h6>
-            <span class="badge bg-primary">{{ $recentDonations->count() }} This Week</span>
-        </div>
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-hover mb-0">
-                    <thead class="table-light">
+    <!-- Recent Donations Table -->
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 fw-bold text-primary">
+            <i class="bi bi-table me-2"></i>Recent Donations
+        </h6>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Donor</th>
+                        <th>Purpose</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($donations as $donation)
                         <tr>
-                            <th>Date</th>
-                            <th>Donor</th>
-                            <th>Purpose</th>
-                            <th>Amount</th>
-                            <th>Payment Method</th>
-                            <th>Status</th>
+                            <td>{{ $donation->created_at->format('M d, Y') }}</td>
+                            <td>
+                                @if($donation->anonymous)
+                                    Anonymous
+                                @elseif($donation->user)
+                                    {{ $donation->user->getFullNameAttribute() }}
+                                @elseif($donation->donor_name)
+                                    {{ $donation->donor_name }}
+                                @else
+                                    Anonymous
+                                @endif
+                            </td>
+                            <td>{{ ucfirst($donation->purpose) }}</td>
+                            <td>₱{{ number_format($donation->amount, 2) }}</td>
+                            <td>
+                                @if($donation->status == 'pending')
+                                    <span class="badge bg-warning text-dark">Pending</span>
+                                @elseif($donation->status == 'verified' || $donation->status == 'approved')
+                                    <span class="badge bg-success">Approved</span>
+                                @elseif($donation->status == 'declined')
+                                    <span class="badge bg-danger">Declined</span>
+                                @else
+                                    <span class="badge bg-secondary">{{ ucfirst($donation->status) }}</span>
+                                @endif
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($recentDonations as $donation)
-                            <tr>
-                                <td>
-                                    <div>
-                                        <div class="fw-medium">{{ $donation->created_at->format('M d, Y') }}</div>
-                                        <small class="text-muted">{{ $donation->created_at->format('h:i A') }}</small>
-                                    </div>
-                                </td>
-                                <td>
-                                    @if($donation->anonymous)
-                                        <span class="text-muted">
-                                            <i class="fas fa-user-secret me-1"></i>Anonymous
-                                        </span>
-                                    @else
-                                        @if($donation->user)
-                                            <span class="fw-medium">{{ $donation->user->getFullNameAttribute() }}</span>
-                                        @elseif($donation->donor_name)
-                                            <span class="fw-medium">{{ $donation->donor_name }}</span>
-                                        @else
-                                            <span class="text-muted">
-                                                <i class="fas fa-user-secret me-1"></i>Anonymous
-                                            </span>
-                                        @endif
-                                    @endif
-                                </td>
-                                <td>
-                                    <span class="badge bg-{{ $donation->purpose == 'tithe' ? 'primary' : ($donation->purpose == 'offering' ? 'success' : 'info') }}">
-                                        {{ ucfirst($donation->purpose) }}
-                                    </span>
-                                </td>
-                                <td class="fw-bold text-success">₱{{ number_format($donation->amount, 2) }}</td>
-                                <td>
-                                    <span class="badge bg-{{ $donation->payment_method == 'cash' ? 'success' : 'info' }}">
-                                        {{ ucfirst($donation->payment_method ?? 'N/A') }}
-                                    </span>
-                                </td>
-                                <td>
-                                    <span class="badge bg-{{ $donation->status == 'completed' || $donation->status == 'approved' || $donation->status == 'verified' ? 'success' : ($donation->status == 'pending' ? 'warning' : 'danger') }}">
-                                        {{ $donation->status == 'completed' || $donation->status == 'approved' || $donation->status == 'verified' ? 'Approved' : ($donation->status == 'pending' ? 'Pending' : ($donation->status == 'declined' ? 'Declined' : ucfirst($donation->status))) }}
-                                    </span>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="6" class="text-center py-4">
-                                    <div class="text-muted">
-                                        <i class="fas fa-inbox fa-2x mb-2"></i>
-                                        <div>No donations found for this week</div>
-                                        <small>Try selecting a different week or check back later.</small>
-                                    </div>
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
+                    @empty
+                        <tr>
+                            <td colspan="5" class="text-center">No donations found for this week</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
     </div>
-    
-    <!-- Enhanced Pagination for Reports -->
-    @if(isset($recentDonations) && $recentDonations->hasPages())
-    <div class="row mt-4">
-        <div class="col-12">
-            <div class="card pagination-card">
-                <div class="card-body py-3">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <!-- Results Info -->
-                        <div class="d-flex align-items-center">
-                            <span class="pagination-info me-3">
-                                <i class="fas fa-list me-1"></i>
-                                Showing {{ $recentDonations->firstItem() ?? 0 }} to {{ $recentDonations->lastItem() ?? 0 }} of {{ $recentDonations->total() }} donations
-                            </span>
-                            @if($recentDonations->total() > 0)
-                                <span class="page-badge">
-                                    Page {{ $recentDonations->currentPage() }} of {{ $recentDonations->lastPage() }}
-                                </span>
-                            @endif
-                        </div>
-                        
-                        <!-- Pagination Controls -->
-                        <div class="d-flex align-items-center">
-                            <!-- Previous Button -->
-                            @if($recentDonations->onFirstPage())
-                                <button class="btn btn-outline-secondary btn-sm me-2" disabled>
-                                    <i class="fas fa-chevron-left me-1"></i>Previous
-                                </button>
-                            @else
-                                <a href="{{ $recentDonations->previousPageUrl() }}" class="btn btn-outline-primary btn-sm me-2">
-                                    <i class="fas fa-chevron-left me-1"></i>Previous
-                                </a>
-                            @endif
-                            
-                            <!-- Page Numbers -->
-                            <div class="btn-group me-2" role="group">
-                                @php
-                                    $start = max($recentDonations->currentPage() - 2, 1);
-                                    $end = min($start + 4, $recentDonations->lastPage());
-                                    $start = max($end - 4, 1);
-                                @endphp
-                                
-                                @if($start > 1)
-                                    <a href="{{ $recentDonations->url(1) }}" class="btn btn-outline-secondary btn-sm">1</a>
-                                    @if($start > 2)
-                                        <span class="btn btn-outline-secondary btn-sm disabled">...</span>
-                                    @endif
-                                @endif
-                                
-                                @for($i = $start; $i <= $end; $i++)
-                                    @if($i == $recentDonations->currentPage())
-                                        <button class="btn btn-primary btn-sm active">{{ $i }}</button>
-                                    @else
-                                        <a href="{{ $recentDonations->url($i) }}" class="btn btn-outline-secondary btn-sm">{{ $i }}</a>
-                                    @endif
-                                @endfor
-                                
-                                @if($end < $recentDonations->lastPage())
-                                    @if($end < $recentDonations->lastPage() - 1)
-                                        <span class="btn btn-outline-secondary btn-sm disabled">...</span>
-                                    @endif
-                                    <a href="{{ $recentDonations->url($recentDonations->lastPage()) }}" class="btn btn-outline-secondary btn-sm">{{ $recentDonations->lastPage() }}</a>
-                                @endif
-                            </div>
-                            
-                            <!-- Next Button -->
-                            @if($recentDonations->hasMorePages())
-                                <a href="{{ $recentDonations->nextPageUrl() }}" class="btn btn-outline-primary btn-sm">
-                                    Next<i class="fas fa-chevron-right ms-1"></i>
-                                </a>
-                            @else
-                                <button class="btn btn-outline-secondary btn-sm" disabled>
-                                    Next<i class="fas fa-chevron-right ms-1"></i>
-                                </button>
-                            @endif
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    @endif
 </div>
+
 @endsection
 
 @push('styles')

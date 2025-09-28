@@ -47,8 +47,11 @@
                     @elseif(auth()->user()->role == 1)
                         <form action="{{ route('admin.profile.update') }}" method="POST" enctype="multipart/form-data">
                     @elseif(auth()->user()->role == 2)
+                        <form action="{{ route('treasurer.profile.update') }}" method="POST" enctype="multipart/form-data">
+                    @elseif(auth()->user()->role == 4)
                         <form action="{{ route('staff.profile.update') }}" method="POST" enctype="multipart/form-data">
                     @endif
+                    
                         @csrf
                         @method('PUT')
 

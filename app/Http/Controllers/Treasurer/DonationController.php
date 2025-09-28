@@ -17,31 +17,47 @@ class DonationController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
-    {
-        $query = Donation::with('user')->orderBy('created_at', 'desc');
+   public function index(Request $request)
+{
+    $query = Donation::with('user'); // base query
 
-        // Status filter
-        if ($request->filled('status')) {
-            $query->where('status', $request->input('status'));
-        }
-
-        // Month filter (YYYY-MM)
-        if ($request->filled('date')) {
-            try {
-                $start = \Carbon\Carbon::createFromFormat('Y-m', $request->input('date'))->startOfMonth();
-                $end = (clone $start)->endOfMonth();
-                $query->whereBetween('created_at', [$start, $end]);
-            } catch (\Exception $e) {
-                // Ignore invalid date format; fallback to no date filtering
-            }
-        }
-
-        $donations = $query->paginate(10);
-        $donations->appends($request->query());
-        
-        return view('treasurer.donations.index', compact('donations'));
+    // ✅ Status filter
+    if ($request->filled('status')) {
+        $query->where('status', $request->status);
     }
+
+    // ✅ Date filter
+    if ($request->filled('date')) {
+        $query->whereMonth('transaction_date', date('m', strtotime($request->date)))
+              ->whereYear('transaction_date', date('Y', strtotime($request->date)));
+    }
+
+    // ✅ Search filter (this is the part you add)
+    if ($request->filled('search')) {
+        $search = strtolower($request->search);
+
+        $query->where(function ($q) use ($search) {
+            // donor_name (manual input)
+            $q->where('donor_name', 'like', "%{$search}%");
+
+            // linked user full name
+            $q->orWhereHas('user', function ($userQuery) use ($search) {
+                $userQuery->where('first_name', 'like', "%{$search}%")
+                          ->orWhere('last_name', 'like', "%{$search}%");
+            });
+
+            // ✅ handle anonymous search
+            if ($search === 'anonymous') {
+                $q->orWhere('anonymous', true);
+            }
+        });
+    }
+
+    // ✅ Final query
+    $donations = $query->latest()->paginate(10);
+
+    return view('treasurer.donations.index', compact('donations'));
+}
 
     /**
      * Show the form for creating a new donation.

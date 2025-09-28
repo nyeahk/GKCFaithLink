@@ -20,34 +20,44 @@ class DatabaseSeeder extends Seeder
         $treasurerRole = DB::table('user_role')->where('role_name', 'treasurer')->first();
         $staffRole = DB::table('user_role')->where('role_name', 'staff')->first();
 
+        // User::create([
+        //   'first_name' => 'Church',
+        //   'last_name' => 'Admin',
+        //   'email' => 'admin@example.com',
+        //   'email_verified_at' => now(),
+        //   'password' => bcrypt('12345678'),
+        //   'role' => $adminRole->id,
+        //   'is_active' => true,
+        // ]);
+
         User::create([
-          'first_name' => 'Church',
-          'last_name' => 'Admin',
-          'email' => 'admin@example.com',
+          'first_name' => 'Admin',
+          'last_name' => 'Peps',
+          'email' => 'admin2@example.com',
           'email_verified_at' => now(),
           'password' => bcrypt('12345678'),
           'role' => $adminRole->id,
           'is_active' => true,
         ]);
 
-         User::create([
-          'first_name' => 'Church',
-          'last_name' => 'Treasurer',
-          'email' => 'treasurer@example.com',
-          'email_verified_at' => now(),
-          'password' => bcrypt('12345678'),
-          'role' => $treasurerRole->id,
-          'is_active' => true,
-        ]);  
+        //  User::create([
+        //   'first_name' => 'Church',
+        //   'last_name' => 'Treasurer',
+        //   'email' => 'treasurer@example.com',
+        //   'email_verified_at' => now(),
+        //   'password' => bcrypt('12345678'),
+        //   'role' => $treasurerRole->id,
+        //   'is_active' => true,
+        // ]);  
 
-        User::create([
-          'first_name' => 'Church',
-          'last_name' => 'Staff',
-          'email' => 'staff@example.com',
-          'email_verified_at' => now(),
-          'password' => bcrypt('12345678'),
-          'role' => $staffRole->id,
-          'is_active' => true,
-        ]);
+        // User::create([
+        //   'first_name' => 'Church',
+        //   'last_name' => 'Staff',
+        //   'email' => 'staff@example.com',
+        //   'email_verified_at' => now(),
+        //   'password' => bcrypt('12345678'),
+        //   'role' => $staffRole->id,
+        //   'is_active' => true,
+        // ]);
     }
 }

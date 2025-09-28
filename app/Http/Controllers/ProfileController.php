@@ -40,8 +40,10 @@ class ProfileController extends Controller
 
     try {
         // Update basic info
-        $user->name = $request->input('name');
-        //$user->email = $request->input('email');
+        $user->name = $request->input('first_name');
+        $user->name = $request->input('last_name');
+        $user->name = $request->input('first_name') . ' ' . $request->input('last_name'); 
+        $user->email = $request->input('email');
         $user->contact_number = $request->input('contact_number');
         $user->address = $request->input('address');
 

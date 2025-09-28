@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\AnnouncementController;
 use App\Http\Controllers\Admin\DonationController as AdminDonationController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\ReportsController;
+use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
 use App\Http\Controllers\Member\DashboardController as MemberDashboardController;
 use App\Http\Controllers\Member\DonationController as MemberDonationController;  
 use App\Http\Controllers\Member\AnnouncementController as MemberAnnouncementController;
@@ -106,11 +107,11 @@ Route::middleware(['auth'])->group(function () {
         Route::get('reports/weekly/download', [ReportsController::class, 'downloadWeeklyReport'])->name('reports.weekly.download');
         Route::get('reports/monthly/download', [ReportsController::class, 'downloadMonthlyReport'])->name('reports.monthly.download');
 
-        Route::get('profile', [ProfileController::class, 'index'])->name('profile.index');
-        Route::get('profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
-        Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
-        Route::get('profile/password', [ProfileController::class, 'password'])->name('profile.password');
-        Route::put('profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password.update');
+        Route::get('profile', [AdminProfileController::class, 'index'])->name('profile.index');
+        Route::get('profile/edit', [AdminProfileController::class, 'edit'])->name('profile.edit');
+        Route::put('profile', [AdminProfileController::class, 'update'])->name('profile.update');
+        Route::get('profile/password', [AdminProfileController::class, 'password'])->name('profile.password');
+        Route::put('profile/password', [AdminProfileController::class, 'updatePassword'])->name('profile.password.update');
     });
 
     // Treasurer routes - only accessible by users with role 2 (treasurer)

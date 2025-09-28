@@ -101,10 +101,6 @@
                                         <div class="col-md-8">{{ auth()->user()->email }}</div>
                                     </div>
                                     <div class="row mb-3">
-                                        <div class="col-md-4 fw-bold">Username:</div>
-                                        <div class="col-md-8">{{ auth()->user()->username }}</div>
-                                    </div>
-                                    <div class="row mb-3">
                                         <div class="col-md-4 fw-bold">Contact Number:</div>
                                         <div class="col-md-8">{{ auth()->user()->contact_number }}</div>
                                     </div>

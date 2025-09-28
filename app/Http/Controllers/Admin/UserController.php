@@ -31,60 +31,40 @@ class UserController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
-    {
-        // Debug the request parameters
-        \Log::info('User search parameters:', $request->all());
-        
-        $query = User::query();
-        
-        // Apply search filter if provided
-        if ($request->has('search') && !empty($request->input('search'))) {
-            $search = $request->input('search');
-            $query->where(function($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('first_name', 'like', "%{$search}%")
-                  ->orWhere('last_name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%")
-                  ->orWhere('username', 'like', "%{$search}%");
-            });
-        }
-        
-        // Apply role filter if provided
-        if ($request->has('role') && $request->input('role') != '') {
-            $query->where('role', $request->input('role'));
-        }
-        
-        // Apply status filter if provided
-        if ($request->has('status') && $request->input('status') != '') {
-            $status = $request->input('status');
-            if ($status === 'active') {
-                $query->where('is_active', true);
-            } elseif ($status === 'inactive') {
-                $query->where('is_active', false);
-            }
-        }
-        
-        // Apply approval filter if provided
-        if ($request->has('approval') && $request->input('approval') != '') {
-            $approval = $request->input('approval');
-            if ($approval === 'approved') {
-                $query->where('is_approved', true);
-            } elseif ($approval === 'pending') {
-                $query->where('is_approved', false);
-            }
-        }
-        
-        // Order by created_at by default
-        $query->orderBy('created_at', 'desc');
-        
-        // Paginate the results
-        $users = $query->paginate(15);
-        
-        // Append query parameters to pagination links
-        $users->appends($request->query());
-        
-        return view('admin.users.index', compact('users'));
+{
+    $query = User::query();   // 👈 Base query for users
+
+    // role filter
+    if ($request->filled('role')) {
+        $query->where('role', $request->role);
     }
+
+    // status filter
+    if ($request->filled('status')) {
+        $query->where('is_active', $request->status === 'active');
+    }
+
+    // approval filter
+    if ($request->filled('approval')) {
+        $query->where('is_approved', $request->approval === 'approved');
+    }
+
+    // 🔎 👉 THIS IS WHERE YOU ADD THE SEARCH LOGIC
+    if ($request->filled('search')) {
+        $search = strtolower($request->search);
+
+        $query->where(function ($q) use ($search) {
+            $q->whereRaw("LOWER(email) LIKE ?", ["%{$search}%"])
+              ->orWhereRaw("LOWER(first_name) LIKE ?", ["%{$search}%"])
+              ->orWhereRaw("LOWER(last_name) LIKE ?", ["%{$search}%"])
+              ->orWhereRaw("LOWER(CONCAT(first_name, ' ', last_name)) LIKE ?", ["%{$search}%"]);
+        });
+    }
+
+    $users = $query->paginate(10);
+
+    return view('admin.users.index', compact('users'));
+}
 
     /**
      * Display the specified user.

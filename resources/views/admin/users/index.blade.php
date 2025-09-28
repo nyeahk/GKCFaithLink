@@ -46,7 +46,7 @@
                                    value="{{ request('search') }}"
                                    style="border-radius: 10px;">
                             <label for="searchInput">
-                                <i class="bi bi-search me-1"></i>Search by name, email or username
+                                <i class="bi bi-search me-1"></i>Search by name, email
                             </label>
                         </div>
                     </div>
