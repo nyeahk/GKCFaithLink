@@ -7,6 +7,9 @@ use App\Models\Announcement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
+use App\Models\User;
+use App\Notifications\AnnouncementCreatedNotification;
+use Illuminate\Support\Facades\Notification;
 
 class AnnouncementController extends Controller
 {
@@ -61,6 +64,13 @@ class AnnouncementController extends Controller
             }
 
             $announcement->save();
+
+            // Notify members (role 3). Add other roles if desired.
+            $usersToNotify = User::whereIn('role', [3])->where('is_active', true)->get();
+            if ($usersToNotify->isNotEmpty()) {
+                // Send synchronously so database notifications are stored immediately
+                Notification::sendNow($usersToNotify, new AnnouncementCreatedNotification($announcement));
+            }
 
             return redirect()->route('staff.announcements.index')
                 ->with('success', 'Announcement created successfully.');
@@ -167,5 +177,10 @@ class AnnouncementController extends Controller
 
         return redirect()->route('staff.announcements.index')
             ->with('success', 'Announcement deleted successfully.');
+    }
+
+    public function via($notifiable)
+    {
+        return ['database'];
     }
 }

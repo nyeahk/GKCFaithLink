@@ -351,6 +351,10 @@
 
 @push('scripts')
 <script>
+
+     // Initialize the modal
+    window.eventsModal = new bootstrap.Modal(document.getElementById('eventsModal'));
+
     // Function to show events for a selected date
     window.showEventsForDate = function(date) {
         const modalDate = document.getElementById('modalDate');
@@ -389,6 +393,8 @@
                 // Check if events property exists and is an array
                 if (data.events && Array.isArray(data.events) && data.events.length > 0) {
                     let eventsHtml = '';
+                    
+                    data.events.sort((a, b) => new Date(b.start_date || b.time) - new Date(a.start_date || a.time));
                     
                     data.events.forEach(event => {
                         eventsHtml += `

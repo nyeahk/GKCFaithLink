@@ -18,6 +18,9 @@ class DashboardController extends Controller
      */
     public function index(Request $request)
     {
+        $announcementsCount = \App\Models\Announcement::count();
+        $eventsCount = \App\Models\Event::where('start_date', '>=', now())->count();
+
         // Set timezone
         date_default_timezone_set('Asia/Manila');
         
@@ -43,6 +46,8 @@ class DashboardController extends Controller
         
         // Generate calendar data
         $calendar = $this->generateCalendarData($currentDate);
+
+        $membersCount = User::where('role', 3)->count();
         
         // Return view with data
         return view('staff.dashboard', compact(
@@ -50,7 +55,10 @@ class DashboardController extends Controller
             'currentMonth',
             'currentYear',
             'lastMonthTimestamp',
-            'nextMonthTimestamp'
+            'nextMonthTimestamp',
+            'membersCount',
+            'announcementsCount',
+            'eventsCount'
         ));
     }
     

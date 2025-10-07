@@ -94,9 +94,17 @@
                 </table>
             </div>
             
-            <div class="mt-4">
-                {{ $users->links() }}
+            <!-- Pagination similar to events index -->
+            @if(isset($users) && method_exists($users, 'hasPages') && $users->hasPages())
+            <div class="d-flex justify-content-between align-items-center mt-4">
+                <div>
+                    Showing {{ $users->firstItem() }} to {{ $users->lastItem() }} of {{ $users->total() }} users
+                </div>
+                <div>
+                    {{ $users->appends(request()->query())->links('pagination::bootstrap-5') }}
+                </div>
             </div>
+            @endif
         </div>
     </div>
 </div>

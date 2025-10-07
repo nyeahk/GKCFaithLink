@@ -70,6 +70,10 @@ class NotificationController extends Controller
             return ['icon' => 'fas fa-calendar-check', 'class' => 'info'];
         } elseif ($type == 'App\Notifications\EventVolunteerNotification') {
             return ['icon' => 'fas fa-users', 'class' => 'primary'];
+        } elseif ($type == 'App\Notifications\EventCreatedNotification') {
+            return ['icon' => 'fas fa-calendar-plus', 'class' => 'success'];
+        } elseif ($type == 'App\Notifications\AnnouncementCreatedNotification') {
+            return ['icon' => 'fas fa-bullhorn', 'class' => 'info'];
         } else {
             return ['icon' => 'fas fa-bell', 'class' => 'secondary'];
         }
@@ -93,6 +97,10 @@ class NotificationController extends Controller
             return 'Event Registration';
         } elseif ($type == 'App\Notifications\EventVolunteerNotification') {
             return 'Volunteer Opportunity';
+        } elseif ($type == 'App\Notifications\EventCreatedNotification') {
+            return 'New Event Created';
+        } elseif ($type == 'App\Notifications\AnnouncementCreatedNotification') {
+            return 'New Announcement';
         } else {
             return 'Notification';
         }
@@ -135,5 +143,73 @@ class NotificationController extends Controller
         
         return response()->json(['count' => $count]);
     }
-}
 
+    public function getUnreadCount()
+    {
+        $count = Auth::user()->unreadNotifications->count();
+        
+        return response()->json(['count' => $count]);
+    }
+
+    /**
+     * Mark a specific notification as read and redirect to its intended URL.
+     *
+     * @param  \Illuminate\Notifications\DatabaseNotification  $notification
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function markAsReadAndRedirect(\Illuminate\Notifications\DatabaseNotification $notification)
+    {
+        // Authorize that the user owns the notification
+        if (auth()->user()->id !== $notification->notifiable_id) {
+            abort(403);
+        }
+
+        // Mark the notification as read
+        $notification->markAsRead();
+
+        // Determine the redirect URL from the notification data
+        $url = $notification->data['url'] ?? route('notifications.index');
+
+        // Redirect the user to the original URL
+        return redirect($url);
+    }
+
+    public function checkNew(Request $request)
+    {
+        $user = Auth::user();
+        $lastCheck = $request->input('last_check', now()->subMinutes(5)->timestamp);
+        
+        // Get notifications created after the last check
+        $newNotifications = $user->notifications()
+            ->where('created_at', '>', date('Y-m-d H:i:s', $lastCheck))
+            ->whereNull('read_at')
+            ->latest()
+            ->take(5)
+            ->get();
+
+        if ($newNotifications->count() > 0) {
+            $notifications = $newNotifications->map(function($notification) {
+                return [
+                    'id' => $notification->id,
+                    'title' => $this->getNotificationTitle($notification->type, $notification->data),
+                    'message' => $notification->data['message'] ?? 'New notification received',
+                    'type' => $this->getNotificationType($notification->type),
+                    'url' => $notification->data['url'] ?? route('notifications.show', $notification->id),
+                    'created_at' => $notification->created_at->diffForHumans()
+                ];
+            });
+
+            return response()->json([
+                'hasNew' => true,
+                'notifications' => $notifications,
+                'count' => $newNotifications->count()
+            ]);
+        }
+
+        return response()->json([
+            'hasNew' => false,
+            'notifications' => [],
+            'count' => 0
+        ]);
+    }
+}

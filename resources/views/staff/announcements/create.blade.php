@@ -46,13 +46,13 @@
                     @enderror
                 </div>
                 
-                <div class="form-group">
+                <!-- <div class="form-group">
                     <label for="posted_at">Posting Date</label>
                     <input type="datetime-local" name="posted_at" id="posted_at" class="form-control @error('posted_at') is-invalid @enderror" value="{{ old('posted_at') }}" required>
                     @error('posted_at')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
-                </div>
+                </div> -->
                 
                 <div class="form-group">
                     <label for="status">Status</label>

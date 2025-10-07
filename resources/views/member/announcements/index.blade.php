@@ -44,9 +44,17 @@
                             @endforeach
                         </div>
                         
-                        <div class="d-flex justify-content-center mt-4">
-                            {{ $announcements->links() }}
+                        <!-- Pagination: match staff events style -->
+                        @if(isset($announcements) && method_exists($announcements, 'hasPages') && $announcements->hasPages())
+                        <div class="d-flex justify-content-between align-items-center mt-4">
+                            <div>
+                                Showing {{ $announcements->firstItem() }} to {{ $announcements->lastItem() }} of {{ $announcements->total() }} announcements
+                            </div>
+                            <div>
+                                {{ $announcements->appends(request()->query())->links('pagination::bootstrap-5') }}
+                            </div>
                         </div>
+                        @endif
                     @else
                         <div class="text-center py-5">
                             <i class="bi bi-megaphone text-muted" style="font-size: 3rem;"></i>

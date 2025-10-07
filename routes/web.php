@@ -53,6 +53,29 @@ Route::post('/register', [RegisterController::class, 'register'])->name('registe
 
 // Protected Routes
 Route::middleware(['auth'])->group(function () {
+
+    Route::get('notifications', function () {
+        $notifications = auth()->user()->notifications()->latest()->get();
+
+        $groupedNotifications = $notifications->groupBy(function($item) {
+            return $item->created_at->format('Y-m-d');
+        });
+
+        return view('notifications.index', [
+            'groupedNotifications' => $groupedNotifications
+        ]);
+    })->name('notifications.index');
+
+    Route::get('notifications', function () {
+        $notifications = auth()->user()->notifications()->latest()->get();
+        $groupedNotifications = $notifications->groupBy(function($item) {
+            return $item->created_at->format('Y-m-d');
+        });
+        return view('notifications.index', compact('groupedNotifications'));
+    })->middleware('auth')->name('notifications.index');
+    
+    Route::get('notifications', [NotificationController::class, 'index'])->middleware('auth')->name('notifications.index');
+
     // Profile routes - accessible by all authenticated users   
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -66,6 +89,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/notifications/mark-all-read', [App\Http\Controllers\NotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-read');
     Route::post('/notifications/{id}/mark-as-read', [App\Http\Controllers\NotificationController::class, 'markAsRead'])->name('notifications.mark-as-read');
     Route::get('/notifications/count', [App\Http\Controllers\NotificationController::class, 'getUnreadCount'])->name('notifications.count');
+    Route::get('/notifications/{notification}/read-and-redirect', [\App\Http\Controllers\NotificationController::class, 'markAsReadAndRedirect'])->name('notifications.read-and-redirect');
 
 
     // Admin routes - only accessible by users with role 1 (admin)
@@ -77,6 +101,11 @@ Route::middleware(['auth'])->group(function () {
         // Events - view only for admin
         Route::get('events', [EventController::class, 'index'])->name('events.index');
         Route::get('events/{event}', [EventController::class, 'show'])->name('events.show');
+
+        // Events - view only for admin
+        Route::get('events', [EventController::class, 'index'])->name('events.index');
+        Route::get('events/{event}', [EventController::class, 'show'])->name('events.show');
+        Route::get('events/{event}/attendees', [EventController::class, 'attendees'])->name('events.attendees');
         
         // Donations
         Route::get('donations', [AdminDonationController::class, 'index'])->name('donations.index');
@@ -112,6 +141,15 @@ Route::middleware(['auth'])->group(function () {
         Route::put('profile', [AdminProfileController::class, 'update'])->name('profile.update');
         Route::get('profile/password', [AdminProfileController::class, 'password'])->name('profile.password');
         Route::put('profile/password', [AdminProfileController::class, 'updatePassword'])->name('profile.password.update');
+        
+    // Announcements - admin views
+    Route::get('announcements', [AnnouncementController::class, 'index'])->name('announcements.index');
+    Route::get('announcements/create', [AnnouncementController::class, 'create'])->name('announcements.create');
+    Route::post('announcements', [AnnouncementController::class, 'store'])->name('announcements.store');
+    Route::get('announcements/{announcement}', [AnnouncementController::class, 'show'])->name('announcements.show');
+    Route::get('announcements/{announcement}/edit', [AnnouncementController::class, 'edit'])->name('announcements.edit');
+    Route::put('announcements/{announcement}', [AnnouncementController::class, 'update'])->name('announcements.update');
+    Route::delete('announcements/{announcement}', [AnnouncementController::class, 'destroy'])->name('announcements.destroy');
     });
 
     // Treasurer routes - only accessible by users with role 2 (treasurer)
@@ -179,6 +217,15 @@ Route::middleware(['auth'])->group(function () {
         // Dashboard
         Route::get('dashboard', [App\Http\Controllers\Staff\DashboardController::class, 'index'])->name('dashboard');
         
+        // Real-time counts endpoint
+        Route::get('dashboard/counts', [App\Http\Controllers\Staff\DashboardController::class, 'counts'])->name('dashboard.counts');
+
+        // Event Attendee Management for Staff
+        Route::get('staff/events/{event}/attendees', [EventController::class, 'attendees'])->name('staff.events.attendees');
+        Route::get('events/{event}/attendees', [App\Http\Controllers\Staff\EventController::class, 'attendees'])->name('events.attendees');
+        Route::patch('events/{event}/volunteers/{registration}/approve', [App\Http\Controllers\Staff\EventController::class, 'approveVolunteer'])->name('events.volunteers.approve');
+        Route::patch('events/{event}/volunteers/{registration}/decline', [App\Http\Controllers\Staff\EventController::class, 'declineVolunteer'])->name('events.volunteers.decline');
+
         // Events - full CRUD for staff
         Route::get('events', [App\Http\Controllers\Staff\EventController::class, 'index'])->name('events.index');
         Route::get('events/create', [App\Http\Controllers\Staff\EventController::class, 'create'])->name('events.create');

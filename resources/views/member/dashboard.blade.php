@@ -192,10 +192,12 @@
             .then(response => response.json())
             .then(data => {
                 modalDate.textContent = data.date;
-                
+
                 if (data.hasEvents) {
+                    // Sort events by start_datetime ascending (earliest first)
+                    data.events.sort((a, b) => new Date(a.start_datetime) - new Date(b.start_datetime));
+
                     let eventsHtml = '';
-                    
                     data.events.forEach(event => {
                         eventsHtml += `
                             <div class="card event-card mb-3">
@@ -218,7 +220,7 @@
                             </div>
                         `;
                     });
-                    
+
                     eventsContainer.innerHTML = eventsHtml;
                 } else {
                     eventsContainer.innerHTML = `
@@ -237,6 +239,10 @@
                 `;
             });
     }
+
+    console.log("Before Sorting:", data.events);
+data.events.sort((a, b) => new Date(a.start_datetime) - new Date(b.start_datetime));
+console.log("After Sorting:", data.events);
 </script>
 @endpush
 

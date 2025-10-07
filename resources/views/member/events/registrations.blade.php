@@ -35,7 +35,7 @@
                                     <tr>
                                         <th>Event</th>
                                         <th>Date</th>
-                                        <th>Registration Type</th>
+                                        <th>Registration Details</th>
                                         <th>Status</th>
                                         <th>Actions</th>
                                     </tr>
@@ -52,9 +52,58 @@
                                                 {{ $registration->event->start_date->format('M j, Y') }}
                                             </td>
                                             <td>
+                                                {{-- Match the UI from registration form --}}
+                                                <div class="mb-2">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" checked disabled>
+                                                        <label class="form-check-label">
+                                                            {{ $registration->is_volunteer ? 'I would like to volunteer for this event' : 'Attendee Only' }}
+                                                        </label>
+                                                    </div>
+                                                </div>
+
                                                 @if($registration->is_volunteer)
-                                                    <span class="badge bg-info">
-                                                        <i class="bi bi-hand-thumbs-up me-1"></i> Volunteer
-                                                    </span>
-                                                    <div class="small text-muted mt-1">
-                                                        {{ $
+                                                    <div class="volunteer-section">
+                                                        <label class="form-label mb-1">Volunteer Role:</label>
+                                                        <select class="form-select form-select-sm" disabled>
+                                                            <option value="setup" {{ $registration->volunteer_role == 'setup' ? 'selected' : '' }}>Setup</option>
+                                                            <option value="greeting" {{ $registration->volunteer_role == 'greeting' ? 'selected' : '' }}>Greeting</option>
+                                                            <option value="serving" {{ $registration->volunteer_role == 'serving' ? 'selected' : '' }}>Serving</option>
+                                                            <option value="cleanup" {{ $registration->volunteer_role == 'cleanup' ? 'selected' : '' }}>Cleanup</option>
+                                                            <option value="other" {{ $registration->volunteer_role == 'other' ? 'selected' : '' }}>Other</option>
+                                                        </select>
+                                                    </div>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if($registration->status === 'pending')
+                                                    <span class="badge bg-warning text-dark">Pending</span>
+                                                @elseif($registration->status === 'approved')
+                                                    <span class="badge bg-success">Approved</span>
+                                                @elseif($registration->status === 'declined')
+                                                    <span class="badge bg-danger">Declined</span>
+                                                @else
+                                                    <span class="badge bg-secondary">Unknown</span>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                <form action="{{ route('member.events.cancel', $registration->id) }}" method="POST" class="d-inline">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure you want to cancel this registration?')">
+                                                        <i class="bi bi-x-circle"></i> Cancel
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection

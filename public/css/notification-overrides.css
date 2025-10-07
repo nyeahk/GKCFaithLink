@@ -1,0 +1,44 @@
+/* Notification dropdown overrides - loaded after other CSS to ensure final appearance */
+.dropdown-menu.dropdown-menu-end.notification-dropdown-modern,
+.dropdown-menu.notification-dropdown-modern .notification-dropdown-inner,
+.dropdown-menu.notification-dropdown-modern .notification-dropdown-inner * {
+  background: #ffffff !important;
+  background-image: none !important;
+  color: #0f172a !important;
+  border-color: #e5e7eb !important;
+  box-shadow: 0 18px 40px rgba(16,24,40,0.08) !important;
+}
+
+.dropdown-menu.notification-dropdown-modern {
+  width: 420px !important;
+  max-height: 560px !important;
+  border-radius: 10px !important;
+  overflow: hidden !important;
+  z-index: 999999 !important;
+}
+
+.dropdown-menu.notification-dropdown-modern .view-all-notifications-btn,
+.dropdown-menu.notification-dropdown-modern .view-all-btn,
+.dropdown-menu.notification-dropdown-modern .view-all-notifications-btn i {
+  background: #2563eb !important;
+  color: #fff !important;
+  border: none !important;
+}
+
+.dropdown-menu.notification-dropdown-modern .notification-badge,
+.dropdown-menu.notification-dropdown-modern .badge.notification-badge {
+  background: #2563eb !important;
+  color: #fff !important;
+}
+
+.dropdown-menu.notification-dropdown-modern .unread-dot,
+.dropdown-menu.notification-dropdown-modern .unread-indicator {
+  background: #ff4d4f !important;
+}
+
+/* Ensure dropdown links aren't white because of navbar rules */
+.navbar .dropdown-menu.notification-dropdown-modern,
+.navbar .dropdown-menu.notification-dropdown-modern * {
+  color: inherit !important;
+  background: inherit !important;
+}

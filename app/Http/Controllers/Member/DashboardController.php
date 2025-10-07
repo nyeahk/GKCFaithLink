@@ -49,11 +49,16 @@ class DashboardController extends Controller
             ->orderBy('start_date', 'asc')
             ->take(5)
             ->get();
+
+        $upcomingEvents = \App\Models\Event::where('start_date', '>=', now())
+            ->orderBy('start_date', 'asc') // ascending order
+            ->take(3) // or whatever limit you want
+            ->get();
             
         // Get recent announcements
         $recentAnnouncements = Announcement::where('status', 'published')
             ->orderBy('posted_at', 'desc')
-            ->take(5)
+            ->take(3)
             ->get();
 
         return view('member.dashboard', compact(
@@ -79,29 +84,22 @@ class DashboardController extends Controller
         $dateObj = Carbon::parse($date);
         $currentDate = Carbon::now()->startOfDay();
         
-        // Get all current and future events for this date
-        $events = Event::whereDate('start_date', $dateObj)
-            ->where(function($query) use ($currentDate) {
-                $query->whereDate('start_date', '>=', $currentDate)
-                      ->orWhereDate('end_date', '>=', $currentDate);
-            })
-            ->where('status', 'published')
+        // Controller method that returns events for a given date
+        $events = Event::whereDate('start_date', $date)
+            ->orderBy('start_date', 'asc')
             ->get()
             ->map(function($event) {
-                return [
-                    'id' => $event->id,
-                    'title' => $event->title,
-                    'description' => $event->description,
-                    'start_time' => $event->start_date->format('g:i A'), // 12-hour format
-                    'end_time' => $event->end_date->format('g:i A'),     // 12-hour format
-                    'location' => $event->location
-                ];
+                // Add formatted properties if needed
+                $event->start_datetime = $event->start_date; // ISO format
+                $event->start_time = \Carbon\Carbon::parse($event->start_date)->format('g:i A');
+                $event->end_time = \Carbon\Carbon::parse($event->end_date)->format('g:i A');
+                return $event;
             });
-        
+
         return response()->json([
-            'date' => $dateObj->format('F d, Y'),
+            'date' => \Carbon\Carbon::parse($date)->format('F d, Y'),
             'hasEvents' => $events->count() > 0,
-            'events' => $events
+            'events' => $events,
         ]);
     }
     

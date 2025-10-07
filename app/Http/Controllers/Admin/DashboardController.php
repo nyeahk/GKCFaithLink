@@ -230,31 +230,22 @@ class DashboardController extends Controller
         $date = Carbon::parse($date);
         $currentDate = Carbon::now()->startOfDay();
         
-        // Only get current and future events
+        // Controller method that returns events for a given date
         $events = Event::whereDate('start_date', $date)
-            ->where(function($query) use ($currentDate) {
-                $query->whereDate('start_date', '>=', $currentDate)
-                      ->orWhereDate('end_date', '>=', $currentDate);
-            })
-            ->select('id', 'title', 'start_date', 'end_date', 'location', 'status', 'description')
+            ->orderBy('start_date', 'asc')
             ->get()
-            ->map(function ($event) {
-                return [
-                    'id' => $event->id,
-                    'title' => $event->title,
-                    'start_time' => Carbon::parse($event->start_date)->format('g:i A'), // 12-hour format with AM/PM
-                    'end_time' => Carbon::parse($event->end_date)->format('g:i A'),     // 12-hour format with AM/PM
-                    'location' => $event->location,
-                    'status' => ucfirst($event->status),
-                    'status_class' => $this->getStatusClass($event->status),
-                    'description' => $event->description
-                ];
+            ->map(function($event) {
+                // Add formatted properties if needed
+                $event->start_datetime = $event->start_date; // ISO format
+                $event->start_time = \Carbon\Carbon::parse($event->start_date)->format('g:i A');
+                $event->end_time = \Carbon\Carbon::parse($event->end_date)->format('g:i A');
+                return $event;
             });
 
         return response()->json([
+            'date' => \Carbon\Carbon::parse($date)->format('F d, Y'),
+            'hasEvents' => $events->count() > 0,
             'events' => $events,
-            'date' => $date->format('F j, Y'),
-            'hasEvents' => $events->count() > 0
         ]);
     }
 

@@ -1,3 +1,61 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities; 
+
+/* Notification dropdown authoritative overrides
+	 These rules are placed in the Tailwind source so the compiled CSS
+	 will include them and they can beat other legacy compiled files.
+*/
+:root {
+	--gfk-dropdown-bg: #ffffff;
+	--gfk-dropdown-text: #0f172a;
+	--gfk-dropdown-border: #e5e7eb;
+	--gfk-primary: #2563eb;
+}
+
+.dropdown-menu.notification-dropdown-modern,
+.dropdown-menu.notification-dropdown-modern *,
+html body .dropdown-menu.notification-dropdown-modern {
+	background: var(--gfk-dropdown-bg) !important;
+	color: var(--gfk-dropdown-text) !important;
+	border: 1px solid var(--gfk-dropdown-border) !important;
+	box-shadow: 0 18px 40px rgba(16,24,40,0.08) !important;
+	background-image: none !important;
+	z-index: 99999 !important;
+}
+
+.dropdown-menu.notification-dropdown-modern .notification-link,
+.dropdown-menu.notification-dropdown-modern a {
+	color: var(--gfk-dropdown-text) !important;
+	text-decoration: none !important;
+}
+
+.dropdown-menu.notification-dropdown-modern .notification-icon.success { background: #16a34a !important; }
+.dropdown-menu.notification-dropdown-modern .notification-icon.danger  { background: #dc2626 !important; }
+.dropdown-menu.notification-dropdown-modern .notification-icon.warning { background: #d97706 !important; }
+.dropdown-menu.notification-dropdown-modern .notification-icon.info    { background: #0284c7 !important; }
+
+.dropdown-menu.notification-dropdown-modern .view-all-notifications-btn,
+.dropdown-menu.notification-dropdown-modern .view-all-btn {
+	background: var(--gfk-primary) !important;
+	color: #fff !important;
+	border: none !important;
+}
+
+/* Force white date separators and header contrast */
+.dropdown-menu.notification-dropdown-modern .dropdown-header-modern,
+.dropdown-menu.notification-dropdown-modern .dropdown-date-separator {
+	background: #ffffff !important;
+	color: #64748b !important;
+}
+
+/* Ensure unread dot is prominent */
+.dropdown-menu.notification-dropdown-modern .unread-dot {
+	background: #ff4d4f !important;
+	box-shadow: 0 0 0 6px rgba(255,77,79,0.06) !important;
+}
+
+/* Mobile-specific width clamp */
+@media (max-width: 576px) {
+	.dropdown-menu.notification-dropdown-modern { width: 320px !important; }
+}

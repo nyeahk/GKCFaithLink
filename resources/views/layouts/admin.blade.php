@@ -7,6 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/notification-overrides.css') }}">
     @stack('styles')
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
@@ -208,24 +209,7 @@
             color: var(--admin-text-light) !important;
         }
 
-        /* Dropdown Menu */
-        .navbar .dropdown-menu {
-            background-color: var(--admin-navbar-bg) !important;
-            border: none !important;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
-            border-radius: 8px !important;
-            padding: 0.5rem !important;
-        }
-
-        .navbar .dropdown-item {
-            color: var(--admin-text-light) !important;
-            border-radius: 6px !important;
-            margin: 0.2rem 0 !important;
-        }
-
-        .navbar .dropdown-item:hover {
-            background-color: rgba(255, 255, 255, 0.1) !important;
-        }
+        /* Dropdown / notification styling is centralized in layouts/navigation.blade.php */
 
         /* User Info Section */
         .navbar .user-info {
@@ -1097,26 +1081,13 @@
             margin-top: 2rem !important;
         }
 
-        /* Ensure ALL navbar text is white */
-        .navbar,
-        .navbar *,
-        .navbar-brand, 
-        .navbar-brand strong,
+        /* Ensure navbar header-level text and icons are white. Avoid broad selectors that cascade into dropdowns. */
+        .navbar .navbar-brand,
         .navbar .nav-link,
-        .navbar .dropdown-toggle,
-        .navbar-text,
-        .navbar span,
-        .navbar div,
-        .navbar p,
-        .navbar .dropdown-item,
-        .navbar .welcome-text,
-        .navbar .user-greeting,
-        .navbar .user-name,
-        .navbar .logout-link,
-        .navbar .nav-item,
-        .navbar .nav-link,
-        .navbar .dropdown-menu,
-        .navbar .dropdown-item {
+        .navbar .navbar-text,
+        .navbar .navbar-nav .nav-link,
+        .navbar .bi,
+        .navbar i {
             color: var(--admin-text-light) !important;
         }
 

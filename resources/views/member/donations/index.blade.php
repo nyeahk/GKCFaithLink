@@ -74,9 +74,6 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div class="d-flex justify-content-center mt-4">
-                            {{ $donations->links() }}
-                        </div>
                     @else
                         <div class="text-center py-4">
                            
@@ -88,6 +85,20 @@
                         </div>
                     @endif
                 </div>
+                @if($donations->count() > 0)
+                <div class="card-footer">
+                    <div class="row">
+                        <div class="col-md-6 pt-2">
+                            Showing {{ $donations->firstItem() }} to {{ $donations->lastItem() }} of {{ $donations->total() }} results
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex justify-content-end">
+                                {!! $donations->appends(request()->query())->links('pagination::bootstrap-5') !!}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @endif
             </div>
         </div>
     </div>

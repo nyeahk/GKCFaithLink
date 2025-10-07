@@ -68,9 +68,16 @@
                             </table>
                         </div>
                         
-                        <div class="d-flex justify-content-center mt-4">
-                            {{ $events->links() }}
+                        @if(isset($events) && method_exists($events, 'hasPages') && $events->hasPages())
+                        <div class="d-flex justify-content-between align-items-center mt-4">
+                            <div>
+                                Showing {{ $events->firstItem() }} to {{ $events->lastItem() }} of {{ $events->total() }} events
+                            </div>
+                            <div>
+                                {{ $events->appends(request()->query())->links('pagination::bootstrap-5') }}
+                            </div>
                         </div>
+                        @endif
                     @else
                         <div class="text-center py-5">
                             <i class="bi bi-calendar-x text-muted" style="font-size: 3rem;"></i>

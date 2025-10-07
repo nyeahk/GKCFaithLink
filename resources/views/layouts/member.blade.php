@@ -7,6 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/notification-overrides.css') }}">
     @stack('styles')
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
@@ -240,20 +241,13 @@
             height: 64px;
         }
         
-        /* Ensure ALL navbar text is white, including any welcome messages */
-        .navbar,
-        .navbar *,
-        .navbar-brand, 
-        .navbar-brand strong,
+        /* Ensure top-level navbar header text is white; avoid cascading into dropdowns */
+        .navbar .navbar-brand,
         .navbar .nav-link,
         .navbar .dropdown-toggle,
-        .navbar-text,
-        .navbar span,
-        .navbar div,
-        .navbar p,
-        .navbar .dropdown-item,
-        .navbar .welcome-text,
-        .navbar .user-greeting {
+        .navbar .navbar-text,
+        .navbar .bi,
+        .navbar i {
             color: var(--white) !important;
         }
         
@@ -266,18 +260,7 @@
             color: var(--white) !important;
         }
         
-        /* Ensure dropdown menus maintain proper text color */
-        .navbar .dropdown-menu {
-            background-color: var(--navbar-bg);
-        }
-        
-        .navbar .dropdown-menu .dropdown-item {
-            color: var(--white) !important;
-        }
-        
-        .navbar .dropdown-menu .dropdown-item:hover {
-            background-color: rgba(255, 255, 255, 0.15);
-        }
+        /* Dropdown / notification styling is centralized in layouts/navigation.blade.php */
         
         /* Update navbar button hover states */
         .navbar .btn:hover,

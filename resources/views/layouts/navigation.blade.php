@@ -18,116 +18,13 @@
                         @endif
                     </a>
 
-                    <!-- Notifications Dropdown (Desktop) -->
-                    <div class="nav-item dropdown d-none d-md-block">
-                        <a class="nav-link dropdown-toggle notification-bell" href="#" id="navbarDropdownNotifications" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-bell"></i>
-                            @if(auth()->user()->unreadNotifications->count() > 0)
-                                <span class="badge bg-danger rounded-pill notification-badge">{{ auth()->user()->unreadNotifications->count() }}</span>
-                            @endif
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-end notification-dropdown-modern" aria-labelledby="navbarDropdownNotifications" style="background:#ffffff; color:#0f172a; border:1px solid #e5e7eb;">
-                            <div class="dropdown-header-modern">
-                                <div class="notification-header-content">
-                                    <div class="header-left">
-                                        <div class="notification-dropdown-title">Notifications</div>
-                                        <div class="notification-count-text">
-                                            {{ auth()->user()->unreadNotifications->count() }} unread
-                                        </div>
-                                    </div>
-                                    <div class="header-actions">
-                                    @if(auth()->user()->unreadNotifications->count() > 0)
-                                        <form action="{{ route('notifications.mark-all-read') }}" method="POST" class="d-inline">
-                                            @csrf
-                                                <button type="submit" class="mark-all-btn" title="Mark all as read">
-                                                    <i class="fas fa-check-double"></i>
-                                            </button>
-                                        </form>
-                                    @endif
-                                        <a href="{{ route('notifications.index') }}" class="view-all-btn" title="View all">
-                                            <i class="fas fa-arrow-right"></i>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            @php
-                                $recentNotifications = auth()->user()->notifications()->latest()->take(8)->get()->groupBy(function($n){
-                                    return $n->created_at->toDateString();
-                                });
-                                @endphp
-                                
-                            <ul class="notification-dropdown-list list-unstyled mb-0">
-                                @forelse($recentNotifications as $date => $items)
-                                    <li class="dropdown-date-separator"><span>{{ \Carbon\Carbon::parse($date)->format('M d, Y') }}</span></li>
-                                    @foreach($items as $notification)
-                                        @php
-                                            $iconClass = 'secondary'; $icon = 'fas fa-bell';
-                                            if ($notification->type == 'App\\Notifications\\DonationApprovedNotification') { $iconClass = 'success'; $icon = 'fas fa-check-circle'; }
-                                            elseif ($notification->type == 'App\\Notifications\\DonationDeclinedNotification') { $iconClass = 'danger'; $icon = 'fas fa-times-circle'; }
-                                            elseif ($notification->type == 'App\\Notifications\\DonationStatusNotification') {
-                                                $status = $notification->data['status'] ?? 'approved';
-                                                if ($status === 'declined') { $iconClass = 'danger'; $icon = 'fas fa-times-circle'; } else { $iconClass = 'success'; $icon = 'fas fa-check-circle'; }
-                                            }
-                                            elseif ($notification->type == 'App\\Notifications\\NewDonationNotification') { $iconClass = 'warning'; $icon = 'fas fa-donate'; }
-                                            elseif ($notification->type == 'App\\Notifications\\EventRegistrationNotification') { $iconClass = 'info'; $icon = 'fas fa-calendar-check'; }
-                                            elseif ($notification->type == 'App\\Notifications\\EventVolunteerNotification') { $iconClass = 'primary'; $icon = 'fas fa-hands-helping'; }
-
-                                            $title = 'Notification';
-                                            if ($notification->type == 'App\\Notifications\\DonationApprovedNotification') { $title = 'Donation Approved'; }
-                                            elseif ($notification->type == 'App\\Notifications\\DonationDeclinedNotification') { $title = 'Donation Declined'; }
-                                            elseif ($notification->type == 'App\\Notifications\\DonationStatusNotification') { $title = (($notification->data['status'] ?? 'approved') === 'declined') ? 'Donation Declined' : 'Donation Approved'; }
-                                            elseif ($notification->type == 'App\\Notifications\\NewDonationNotification') { $title = 'New Donation'; }
-                                            elseif ($notification->type == 'App\\Notifications\\EventRegistrationNotification') { $title = 'Event Registration'; }
-                                            elseif ($notification->type == 'App\\Notifications\\EventVolunteerNotification') { $title = 'Event Volunteer'; }
-                                        @endphp
-                                        <li class="notification-dropdown-item">
-                                            <a href="{{ route('notifications.show', $notification->id) }}" class="notification-link">
-                                                <div class="notification-item-content">
-                                                    <div class="notification-icon-wrapper">
-                                                        <div class="notification-icon {{ $iconClass }}">
-                                                            <i class="{{ $icon }}"></i>
-                                                        </div>
-                                                    </div>
-                                                    <div class="notification-text">
-                                                        <div class="d-flex justify-content-between align-items-start">
-                                                            <div class="notification-message {{ !$notification->read_at ? 'unread' : '' }}">
-                                                                {{ $title }}
-                                                    </div>
-                                                            @if(!$notification->read_at)
-                                                                <span class="unread-dot"></span>
-                                                            @endif
-                                                        </div>
-                                                        <div class="d-flex align-items-center gap-2 small text-muted">
-                                                            <span class="notification-time"><i class="far fa-clock"></i> {{ $notification->created_at->diffForHumans() }}</span>
-                                                            @if(isset($notification->data['amount']))
-                                                                <span class="badge bg-success-subtle text-success fw-semibold">₱{{ number_format($notification->data['amount'], 2) }}</span>
-                                                            @endif
-                                                        </div>
-                                                        <div class="text-muted small mt-1">
-                                                            {{ Str::limit($notification->data['message'] ?? 'You have a new notification', 80) }}
-                                                    </div>
-                                            </div>
-                                        </div>
-                                    </a>
-                                        </li>
-                                    @endforeach
-                                @empty
-                                    <li class="notification-empty">
-                                        <div class="empty-state-mini">
-                                            <i class="fas fa-bell-slash"></i>
-                                            <span>No notifications yet</span>
-                                    </div>
-                                    </li>
-                                @endforelse
-                                <li class="notification-dropdown-footer">
-                                    <a href="{{ route('notifications.index') }}" class="view-all-notifications-btn">
-                                        View all notifications <i class="fas fa-arrow-right"></i>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
+                    <!-- Notifications Link (Desktop) -->
+                    <a href="{{ route('notifications.index') }}" class="nav-link notification-bell d-none d-md-block">
+                        <i class="fas fa-bell"></i>
+                        @if(auth()->user()->unreadNotifications->count() > 0)
+                            <span class="badge bg-danger rounded-pill notification-badge">{{ auth()->user()->unreadNotifications->count() }}</span>
+                        @endif
+                    </a>
                 </div>
                 
                 <span class="me-3 text-muted">Hi, <strong>{{ Auth::user()->first_name }}</strong></span>
@@ -141,10 +38,115 @@
         </div>
     </div>
 </nav>
+ 
+<!-- Strong inline overrides for notification dropdown to ensure consistent UI and color -->
+<style>
+    /* Override root primary colors so compiled CSS uses the same blue primary */
+    :root {
+        /* Aligned with notifications page palette */
+        --primary: #4F959D !important; /* original notifications primary */
+        --primary-dark: #205781 !important; /* original notifications primary-dark */
+        --primary-light: #98D2C0 !important; /* original notifications primary-light */
+        --nav-primary: #2563eb !important; /* navigation accent (blue-600) kept for header */
+        --nav-primary-dark: #1d4ed8 !important; /* navigation darker */
+        --white: #ffffff !important;
+        --text-dark: #333333 !important;
+        --text-darker: #111111 !important;
+        --text-light: #666666 !important;
+    }
+
+    /* Ensure dropdown uses a clear white card and dark text */
+    .dropdown-menu.notification-dropdown-modern {
+        background: #ffffff !important;
+        color: #0f172a !important;
+        border: 1px solid #e5e7eb !important;
+        width: 420px !important;
+        max-height: 520px !important;
+        z-index: 9999 !important;
+    }
+
+    /* Links inside dropdown should be dark and not blue */
+    .dropdown-menu.notification-dropdown-modern a,
+    .dropdown-menu.notification-dropdown-modern .notification-link,
+    .dropdown-menu.notification-dropdown-modern .notification-link * {
+        color: #0f172a !important;
+        text-decoration: none !important;
+    }
+
+    /* Neutralize legacy teal/blue backgrounds coming from compiled CSS */
+    .dropdown-menu.notification-dropdown-modern .notification-card,
+    .dropdown-menu.notification-dropdown-modern .notification-item,
+    .dropdown-menu.notification-dropdown-modern .notification-card.border-primary,
+    .dropdown-menu.notification-dropdown-modern .notification-item.unread {
+        background: transparent !important;
+        border-left: none !important;
+    }
+
+    /* Badge and unread indicators: choose clear colors */
+    .dropdown-menu.notification-dropdown-modern .notification-badge,
+    .dropdown-menu.notification-dropdown-modern .badge.notification-badge {
+        background: #2563eb !important; /* blue accent */
+        color: #fff !important;
+    }
+
+    .dropdown-menu.notification-dropdown-modern .unread-dot,
+    .dropdown-menu.notification-dropdown-modern .unread-indicator {
+        background: #ff4d4f !important; /* red unread */
+        box-shadow: 0 0 0 6px rgba(255,77,79,0.06) !important;
+    }
+
+    /* Notification icon chips: keep their semantic colors but prefer more saturated tones */
+    .dropdown-menu.notification-dropdown-modern .notification-icon.success { background: #16a34a !important; }
+    .dropdown-menu.notification-dropdown-modern .notification-icon.danger  { background: #dc2626 !important; }
+    .dropdown-menu.notification-dropdown-modern .notification-icon.warning { background: #d97706 !important; }
+    .dropdown-menu.notification-dropdown-modern .notification-icon.info    { background: #0284c7 !important; }
+    .dropdown-menu.notification-dropdown-modern .notification-icon.secondary{ background: #6b7280 !important; }
+
+    /* Footer button: blue primary */
+    .dropdown-menu.notification-dropdown-modern .view-all-notifications-btn,
+    .dropdown-menu.notification-dropdown-modern .view-all-btn {
+        background: #2563eb !important;
+        color: #ffffff !important;
+        border: none !important;
+    }
+
+    /* Improve spacing and wrapping */
+    .dropdown-menu.notification-dropdown-modern .notification-dropdown-item { padding: 0 !important; }
+    .dropdown-menu.notification-dropdown-modern .notification-link { padding: 0.9rem 1rem !important; }
+    .dropdown-menu.notification-dropdown-modern .notification-message { white-space: normal !important; word-break: break-word !important; }
+
+    /* Small-screen tweaks */
+    @media (max-width: 576px) {
+        .dropdown-menu.notification-dropdown-modern { width: 300px !important; }
+    }
+</style>
 
 @push('styles')
 <style>
-    /* Standardize ALL navigation headers to #367588 */
+    /* Bright palette for navigation and dropdowns */
+    :root {
+        /* Use the notifications page palette globally to keep UI consistent */
+        --primary: #4F959D; /* main primary from notifications page */
+        --primary-dark: #205781;
+        --primary-light: #98D2C0;
+        --background-light: #F6F8D5;
+        --white: #ffffff;
+        --text-dark: #333333;
+        --text-darker: #111111;
+        --text-light: #666666;
+        --success: #28a745;
+        --warning: #ffc107;
+        --danger: #dc3545;
+        --info: #17a2b8;
+        --secondary: #6c757d;
+        --border-light: #e9ecef;
+        --nav-primary: var(--primary);
+        --nav-primary-dark: var(--primary-dark);
+        --accent: #ff9f1c; /* keep accent */
+        --muted: #4b5563;
+    }
+
+    /* Standardize ALL navigation headers to a brighter teal */
     .navbar,
     .top-nav,
     .navigation-header,
@@ -162,35 +164,22 @@
     .header-wrapper,
     .nav-wrapper,
     .navigation-container {
-        background-color: #367588 !important;
-        color: #ffffff !important;
+    background-color: #ffffff !important;
+        color: #000000 !important;
         height: 64px !important;
         min-height: 64px !important;
     }
     
     /* Ensure all text in headers is white for consistency */
-    .navbar *,
-    .top-nav *,
-    .navigation-header *,
-    .admin-navbar *,
-    .member-navbar *,
-    .treasurer-navbar *,
-    header.main-header *,
-    .app-header *,
-    .site-header *,
-    nav[class*="navbar"] *,
-    header[class*="navbar"] *,
-    div[class*="navbar"] *,
-    .header-container *,
-    .main-header *,
-    .header-wrapper *,
-    .nav-wrapper *,
-    .navigation-container *,
+    /* Only target top-level navigation header elements for white text, avoid cascading into dropdowns */
+    .navbar .navbar-brand,
+    .navbar .nav-link,
     .navbar .text-muted,
-    .navbar .text-muted strong,
     .navbar span,
-    .navbar strong {
-        color: #ffffff !important;
+    .navbar strong,
+    .top-nav .nav-link,
+    .navigation-header .nav-link {
+        color: #000000 !important;
     }
     
     /* Exception for dropdown menus */
@@ -207,8 +196,8 @@
     button[type="submit"][form*="logout"],
     a[href*="logout"] {
         background-color: transparent !important;
-        color: #ffffff !important;
-        border: 1px solid #ffffff !important;
+        color: #000000 !important;
+        border: 1px solid #000000 !important;
         transition: all 0.3s ease !important;
     }
 
@@ -217,9 +206,9 @@
     .logout-button:hover,
     button[type="submit"][form*="logout"]:hover,
     a[href*="logout"]:hover {
-        background-color: rgba(255, 255, 255, 0.1) !important;
-        color: #ffffff !important;
-        border-color: #ffffff !important;
+        background-color: rgba(0, 0, 0, 0.1) !important;
+        color: #000000 !important;
+        border-color: #000000 !important;
     }
 
     /* Enhanced Notification Dropdown Styles */
@@ -275,25 +264,29 @@
         padding: 0.75rem 1rem;
         border-radius: 50px;
         transition: all 0.3s ease;
-        color: white !important;
+        color: black !important;
     }
 
     .notification-bell:hover {
-        background-color: rgba(255, 255, 255, 0.1);
+        background-color: rgba(255, 255, 255, 0.14);
         transform: scale(1.05);
         color: white !important;
     }
 
     .notification-badge {
         position: absolute;
-        top: 0.25rem;
+        top: 0.2rem;
         right: 0.25rem;
-        font-size: 0.7rem;
+        font-size: 0.75rem;
         min-width: 18px;
         height: 18px;
         display: flex;
         align-items: center;
         justify-content: center;
+        background: #ff4d4f; /* brighter red */
+        color: white;
+        border-radius: 50%;
+        box-shadow: 0 4px 12px rgba(255,107,107,0.12);
         animation: pulse 2s infinite;
     }
 
@@ -303,16 +296,49 @@
     }
 
     /* Modern Dropdown Styles */
-    .notification-dropdown-modern {
-        width: 380px;
-        max-height: 600px;
-        border: 1px solid #e5e7eb; /* slate-200 */
-        border-radius: 12px;
-        box-shadow: 0 12px 28px rgba(17, 24, 39, 0.15); /* subtle slate shadow */
-        padding: 0;
-        overflow: hidden;
-        background: #ffffff;
+    /* Stronger, more readable dropdown: wider, lighter, and above other nav styles */
+    .dropdown-menu.notification-dropdown-modern {
+        width: 420px !important;
+        max-height: 560px !important;
+        border: 1px solid rgba(34,193,216,0.10) !important; /* soft brighter teal border */
+        border-radius: 10px !important;
+        box-shadow: 0 18px 40px rgba(16,24,40,0.08) !important; /* subtle soft shadow */
+        padding: 0 !important;
+        overflow: hidden !important;
+        background: #ffffff !important;
+        color: #0f172a !important;
+        z-index: 2050 !important; /* make sure dropdown sits above other elements */
     }
+
+    /* Compact item layout and hover states */
+    .notification-dropdown-item .notification-link {
+        padding: 0.9rem 1rem !important;
+        border-bottom: 1px solid #eef2f7 !important;
+        display: flex !important;
+        gap: 0.9rem !important;
+        align-items: flex-start !important;
+        text-decoration: none !important;
+        position: relative !important; /* for unread-dot positioning */
+        word-break: break-word !important;
+    }
+
+    .notification-dropdown-item .notification-link:hover {
+        background: #f8fafc !important;
+        transform: translateY(0) !important;
+        box-shadow: none !important;
+        text-decoration: none !important;
+    }
+
+    .notification-icon-wrapper { width: 48px; flex-shrink: 0; display:flex; align-items:flex-start; }
+    .notification-text { min-width: 0; }
+
+    .notification-message { font-size: 0.98rem; margin-bottom: 6px; color: #0b2540; line-height:1.3; }
+    .notification-message.unread { color: #0b2540; font-weight: 700; }
+
+    /* improved unread indicator: small clear dot inside the list item */
+    .unread-dot { position: absolute; right: 14px; top: 18px; width: 9px; height: 9px; background: #ff4d4f; border-radius: 50%; box-shadow: 0 0 0 6px rgba(255,77,79,0.06); }
+
+    .notification-dropdown-list { padding: 0.25rem 0; }
 
     /* Header Styles */
     .dropdown-header-modern {
@@ -390,9 +416,9 @@
 
     /* Notification List Styles */
     .notification-dropdown-list {
-        max-height: 400px;
-        overflow-y: auto;
-        padding: 0;
+        max-height: 420px !important;
+        overflow-y: auto !important;
+        padding: 0 !important;
     }
 
     .notification-dropdown-item {
@@ -406,18 +432,18 @@
     }
 
     .notification-link {
-        display: block;
-        padding: 0.875rem 1rem;
-        text-decoration: none;
-        color: #0f172a;
-        transition: all 0.3s ease;
-        position: relative;
+        display: block !important;
+        padding: 0.25rem 0 !important; /* inner padding handled by .notification-dropdown-item .notification-link */
+        text-decoration: none !important;
+        color: inherit !important;
+        transition: background 0.12s ease !important;
+        position: relative !important;
     }
 
     .notification-link:hover {
-        background: #f8fafc; /* slate-50 */
-        color: #0f172a;
-        text-decoration: none;
+        background: #f8fafc !important; /* slate-50 */
+        color: inherit !important;
+        text-decoration: none !important;
     }
 
     .notification-item-content {
@@ -454,21 +480,22 @@
     }
 
     .notification-message {
-        font-size: 0.9rem;
-        font-weight: 500;
-        color: #111827; /* gray-900 */
-        margin: 0 0 0.25rem 0;
-        line-height: 1.4;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
+        font-size: 0.95rem !important;
+        font-weight: 500 !important;
+        color: #111827 !important; /* gray-900 */
+        margin: 0 0 0.25rem 0 !important;
+        line-height: 1.35 !important;
+        display: -webkit-box !important;
+        -webkit-line-clamp: 2 !important;
+        line-clamp: 2 !important;
+        -webkit-box-orient: vertical !important;
+        overflow: hidden !important;
+        word-break: break-word !important;
     }
 
     .notification-message.unread {
-        font-weight: 600;
-        color: #0f172a;
+        font-weight: 700 !important;
+        color: #0b2540 !important;
     }
 
     .notification-time {
@@ -479,16 +506,8 @@
         gap: 0.25rem;
     }
 
-    .unread-dot {
-        width: 8px;
-        height: 8px;
-        background: #2563eb; /* blue-600 */
-        border-radius: 50%;
-        position: absolute;
-        top: 0.5rem;
-        right: 0.5rem;
-        animation: pulse 2s infinite;
-    }
+    /* fallback if unread-indicator class used elsewhere */
+    .unread-indicator, .unread-dot { display:inline-block; }
 
     /* Empty State */
     .notification-empty {
@@ -817,6 +836,36 @@ document.addEventListener('DOMContentLoaded', function() {
 }
 </style>
 @endpush
+
+<!-- Defensive: final high-specificity override to force notification dropdown palette -->
+<style id="notification-dropdown-force" nonce="">
+    /* Apply to the dropdown by id/class, its immediate menu and all descendants */
+    .dropdown-menu.dropdown-menu-end.notification-dropdown-modern,
+    .dropdown-menu.dropdown-menu-end.notification-dropdown-modern .notification-dropdown-inner,
+    .dropdown-menu.dropdown-menu-end.notification-dropdown-modern .notification-dropdown-inner * {
+        background: #ffffff !important;
+        background-image: none !important;
+        color: #0f172a !important;
+        border-color: #e5e7eb !important;
+        box-shadow: 0 18px 40px rgba(16,24,40,0.08) !important;
+        -webkit-text-fill-color: #0f172a !important;
+    }
+
+    /* Ensure badges and buttons keep the blue accent */
+    .dropdown-menu.dropdown-menu-end.notification-dropdown-modern .badge,
+    .dropdown-menu.dropdown-menu-end.notification-dropdown-modern .view-all-btn,
+    .dropdown-menu.dropdown-menu-end.notification-dropdown-modern .view-all-notifications-btn {
+        background: #2563eb !important;
+        color: #fff !important;
+    }
+
+    /* Make sure nothing in the dropdown inherits navbar color */
+    .navbar .dropdown-menu.notification-dropdown-modern,
+    .navbar .dropdown-menu.notification-dropdown-modern * {
+        color: inherit !important;
+        background: inherit !important;
+    }
+</style>
 
 
 

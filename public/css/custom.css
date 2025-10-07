@@ -1,98 +1,50 @@
 /* Enhanced Notification Dropdown Styling */
-.notification-bell {
-    position: relative;
-}
+/* Legacy notification styles removed to let navigation.blade.php control dropdown appearance.
+   The rules below are lightweight overrides to ensure any remaining selectors in compiled CSS
+   don't force teal/blue backgrounds or link colors. */
+
+.notification-bell { position: relative !important; }
 
 .notification-badge {
-    position: absolute;
-    top: -5px;
-    right: -5px;
-    font-size: 0.65rem;
-    padding: 0.25rem 0.4rem;
-    background-color: var(--error);
+    position: absolute !important;
+    top: 4px !important;
+    right: 6px !important;
+    font-size: 0.75rem !important;
+    padding: 0.15rem 0.45rem !important;
+    background-color: #ff4d4f !important; /* match nav badge */
+    color: #fff !important;
+    border-radius: 50% !important;
 }
 
-.notification-dropdown {
-    width: 350px;
-    padding: 0;
-    border-radius: 0.5rem;
-    border: none;
-    overflow: hidden;
+.notification-dropdown, .notification-dropdown * {
+    background: transparent !important;
+    color: inherit !important;
 }
 
-.dropdown-header {
-    background-color: var(--background-light);
-}
-
-.notification-item {
-    transition: var(--hover-transition);
-    border-left: 3px solid transparent;
-}
-
-.notification-item:hover {
-    background-color: rgba(79, 149, 157, 0.05);
-    transform: var(--hover-scale);
-}
-
+/* Neutralize any old hover/background forces */
+.notification-item,
+.notification-item:hover,
 .notification-item.unread {
-    border-left: 3px solid var(--primary);
-    background-color: rgba(79, 149, 157, 0.05);
+    background: transparent !important;
+    border-left: none !important;
+    transform: none !important;
 }
 
-.icon-circle {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+/* Keep icon container sizing but don't force colors */
+.icon-circle { width: 40px !important; height: 40px !important; }
+
+.notification-link, .notification-link a {
+    color: inherit !important;
+    text-decoration: none !important;
 }
 
-.notification-title {
-    font-size: 0.9rem;
-    color: var(--text-dark);
-}
+.dropdown-footer, .dropdown-header { background: transparent !important; }
 
-.notification-text {
-    font-size: 0.8rem;
-    color: var(--text-light);
-}
+/* Ensure footer link uses nav's blue rather than role-specific var */
+.dropdown-footer a { color: #2563eb !important; }
 
-.notification-time {
-    font-size: 0.75rem;
-    color: var(--text-light);
-}
-
-.unread-indicator {
-    width: 8px;
-    height: 8px;
-    background-color: var(--primary);
-    border-radius: 50%;
-    display: inline-block;
-}
-
-.mark-all-read-btn {
-    color: var(--text-light);
-    font-size: 0.8rem;
-}
-
-.mark-all-read-btn:hover {
-    color: var(--primary);
-}
-
-.dropdown-footer {
-    background-color: var(--background-light);
-}
-
-.dropdown-footer a {
-    color: var(--primary);
-    font-size: 0.85rem;
-}
-
-.dropdown-footer a:hover {
-    color: var(--primary-dark);
-}
+/* Small safety: ensure unread indicator remains visible */
+.unread-indicator { display:inline-block !important; background: #ff4d4f !important; }
 
 /* Animation for new notifications */
 @keyframes pulse {

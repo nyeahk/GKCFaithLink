@@ -49,6 +49,11 @@ class Event extends Model
     {
         return $this->registrations()->where('user_id', $userId)->first();
     }
+
+    public function joinedMembers()
+    {
+        return $this->belongsToMany(User::class, 'event_members');
+    }
 }
 
 

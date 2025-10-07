@@ -7,6 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/notification-overrides.css') }}">
     @stack('styles')
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
@@ -150,9 +151,11 @@
             opacity: 1 !important;
         }
 
+        /* Keep dropdown menus readable — prefer white cards for dropdown content */
         .navbar .dropdown-menu {
-            background-color: var(--staff-navbar-bg) !important;
-            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            background-color: #ffffff !important;
+            color: #0f172a !important;
+            border: 1px solid rgba(229,231,235,0.9) !important;
         }
 
         .navbar .dropdown-item:hover {
@@ -894,102 +897,7 @@
             overflow: hidden !important;
         }
 
-        /* Notification Dropdown Styles */
-        .navbar .dropdown-menu,
-        .navbar .notification-dropdown,
-        .navbar .notifications-menu {
-            background-color: var(--staff-navbar-bg) !important;
-            border: 1px solid rgba(255, 255, 255, 0.1) !important;
-        }
-
-        .navbar .dropdown-item,
-        .navbar .notification-item,
-        .navbar .notifications-menu .dropdown-item,
-        .navbar .notifications-menu a,
-        .navbar .notification-text,
-        .navbar .notification-time,
-        .navbar .view-all-notifications,
-        .navbar .dropdown-menu a,
-        .navbar .dropdown-menu .text-muted,
-        .navbar .dropdown-menu .notification-message,
-        .navbar .dropdown-menu .notification-title {
-            color: var(--staff-text-light) !important;
-            opacity: 1 !important;
-        }
-
-        .navbar .dropdown-item:hover,
-        .navbar .notification-item:hover,
-        .navbar .notifications-menu .dropdown-item:hover {
-            background-color: rgba(255, 255, 255, 0.1) !important;
-        }
-
-        .navbar .dropdown-divider {
-            border-top-color: rgba(255, 255, 255, 0.1) !important;
-        }
-
-        /* Notification Badge and Count Styles */
-        .navbar .notification-badge,
-        .navbar .badge,
-        .navbar .notification-count,
-        .navbar .unread-count {
-            background-color: #ff4757 !important;
-            color: var(--staff-text-light) !important;
-            font-weight: 600 !important;
-            padding: 0.25rem 0.5rem !important;
-            border-radius: 12px !important;
-            font-size: 0.75rem !important;
-            min-width: 20px !important;
-            height: 20px !important;
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            box-shadow: 0 2px 5px rgba(255, 71, 87, 0.3) !important;
-        }
-
-        .navbar .notification-text,
-        .navbar .unread-notifications-text,
-        .navbar .notification-label {
-            color: var(--staff-text-light) !important;
-            font-weight: 500 !important;
-            font-size: 0.9rem !important;
-            opacity: 1 !important;
-            margin-left: 0.5rem !important;
-        }
-
-        .navbar .notification-wrapper {
-            display: flex !important;
-            align-items: center !important;
-            gap: 0.5rem !important;
-        }
-
-        /* Notification Dropdown Header Styles */
-        .navbar .dropdown-menu .dropdown-header,
-        .navbar .notifications-menu .dropdown-header,
-        .navbar .notification-header {
-            background-color: rgba(255, 255, 255, 0.1) !important;
-            color: var(--staff-text-light) !important;
-            font-weight: 600 !important;
-            font-size: 1rem !important;
-            padding: 1rem !important;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
-        }
-
-        .navbar .dropdown-menu .text-muted,
-        .navbar .notifications-menu .text-muted,
-        .navbar .unread-notifications-text,
-        .navbar .notification-count-text {
-            color: var(--staff-text-light) !important;
-            opacity: 0.9 !important;
-            font-weight: 500 !important;
-            font-size: 0.9rem !important;
-            margin-top: 0.25rem !important;
-        }
-
-        .navbar .dropdown-menu .notification-header-wrapper {
-            display: flex !important;
-            flex-direction: column !important;
-            gap: 0.25rem !important;
-        }
+        /* Notification / dropdown styling is centralized in layouts/navigation.blade.php */
     </style>
 </body>
 </html>

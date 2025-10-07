@@ -7,7 +7,7 @@ use Illuminate\Notifications\Notification;
 use App\Models\EventRegistration;
 use App\Events\NotificationSent;
 
-class EventVolunteerNotification extends Notification
+class VolunteerApprovedNotification extends Notification
 {
     use Queueable;
 
@@ -40,25 +40,21 @@ class EventVolunteerNotification extends Notification
     {
         // Generate role-appropriate URL
         $url = match($notifiable->role) {
-            1 => route('admin.events.attendees', $this->registration->event), // Admin (view only)
-            2 => route('staff.dashboard'), // Treasurer (limited access)
-            3 => route('member.dashboard'), // Member (shouldn't receive this notification)
-            4 => route('staff.events.attendees', $this->registration->event), // Staff (can approve)
-            default => route('staff.events.attendees', $this->registration->event)
+            1 => route('admin.dashboard'), // Admin
+            2 => route('member.events.show', $this->registration->event), // Treasurer (same as member)
+            3 => route('member.events.show', $this->registration->event), // Member
+            4 => route('staff.dashboard'), // Staff
+            default => route('member.events.show', $this->registration->event)
         };
 
         return [
-            'title' => 'New Volunteer Request',
-            'message' => $this->registration->user->name . ' wants to volunteer as ' . ucwords(str_replace('_', ' ', $this->registration->volunteer_role)) . ' for "' . $this->registration->event->title . '"',
-            'event_id' => $this->registration->event_id,
+            'title' => 'Volunteer Request Approved',
+            'message' => 'Your volunteer request for "' . $this->registration->event->title . '" has been approved.',
+            'event_id' => $this->registration->event->id,
             'event_title' => $this->registration->event->title,
-            'user_id' => $this->registration->user_id,
-            'user_name' => $this->registration->user->name,
-            'registration_id' => $this->registration->id,
             'volunteer_role' => $this->registration->volunteer_role,
-            'registration_date' => $this->registration->registration_date->format('Y-m-d H:i:s'),
             'url' => $url,
-            'type' => 'event_volunteer'
+            'type' => 'volunteer_approved'
         ];
     }
 

@@ -159,46 +159,42 @@
         fetch(`/admin/events/date/${date}`)
             .then(response => response.json())
             .then(data => {
-                modalDate.textContent = data.date;
-                
-                if (data.hasEvents) {
-                    let eventsHtml = '';
-                    
-                    data.events.forEach(event => {
-                        eventsHtml += `
-                            <div class="card event-card mb-3">
-                                <div class="card-body">
-                                    <h5 class="card-title">
-                                        <i class="bi bi-calendar-event me-2"></i>
-                                        ${event.title}
-                                    </h5>
-                                    <div class="event-time mb-2">
-                                        <i class="bi bi-clock me-1"></i> ${event.start_time} - ${event.end_time}
-                                    </div>
-                                    <div class="event-location mb-2">
-                                        <i class="bi bi-geo-alt me-1"></i> ${event.location}
-                                    </div>
-                                    <div class="mb-3">
-                                        <span class="badge ${event.status_class}">${event.status}</span>
-                                    </div>
-                                    <p class="card-text">${event.description}</p>
-                                    <a href="/admin/events/${event.id}" class="btn btn-sm btn-primary">
-                                        <i class="bi bi-eye me-1"></i> View Details
-                                    </a>
+            modalDate.textContent = data.date;
+
+            if (data.hasEvents) {
+                // Sort events by start_datetime ascending (earliest first)
+                data.events.sort((a, b) => new Date(a.start_datetime) - new Date(b.start_datetime));
+
+                let eventsHtml = '';
+                data.events.forEach(event => {
+                    eventsHtml += `
+                        <div class="card event-card mb-3">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <i class="bi bi-calendar-event me-2"></i>
+                                    ${event.title}
+                                </h5>
+                                <div class="event-time mb-2">
+                                    <i class="bi bi-clock me-1"></i> ${event.start_time} - ${event.end_time}
                                 </div>
+                                <div class="event-location mb-2">
+                                    <i class="bi bi-geo-alt me-1"></i> ${event.location}
+                                </div>
+                                <p class="card-text">${event.description}</p>
                             </div>
-                        `;
-                    });
-                    
-                    eventsContainer.innerHTML = eventsHtml;
-                } else {
-                    eventsContainer.innerHTML = `
-                        <div class="text-center py-4">
-                            <p class="text-muted">No events scheduled for this date.</p>
                         </div>
                     `;
-                }
-            })
+                });
+
+                eventsContainer.innerHTML = eventsHtml;
+            } else {
+                eventsContainer.innerHTML = `
+                    <div class="text-center py-4">
+                        <p class="text-muted">No events scheduled for this date.</p>
+                    </div>
+                `;
+            }
+        })
             .catch(error => {
                 console.error('Error fetching events:', error);
                 eventsContainer.innerHTML = `

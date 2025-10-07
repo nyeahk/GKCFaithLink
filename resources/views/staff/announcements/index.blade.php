@@ -16,8 +16,7 @@
 
         @if(session('success'))
             <div class="alert alert-success">
-                <i class="fas fa-check-circle"></i>
-                {{ session('success') }}
+                <i class="bi bi-check-circle me-2"></i> {{ session('success') }}
             </div>
         @endif
 
@@ -88,10 +87,16 @@
             </table>
         </div>
 
-        @if($announcements->hasPages())
-            <div class="pagination">
-                {{ $announcements->links() }}
+        <!-- Pagination (match events style) -->
+        @if(isset($announcements) && method_exists($announcements, 'hasPages') && $announcements->hasPages())
+        <div class="d-flex justify-content-between align-items-center mt-4">
+            <div>
+                Showing {{ $announcements->firstItem() }} to {{ $announcements->lastItem() }} of {{ $announcements->total() }} results
             </div>
+            <div>
+                {{ $announcements->appends(request()->query())->links('pagination::bootstrap-5') }}
+            </div>
+        </div>
         @endif
     </div>
 @endsection

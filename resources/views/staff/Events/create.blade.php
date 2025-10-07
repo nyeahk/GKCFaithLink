@@ -9,6 +9,16 @@
             <p class="subtitle">Fill in the details to create a new church event</p>
         </div>
 
+        @if($errors->any())
+            <div class="alert alert-danger">
+                <ul class="mb-0">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
         <form action="{{ route('staff.events.store') }}" method="POST" class="create-event-form" enctype="multipart/form-data">
             @csrf
             <div class="form-grid">
